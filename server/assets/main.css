@@ -1,0 +1,48 @@
+@import "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css";
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css";
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/svg-with-js.min.css";
+
+body {
+    padding-top: 50px;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.column-100 {
+    width: 100px;
+}
+
+.column-200 {
+    width: 200px;
+}
+
+button.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 8px;
+}
+
+button.btn span {
+    display: flex;
+}
+
+button.icon {
+    border: 3px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    transition: border 0.5s ease-in-out;
+}
+
+button.icon:hover {
+    border-color: green;
+}
+
+.notEnabled {
+    display: none;
+}

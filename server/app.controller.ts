@@ -1,19 +1,14 @@
 import { Controller, Get, Render } from '@nestjs/common';
-//import { AppService } from './app.service';
+import { FeatureFlagService } from 'server/featureFlag.service';
 
 @Controller()
 export class AppController {
-  //constructor(private readonly appService: AppService) {}
+  constructor(private readonly service: FeatureFlagService) {}
 
   @Get()
   @Render('index')
-  getHello(): object {
-    return {
-      flags: [
-        { name: 'Flag 1', description: 'Description', enabled: true },
-        { name: 'Flag 2', description: 'Description', enabled: false },
-        { name: 'Flag 3', description: 'Description', enabled: true },
-      ],
-    };
+  async getHello() {
+    const flags = await this.service.getAllFlags();
+    return { flags };
   }
 }
