@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feature Flag</title>
+
+    <!-- CSS (load bootstrap from a CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+      body { padding-top: 50px; }
+    </style>
+</head>
+<body class="container">
+
+<main>
+    <div class="page-header" style='margin-bottom: 20px'>
+        <h1>Feature Flags</h1>
+    </div>
+
+    <table class='table table-bordered'>
+        <thead>
+        <tr>
+            <td>Col 1</td>
+            <td>Col 2</td>
+            <td>Col 3</td>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (var i = 0; i < flags.length; i++) { %>
+            <tr>
+                <td><%= flags[i].name %></td>
+                <td><%= flags[i].description %></td>
+                <td><%= flags[i].enabled ? 'X' : '' %></td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+
+    <img src="/world map.jpg">
+</main>
+
+</body>
+</html>

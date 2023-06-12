@@ -1,9 +1,16 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 3010;
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.setBaseViewsDir(join(process.cwd(), 'server', 'views'));
+  app.useStaticAssets(join(process.cwd(), 'server', 'assets'));
+  app.setViewEngine('ejs');
+
   await app.listen(port);
 
   const url = await app.getUrl();
