@@ -1,3 +1,4 @@
+/* This file is in the head of the html file */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const queries = {
   toggle: (id) => `mutation ToggleFlag {
