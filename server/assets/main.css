@@ -12,6 +12,28 @@ hr {
     border-radius: 50%;
 }
 
+th div {
+    display: flex;
+    justify-content: space-between;
+}
+
+th:not([data-type="exclude"]):hover {
+    cursor: pointer;
+    color: var(--gray);
+}
+
+th[data-direction="asc"] div::after {
+    content: "▲";
+}
+
+th[data-direction="desc"] div::after {
+    content: "▼";
+}
+
+th div.row-reverse {
+    flex-direction: row-reverse;
+}
+
 .title {
     display: flex;
     justify-content: space-between;
@@ -21,6 +43,10 @@ hr {
 
 .column-100 {
     width: 100px;
+}
+
+.column-150 {
+    width: 150px;
 }
 
 .column-200 {
@@ -49,7 +75,7 @@ button.icon {
 }
 
 button.icon:hover {
-    border-color: green;
+    border-color: var(--secondary);
 }
 
 .notEnabled {

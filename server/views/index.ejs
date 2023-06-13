@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <title>Feature Flag</title>
 
-
     <link rel="stylesheet" href="/main.css">
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script>
+        window.flags = `<%= JSON.stringify(flags) %>`;
+    </script>
     <script src='/main.js'></script>
 </head>
 <body class="container">
@@ -19,14 +21,27 @@
         </button>
     </div>
 
+    <div style='margin-bottom: 30px'>
+        <fieldset class='stack stack-row'>
+            <label for='search'>Search</label>
+            <input type='search' id='search' onkeyup='handleSearch()'>
+
+            <button type='button' onclick='clearSearch()'>Cancel</button>
+        </fieldset>
+    </div>
+
     <table class='table table-bordered'>
         <thead>
         <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th class='column-100'>Enabled</th>
-            <th class='column-200 text-right'>Updated At</th>
-            <th class='column-100 text-center'>Actions</th>
+            <th><div>Name</div></th>
+            <th><div>Description</div></th>
+            <th class='column-150' data-type='boolean' data-direction='asc'>
+                <div>Enabled</div>
+            </th>
+            <th class='column-200' data-type='date'>
+                <div class='row-reverse'>Updated At</div>
+            </th>
+            <th class='column-100 text-center' data-type='exclude'>Actions</th>
         </tr>
         </thead>
         <tbody id='flags'></tbody>
@@ -59,16 +74,6 @@
     </div>
 </main>
 
-<script>
-  const data = `<%= JSON.stringify(flags) %>`;
-  const str = data.replaceAll('&#34;', '"');
-  const flags = JSON.parse(str);
-  const allFlags = [];
-  flags.sort((a, b) => a.enabled ? -1 : 1).forEach(flag => {
-    allFlags.push(createRow(flag));
-  });
-
-  document.getElementById('flags').innerHTML = allFlags.join('')
-</script>
+<script src='/bottom.js'></script>
 </body>
 </html>
