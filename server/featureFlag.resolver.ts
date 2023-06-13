@@ -12,6 +12,14 @@ export class FeatureFlagResolver {
   }
 
   @Mutation(() => FeatureFlag)
+  async createFlag(
+    @Args('name') name: string,
+    @Args('description') description: string
+  ): Promise<FeatureFlag> {
+    return this.service.createFlag(name, description);
+  }
+
+  @Mutation(() => FeatureFlag)
   async toggleFlag(@Args('id') id: number): Promise<FeatureFlag> {
     return this.service.toggleFlag(id);
   }

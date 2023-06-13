@@ -13,9 +13,9 @@
 <main>
     <div class='title'>
         <h1>Feature Flags</h1>
-        <button type="button" class="btn btn-primary">
+        <button type="button" class="btn btn-primary" onclick='addNewFlag()'>
             <i class='fa-solid fa-plus'></i>
-            <span>New</span>
+            New
         </button>
     </div>
 
@@ -29,10 +29,34 @@
             <th class='column-100 text-center'>Actions</th>
         </tr>
         </thead>
-        <tbody id='flags'>
-
-        </tbody>
+        <tbody id='flags'></tbody>
     </table>
+
+    <div id='form' class='add-new stack notEnabled'>
+        <hr />
+        <h2>Add new</h2>
+
+        <p>New flags will be enabled by default</p>
+
+        <form class='stack'>
+            <div class='stack stack-row'>
+                <fieldset class='stack stack-row'>
+                    <label for='name'>Name</label>
+                    <input type='text' id='name' name='name' />
+                </fieldset>
+
+                <fieldset class='stack stack-row'>
+                    <label for='desc'>Description</label>
+                    <input type='text' id='desc' name='description' />
+                </fieldset>
+            </div>
+
+            <div class='stack stack-row stack-gap-large'>
+                <button class='btn btn-warning' type='button' onclick='cancel()'>Cancel</button>
+                <button class='btn btn-primary' type='button' onclick='submitForm()'>Submit</button>
+            </div>
+        </form>
+    </div>
 </main>
 
 <script>
@@ -41,24 +65,7 @@
   const flags = JSON.parse(str);
   const allFlags = [];
   flags.sort((a, b) => a.enabled ? -1 : 1).forEach(flag => {
-    allFlags.push(`
-        <tr data-row='${flag.id}'>
-            <td>${flag.name}</td>
-            <td>${flag.description}</td>
-            <td class='text-center'>
-              <i class='fa-solid fa-check fa-lg ${flag.enabled ? '' : 'notEnabled'}'></i>
-            </td>
-            <td class='text-right'>${formatDate(flag.updatedAt)}</td>
-            <td style='display: flex; column-gap: 16px;'>
-                <button class='icon' onclick='deleteFlag(${flag.id})'>
-                  <i class='fa-solid fa-xmark fa-xl'></i>
-                </button>
-                <button class='icon' onclick='toggleFlag(${flag.id})'>
-                  <i class='fa-solid fa-rotate fa-lg'></i>
-                </button>
-            </td>
-        </tr>
-    `);
+    allFlags.push(createRow(flag));
   });
 
   document.getElementById('flags').innerHTML = allFlags.join('')

@@ -17,6 +17,7 @@ type FeatureFlag {
 }
 
 type Mutation {
+  createFlag(description: String!, name: String!): FeatureFlag!
   deleteFlag(id: Int!): FeatureFlag!
   toggleFlag(id: Int!): FeatureFlag!
 }

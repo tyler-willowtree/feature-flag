@@ -6,6 +6,12 @@ body {
     padding-top: 50px;
 }
 
+hr {
+    width: 100%;
+    border-color: black;
+    border-radius: 50%;
+}
+
 .title {
     display: flex;
     justify-content: space-between;
@@ -21,15 +27,18 @@ body {
     width: 200px;
 }
 
-button.btn {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    column-gap: 8px;
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-button.btn span {
-    display: flex;
+.stack.stack-row {
+    flex-direction: row;
+}
+
+.stack-gap-large {
+    gap: 30px;
 }
 
 button.icon {
@@ -45,4 +54,22 @@ button.icon:hover {
 
 .notEnabled {
     display: none;
+}
+
+.add-new {
+    margin-top: 20px;
+}
+
+.add-new form {
+    width: 625px;
+    gap: 20px;
+}
+
+.add-new form fieldset {
+    column-gap: 10px;
+    align-items: center;
+}
+
+label {
+    margin-bottom: unset;
 }

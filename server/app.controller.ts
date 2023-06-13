@@ -7,7 +7,7 @@ export class AppController {
 
   @Get()
   @Render('index')
-  async getHello() {
+  async root() {
     const flags = await this.service.getAllFlags();
     return { flags };
   }

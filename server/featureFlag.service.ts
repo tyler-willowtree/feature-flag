@@ -10,6 +10,17 @@ export class FeatureFlagService {
     return this.prisma.featureFlag.findMany();
   }
 
+  async createFlag(name: string, description: string): Promise<FeatureFlag> {
+    return this.prisma.featureFlag.create({
+      data: {
+        name,
+        description,
+        enabled: true,
+        updatedAt: new Date(),
+      },
+    });
+  }
+
   async toggleFlag(id: number): Promise<FeatureFlag> {
     const flag = await this.prisma.featureFlag.findUnique({
       where: { id },
