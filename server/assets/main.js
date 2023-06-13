@@ -31,7 +31,7 @@ const queries = {
 };
 
 const formatDate = (date) => {
-  return dayjs(date).format('MMM DD, YY');
+  return dayjs(date).format('MMM DD, YY h:mm a');
 };
 
 const whichToggle = (flag) => {

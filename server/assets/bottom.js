@@ -1,6 +1,16 @@
 /* This file is at the bottom of the html body tag */
 /* It requires the body to be in the DOM before it runs */
 
+/** -- Variables -- */
+const table = document.querySelector('table');
+const tableHeaders = table.querySelectorAll('th:not([data-type="exclude"])');
+const tableBody = table.querySelector('tbody');
+
+/** -- Sorting -- */
+const directions = Array.from(tableHeaders).map((header) => {
+  return '';
+});
+
 /** -- Initial paint -- */
 const str = window.flags.replaceAll('&#34;', '"');
 const flags = JSON.parse(str);
@@ -10,19 +20,10 @@ flags
   .forEach((flag) => {
     allFlags.push(createRow(flag));
   });
-
 document.getElementById('flags').innerHTML = allFlags.join('');
+directions[2] = 'desc';
 
-/** -- Variables -- */
-const table = document.querySelector('table');
-const tableHeaders = table.querySelectorAll('th:not([data-type="exclude"])');
-const tableBody = table.querySelector('tbody');
 const tableRows = tableBody.querySelectorAll('tr');
-
-/** -- Sorting -- */
-const directions = Array.from(tableHeaders).map((header) => {
-  return '';
-});
 
 const transformData = (index, data) => {
   const type = tableHeaders[index].dataset.type;
@@ -33,9 +34,9 @@ const transformData = (index, data) => {
     case 'boolean':
       return data.includes('notEnabled');
     case 'date':
-      return new Date(data);
+      return dayjs(data);
     default:
-      return data;
+      return data.toUpperCase();
   }
 };
 
@@ -51,6 +52,10 @@ const sortColumn = (index) => {
 
     const a = transformData(index, cellA);
     const b = transformData(index, cellB);
+
+    if (typeof a === 'object') {
+      return (a.isBefore(b) ? -1 : 1) * multiplier;
+    }
 
     switch (true) {
       case a > b:
@@ -68,6 +73,7 @@ const sortColumn = (index) => {
   });
 
   directions[index] = direction === 'asc' ? 'desc' : 'asc';
+  tableHeaders[index].dataset.direction = direction;
 
   // add new rows
   clonedRows.forEach((row) => {
@@ -85,6 +91,5 @@ const sortColumn = (index) => {
         hdr.dataset.direction = '';
       }
     });
-    header.dataset.direction = directions[index];
   });
 });
