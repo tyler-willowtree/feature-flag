@@ -30,6 +30,20 @@ const queries = {
   }`,
 };
 
+const removeRegex = /[^A-Za-z0-9-]/gi;
+
+const changeToParamCase = (str) => {
+  return str
+    .split(' ')
+    .map((word) => word.toLowerCase().replace(removeRegex, ''))
+    .join('-');
+};
+
+const showRealName = () => {
+  const input = document.getElementById('name');
+  input.value = changeToParamCase(input.value);
+};
+
 const formatDate = (date) => {
   return dayjs(date).format('MMM DD, YY h:mm a');
 };

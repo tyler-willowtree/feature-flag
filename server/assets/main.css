@@ -53,6 +53,22 @@ th div.row-reverse {
     width: 200px;
 }
 
+.form-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.form-grid fieldset input {
+    width: 100%;
+}
+
+.form-grid fieldset div {
+    font-size: 0.85em;
+    margin-top: 4px;
+}
+
 .stack {
     display: flex;
     flex-direction: column;
@@ -87,7 +103,7 @@ button.icon:hover {
 }
 
 .add-new form {
-    width: 625px;
+    width: 725px;
     gap: 20px;
 }
 
