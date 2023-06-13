@@ -1,4 +1,34 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+const queries = {
+  toggle: (id) => `mutation ToggleFlag {
+    toggleFlag(id: ${id}) {
+      id
+      name
+      description
+      enabled
+      updatedAt
+    }
+  }`,
+  create: (data) => `mutation CreateFlag {
+    createFlag(${data.join(', ')}) {
+      id
+      name
+      description
+      enabled
+      updatedAt
+    }
+  }`,
+  delete: (id) => `mutation DeleteFlag {
+    deleteFlag(id: ${id}) {
+      id
+      name
+      description
+      enabled
+      updatedAt
+    }
+  }`,
+};
+
 const formatDate = (date) => {
   return dayjs(date).format('MMM DD, YY');
 };
@@ -8,6 +38,17 @@ const whichToggle = (flag) => {
     return 'fa-toggle-off';
   }
   return 'fa-toggle-on';
+};
+
+const createPost = (query) => {
+  return {
+    url: '/graphql',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query }),
+  };
 };
 
 const createRow = (flag) => {
@@ -36,47 +77,30 @@ const createRow = (flag) => {
 };
 
 const toggleFlag = (id) => {
-  fetch('/graphql', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `mutation ToggleFlag {
-                toggleFlag(id: ${id}) {
-                  id
-                  name
-                  description
-                  enabled
-                  updatedAt
-                }
-              }`,
-    }),
+  const table = document.querySelector('tbody');
+  const row = document.querySelector(`[data-row="${id}"]`);
+  const index = row.rowIndex;
+  const { url, body, headers, method } = createPost(queries.toggle(id));
+
+  fetch(url, {
+    method,
+    headers,
+    body,
   })
     .then((res) => res.json())
-    .then(() => {
-      window.location.reload();
+    .then((result) => {
+      table.insertRow(index - 1).innerHTML = createRow(result.data.toggleFlag);
+      table.deleteRow(index);
     })
     .catch((err) => console.log(err));
 };
 
 const deleteFlag = (id) => {
-  fetch('/graphql', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `mutation DeleteFlag {
-                deleteFlag(id: ${id}) {
-                  id
-                  name
-                  description
-                  enabled
-                  updatedAt
-                }
-              }`,
-    }),
+  const { url, body, headers, method } = createPost(queries.delete(id));
+  fetch(url, {
+    method,
+    headers,
+    body,
   })
     .then((res) => res.json())
     .then(() => {
@@ -90,7 +114,6 @@ const addNewFlag = () => {
 };
 
 const submitForm = () => {
-  console.log('submit');
   const theForm = document.getElementById('form').querySelector('form');
   const formData = new FormData(theForm);
   const data = [];
@@ -98,22 +121,11 @@ const submitForm = () => {
     data.push(`${key}: ${typeof value === 'string' ? `"${value}"` : value}`);
   }
 
-  fetch('/graphql', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `mutation CreateFlag {
-                createFlag(${data.join(', ')}) {
-                  id
-                  name
-                  description
-                  enabled
-                  updatedAt
-                }
-              }`,
-    }),
+  const { url, body, headers, method } = createPost(queries.create(data));
+  fetch(url, {
+    method,
+    headers,
+    body,
   })
     .then((res) => res.json())
     .then((result) => {
@@ -125,7 +137,3 @@ const submitForm = () => {
     })
     .catch((err) => console.log(err));
 };
-
-// "mutation ToggleFlag {\n toggleFlag(id: 4) {\n id\n name\n description\n enabled\n updatedAt\n }\n }"
-
-// 'mutation CreateFlag {\n createFlag(name: "Custom", description: "hey hey") {\n id\n name\n description\n enabled\n updatedAt\n }'
