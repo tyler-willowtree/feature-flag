@@ -138,3 +138,29 @@ const submitForm = () => {
     })
     .catch((err) => console.log(err));
 };
+
+const handleSearch = () => {
+  const input = document.getElementById('search');
+  const filter = input.value.toUpperCase();
+  const rows = tableBody.querySelectorAll('tr');
+
+  [].forEach.call(rows, (row) => {
+    const cells = row.querySelectorAll('td');
+    let found = false;
+    [].forEach.call(cells, (cell) => {
+      if (cell.innerHTML.toUpperCase().indexOf(filter) > -1) {
+        found = true;
+      }
+    });
+    if (found) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+};
+
+const clearSearch = () => {
+  document.getElementById('search').value = '';
+  handleSearch();
+};
