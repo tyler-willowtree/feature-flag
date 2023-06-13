@@ -7,7 +7,7 @@ const tableHeaders = table.querySelectorAll('th:not([data-type="exclude"])');
 const tableBody = table.querySelector('tbody');
 
 /** -- Sorting -- */
-const directions = Array.from(tableHeaders).map((header) => {
+const directions = Array.from(tableHeaders).map(() => {
   return '';
 });
 
@@ -16,7 +16,7 @@ const str = window.flags.replaceAll('&#34;', '"');
 const flags = JSON.parse(str);
 const allFlags = [];
 flags
-  .sort((a, b) => (a.enabled ? -1 : 1))
+  .sort((a) => (a.enabled ? -1 : 1))
   .forEach((flag) => {
     allFlags.push(createRow(flag));
   });
