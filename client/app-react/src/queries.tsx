@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
-import { Query, QueryGetFlagByNameArgs } from '../../generated/graphql';
+import { Query, QueryGetFlagByNameArgs } from './generated/graphql';
 
 export const useGetAllFlags = () => {
   const { data, loading, error } = useQuery<Query>(

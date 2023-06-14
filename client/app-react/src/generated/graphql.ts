@@ -31,6 +31,7 @@ export type Mutation = {
   createFlag: FeatureFlag;
   deleteFlag: FeatureFlag;
   toggleFlag: FeatureFlag;
+  updateFlag: FeatureFlag;
 };
 
 
@@ -47,6 +48,13 @@ export type MutationDeleteFlagArgs = {
 
 export type MutationToggleFlagArgs = {
   id: Scalars['Int']['input'];
+};
+
+
+export type MutationUpdateFlagArgs = {
+  description: Scalars['String']['input'];
+  id: Scalars['Int']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type Query = {
