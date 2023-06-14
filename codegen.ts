@@ -10,6 +10,9 @@ const config: CodegenConfig = {
     'client/app-vue/src/generated/graphql.ts': {
       plugins: ['typescript', 'typescript-document-nodes'],
     },
+    'client/app-js/generated/graphql.ts': {
+      plugins: ['typescript', 'typescript-document-nodes'],
+    },
   },
 };
 
