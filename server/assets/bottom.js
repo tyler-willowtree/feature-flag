@@ -12,19 +12,12 @@ const directions = Array.from(tableHeaders).map(() => {
 });
 
 /** -- Initial paint -- */
-const str = window.flags.replaceAll('&#34;', '"');
-const flags = JSON.parse(str);
-const allFlags = [];
-flags
-  .sort((a) => (a.enabled ? -1 : 1))
-  .forEach((flag) => {
-    allFlags.push(createRow(flag));
-  });
 document.getElementById('flags').innerHTML = allFlags.join('');
 directions[2] = 'desc';
 
 const tableRows = tableBody.querySelectorAll('tr');
 
+/** -- Sort -- */
 const transformData = (index, data) => {
   const type = tableHeaders[index].dataset.type;
 

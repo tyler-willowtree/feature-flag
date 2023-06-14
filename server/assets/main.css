@@ -94,24 +94,50 @@ button.icon:hover {
     border-color: var(--secondary);
 }
 
+button.icon.delete {
+    color: var(--danger);
+}
+
+button.icon.edit {
+    color: var(--success);
+}
+
+button.icon.toggle {
+    color: var(--primary);
+}
+
+.hidden,
 .notEnabled {
     display: none;
 }
 
-.add-new {
+.form-wrapper {
     margin-top: 20px;
 }
 
-.add-new form {
+.form-wrapper form {
     width: 725px;
     gap: 20px;
 }
 
-.add-new form fieldset {
+.form-wrapper form fieldset {
     column-gap: 10px;
     align-items: center;
 }
 
 label {
     margin-bottom: unset;
+}
+
+#form .add,
+#form .edit {
+    display: none;
+}
+
+#form.create .add {
+    display: block;
+}
+
+#form.update .edit {
+    display: block;
 }
