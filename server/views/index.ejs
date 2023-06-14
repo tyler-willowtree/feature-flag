@@ -15,7 +15,7 @@
 <main>
     <div class='title'>
         <h1>Feature Flags</h1>
-        <button type="button" class="btn btn-primary" onclick='addNewFlag()'>
+        <button type="button" class="btn btn-primary" onclick='toggleFormOpen("create")'>
             <i class='fa-solid fa-plus'></i>
             New
         </button>
@@ -26,7 +26,7 @@
             <label for='search'>Search</label>
             <input type='search' id='search' onkeyup='handleSearch()'>
 
-            <button type='button' onclick='clearSearch()'>Cancel</button>
+            <button type='button' onclick='handleClearSearch()'>Cancel</button>
         </fieldset>
     </div>
 
@@ -47,11 +47,12 @@
         <tbody id='flags'></tbody>
     </table>
 
-    <div id='form' class='add-new stack notEnabled'>
+    <div id='form' class='form-wrapper stack hidden'>
         <hr />
-        <h2>Add new</h2>
+        <h2 class='add'>Add new flag</h2>
+        <h2 class='edit'>Edit flag</h2>
 
-        <p>New flags will be enabled by default</p>
+        <p class='add'>New flags will be enabled by default</p>
 
         <form class='stack'>
             <div class='form-grid'>
@@ -64,13 +65,13 @@
                 </fieldset>
 
                 <fieldset>
-                    <label for='desc'>Description</label>
-                    <input type='text' id='desc' name='description' />
+                    <label for='description'>Description</label>
+                    <input type='text' id='description' name='description' />
                 </fieldset>
             </div>
 
             <div class='stack stack-row stack-gap-large'>
-                <button class='btn btn-warning' type='button' onclick='cancel()'>Cancel</button>
+                <button class='btn btn-warning' type='button' onclick='handleCancelForm()'>Cancel</button>
                 <button class='btn btn-primary' type='button' onclick='submitForm()'>Submit</button>
             </div>
         </form>
