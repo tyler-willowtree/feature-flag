@@ -24,4 +24,5 @@ type Mutation {
 
 type Query {
   getAllFlags: [FeatureFlag!]!
+  getFlagByName(name: String!): FeatureFlag
 }

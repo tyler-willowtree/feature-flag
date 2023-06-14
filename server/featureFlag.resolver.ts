@@ -11,6 +11,11 @@ export class FeatureFlagResolver {
     return this.service.getAllFlags();
   }
 
+  @Query(() => FeatureFlag, { nullable: true })
+  async getFlagByName(@Args('name') name: string): Promise<FeatureFlag | null> {
+    return this.service.getFlagByName(name);
+  }
+
   @Mutation(() => FeatureFlag)
   async createFlag(
     @Args('name') name: string,

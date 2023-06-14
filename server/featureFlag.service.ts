@@ -10,6 +10,12 @@ export class FeatureFlagService {
     return this.prisma.featureFlag.findMany();
   }
 
+  async getFlagByName(name: string): Promise<FeatureFlag | null> {
+    return this.prisma.featureFlag.findUnique({
+      where: { name },
+    });
+  }
+
   async createFlag(name: string, description: string): Promise<FeatureFlag> {
     return this.prisma.featureFlag.create({
       data: {
