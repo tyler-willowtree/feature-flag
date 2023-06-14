@@ -10,6 +10,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// An example of a feature flag that is enabled in all environments
+// useful when each environment has its own database
 model FeatureFlag {
   id          Int      @id @default(autoincrement())
   name        String   @unique
@@ -18,3 +20,16 @@ model FeatureFlag {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// An example of a feature flag that is enabled in different environments
+// useful when all environments share the same database
+// model FeatureFlag {
+//   id                Int      @id @default(autoincrement())
+//   name              String   @unique
+//   description       String
+//   localEnabled      Boolean
+//   stagingEnabled    Boolean
+//   productionEnabled Boolean
+//   createdAt         DateTime @default(now())
+//   updatedAt         DateTime @updatedAt
+// }
