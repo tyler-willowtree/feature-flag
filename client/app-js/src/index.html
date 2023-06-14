@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <title>JS Example</title>
+</head>
+<body>
+<noscript>
+  <strong>We're sorry but js-example doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+</noscript>
+
+<div class='body'>
+  <h1>Feature Flags (Web components)</h1>
+
+  <h2>All available flags</h2>
+  <div class='mainGrid'></div>
+
+  <hr />
+
+  <h2>Flags that are enabled (allow code to be used)</h2>
+  <div id='enabled-flags' class='stacked'></div>
+  <hr />
+
+  <h2>Flags that are not enabled (hide code)</h2>
+  <div id='disabled-flags' class='stacked'></div>
+
+  <hr />
+
+  <h2>
+    Flags that do not exist in the DB but are wrapped in the FlaggedFeature component (hide code)
+    <br />
+    <span class='font16'>This allows the feature to be started before the DB is updated</span>
+  </h2>
+  <div id='fake-flags' class='stacked'></div>
+</div>
+</body>
+</html>
