@@ -362,6 +362,7 @@ const ownDb = (() => {
           : ''
       }
       ${createFormElement(type, values)}
+      <hr/>
     `;
   };
 

@@ -6,10 +6,23 @@ body {
   padding-top: 50px;
 }
 
+h1 {
+  text-align: center;
+  text-decoration: underline;
+}
+
+h2 {
+  text-align: center;
+}
+
 hr {
   width: 100%;
   border-color: black;
   border-radius: 50%;
+}
+
+.table {
+  margin-bottom: 0;
 }
 
 th div {
@@ -80,6 +93,10 @@ th div.row-reverse {
   gap: 10px;
 }
 
+.stack-no-gap {
+  gap: 0;
+}
+
 .stack.stack-row {
   flex-direction: row;
 }
@@ -112,14 +129,14 @@ button.icon.toggle {
 }
 
 .form-wrapper {
-  margin-top: 20px;
+  width: 725px;
 }
 
 .form-wrapper h2 {
   text-transform: capitalize;
 }
+
 .form-wrapper form {
-  width: 725px;
   gap: 20px;
 }
 
