@@ -23,7 +23,7 @@ th div.text-center {
 
 th:not([data-type="exclude"]):hover {
   cursor: pointer;
-  color: var(--gray);
+  color: #6C757D;
 }
 
 th[data-direction="asc"] div::after {
@@ -96,24 +96,19 @@ button.icon {
 }
 
 button.icon:hover {
-  border-color: var(--secondary);
+  border-color: #6C757D;
 }
 
 button.icon.delete {
-  color: var(--danger);
+  color: #DC3545;
 }
 
 button.icon.edit {
-  color: var(--success);
+  color: #28A745;
 }
 
 button.icon.toggle {
-  color: var(--primary);
-}
-
-.hidden,
-.notEnabled {
-  display: none;
+  color: #007BFF;
 }
 
 .form-wrapper {
