@@ -3,6 +3,7 @@ const ownDb = (() => {
 
   /** ----- VARIABLES ----- */
   const removeRegex = /[^A-Za-z0-9-]/gi;
+  const content = document.getElementById('content');
 
   // flag items
   const flags = [];
@@ -48,19 +49,18 @@ const ownDb = (() => {
   };
 
   // table items
-  const section = document.getElementById('own-db');
-  const table = section.querySelector('table');
-  const tableHeaders = table.querySelectorAll('th:not([data-type="exclude"])');
-  const tableBody = table.querySelector('tbody');
+  let table;
+  let tableHeaders;
+  let tableBody;
 
   const directions = {};
 
   // form items
   const formType = { create: 'create', update: 'update' };
-  const formWrapper = section.querySelector('.form-wrapper');
+  let formWrapper;
 
   // search items
-  const searchWrapper = section.querySelector('.search-form');
+  let searchWrapper;
   let searchInput;
 
   /** ----- FUNCTIONS ----- */
@@ -110,6 +110,29 @@ const ownDb = (() => {
   };
 
   // table items
+  const createTableElement = (flagsArr) => {
+    table = content.querySelector('table');
+    const newBody = document.createElement('tbody');
+
+    table.classList.add('table', 'table-bordered');
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th data-id='name' data-type='text'><div>Name</div></th>
+          <th data-id='description' data-type='text'><div>Description</div></th>
+          <th data-id='enabled' data-type='boolean' class='column-150'><div>Enabled</div></th>
+          <th data-id='updatedAt' data-type='date' class='column-200'><div class='row-reverse'>Updated At</div></th>
+          <th data-type='exclude' class='column-100'><div class='text-center'>Actions</div></th>
+        </tr>
+      </thead>
+    `;
+    table.append(newBody);
+
+    tableHeaders = table.querySelectorAll('th:not([data-type="exclude"])');
+    tableBody = table.querySelector('tbody');
+    flagsArr.forEach((flag) => createNewTableRow(flag));
+  };
+
   const getTableRowAndFlagData = (id) => {
     const row = table.querySelector(`[data-row="${id}"]`);
     const rowIndex = row.rowIndex;
@@ -395,15 +418,44 @@ const ownDb = (() => {
       .catch((err) => console.log(err));
   };
 
+  // general
+  const createContent = (flagsArr) => {
+    content.innerHTML = `
+      <div class="stack stack-gap-large">
+        <h2>Option where each environment has its own database</h2>
+      
+        <div class='stack stack-no-gap'>
+          <div class='title'>
+            <div class='search-form'></div>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick='ownDb.handleFormToggle(ownDb.formType.create)'
+            >
+              <i class='fa-solid fa-plus'></i>
+              Create New
+            </button>
+          </div>
+          
+          <table></table>
+        </div>
+        
+        <div class='form-wrapper stack'></div>
+      </div>
+    `;
+
+    formWrapper = content.querySelector('.form-wrapper');
+    searchWrapper = content.querySelector('.search-form');
+    createTableElement(flagsArr);
+    createSearchElement();
+  };
+
   /** ----- SETUP ----- */
   const setup = () => {
     const newFlags = JSON.parse(window.flags.replaceAll('&#34;', '"'));
-    newFlags.forEach((flag) => {
-      createNewTableRow(flag);
-    });
 
     if (newFlags.length) {
-      createSearchElement();
+      createContent(newFlags);
 
       [].forEach.call(tableHeaders, (header, index) => {
         const columnId = header.dataset.id;

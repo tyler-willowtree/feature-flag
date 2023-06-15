@@ -18,49 +18,7 @@
 <main class='stack stack-gap-large'>
     <h1>&nbsp;&nbsp;Feature Flags&nbsp;&nbsp;</h1>
 
-    <div id='own-db' class='stack stack-gap-large'>
-        <h2>Option where each environment has its own database</h2>
-
-        <div class='stack stack-no-gap'>
-            <div class='title'>
-                <div class='search-form'></div>
-
-                <button
-                    type="button"
-                    class="btn btn-primary"
-                    onclick='ownDb.handleFormToggle(ownDb.formType.create)'
-                >
-                    <i class='fa-solid fa-plus'></i>
-                    Create New
-                </button>
-            </div>
-
-            <table class='table table-bordered'>
-                <thead>
-                <tr>
-                    <th data-id='name'>
-                        <div>Name</div>
-                    </th>
-                    <th data-id='description'>
-                        <div>Description</div>
-                    </th>
-                    <th class='column-150' data-id='enabled' data-type='boolean'>
-                        <div>Enabled</div>
-                    </th>
-                    <th class='column-200' data-id='updated' data-type='date'>
-                        <div class='row-reverse'>Updated At</div>
-                    </th>
-                    <th class='column-100' data-type='exclude'>
-                        <div class='text-center'>Actions</div>
-                    </th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div class='form-wrapper stack'></div>
-    </div>
+    <div id='content'></div>
 </main>
 
 <script src='/own-db.js'></script>
