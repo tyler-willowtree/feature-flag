@@ -52,6 +52,7 @@ const ownDb = (() => {
   let table;
   let tableHeaders;
   let tableBody;
+  let noFlagsElement;
 
   const directions = {};
 
@@ -62,6 +63,7 @@ const ownDb = (() => {
   // search items
   let searchWrapper;
   let searchInput;
+  let searchButton;
 
   /** ----- FUNCTIONS ----- */
   const changeToParamCase = (str) => {
@@ -110,6 +112,27 @@ const ownDb = (() => {
   };
 
   // table items
+  const createNoFlagsFoundRow = () => {
+    tableBody.innerHTML = `
+        <tr class='empty'>
+          <td colspan='5' class='text-center'>No flags found</td>
+        </tr>
+      `;
+
+    noFlagsElement = tableBody.querySelector('tr.empty');
+    searchInput.setAttribute('disabled', true);
+    searchButton.setAttribute('disabled', true);
+  };
+
+  const removeNoFlagsFoundRow = () => {
+    if (noFlagsElement) {
+      noFlagsElement.remove();
+      noFlagsElement = null;
+      searchInput.removeAttribute('disabled');
+      searchButton.removeAttribute('disabled');
+    }
+  };
+
   const createTableElement = (flagsArr) => {
     table = content.querySelector('table');
     const newBody = document.createElement('tbody');
@@ -196,6 +219,7 @@ const ownDb = (() => {
   };
 
   const createNewTableRow = (flag, isInitial = false) => {
+    removeNoFlagsFoundRow();
     const row = tableBody.insertRow();
     flags.push(flag);
     row.setAttribute('data-row', flag.id);
@@ -215,6 +239,9 @@ const ownDb = (() => {
     const { flagIndex, row } = getTableRowAndFlagData(id);
     flags.splice(flagIndex, 1);
     row.remove();
+    if (flags.length === 0) {
+      createNoFlagsFoundRow();
+    }
   };
 
   const transformData = (index, data) => {
@@ -282,8 +309,7 @@ const ownDb = (() => {
     searchWrapper.innerHTML = `
       <form>
         <fieldset class='stack stack-row'>
-          <label for='search-own'>Search</label>
-          <input type='search' id='search-own'>
+          <input type='search' id='search-own' placeholder='Search'>
   
           <button type='button' onclick='ownDb.handleSearchCancel()'>
             Cancel
@@ -293,6 +319,7 @@ const ownDb = (() => {
     `;
 
     searchInput = searchWrapper.querySelector('input#search-own');
+    searchButton = searchWrapper.querySelector('button');
     searchInput.addEventListener('keyup', handleSearchInput);
   };
 
@@ -448,32 +475,34 @@ const ownDb = (() => {
     searchWrapper = content.querySelector('.search-form');
     createTableElement(flagsArr);
     createSearchElement();
+
+    if (!flagsArr.length) {
+      createNoFlagsFoundRow();
+    }
   };
 
   /** ----- SETUP ----- */
   const setup = () => {
-    const newFlags = JSON.parse(window.flags.replaceAll('&#34;', '"'));
+    const newFlags = JSON.parse(window.flagsOwn.replaceAll('&#34;', '"'));
 
-    if (newFlags.length) {
-      createContent(newFlags);
+    createContent(newFlags);
 
-      [].forEach.call(tableHeaders, (header, index) => {
-        const columnId = header.dataset.id;
-        header.addEventListener('click', () => {
-          sortColumn(index, columnId);
+    [].forEach.call(tableHeaders, (header, index) => {
+      const columnId = header.dataset.id;
+      header.addEventListener('click', () => {
+        sortColumn(index, columnId);
 
-          tableHeaders.forEach((hdr) => {
-            const colId = hdr.dataset.id;
-            if (colId !== columnId) {
-              directions[colId] = '';
-              hdr.dataset.direction = '';
-            }
-          });
+        tableHeaders.forEach((hdr) => {
+          const colId = hdr.dataset.id;
+          if (colId !== columnId) {
+            directions[colId] = '';
+            hdr.dataset.direction = '';
+          }
         });
       });
+    });
 
-      table.querySelector('[data-id="enabled"]').click();
-    }
+    table.querySelector('[data-id="enabled"]').click();
   };
 
   return {
