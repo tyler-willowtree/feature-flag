@@ -2,82 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>Feature Flag</title>
 
     <link rel="stylesheet" href="/main.css">
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <script>
         window.flags = `<%= JSON.stringify(flags) %>`;
+        window.dayjs = dayjs;
     </script>
-    <script src='/main.js'></script>
 </head>
 <body class="container">
-<main>
-    <div class='title'>
-        <h1>Feature Flags</h1>
-        <button type="button" class="btn btn-primary" onclick='toggleFormOpen("create")'>
-            <i class='fa-solid fa-plus'></i>
-            New
-        </button>
-    </div>
+<main class='stack stack-gap-large'>
+    <h1>Feature Flags</h1>
 
-    <div style='margin-bottom: 30px'>
-        <fieldset class='stack stack-row'>
-            <label for='search'>Search</label>
-            <input type='search' id='search' onkeyup='handleSearch()'>
+    <div id='own-db' class='stack'>
+        <h2>Own DB Option</h2>
 
-            <button type='button' onclick='handleClearSearch()'>Cancel</button>
-        </fieldset>
-    </div>
+        <div class='title'>
+            <div class='search-form'></div>
 
-    <table class='table table-bordered'>
-        <thead>
-        <tr>
-            <th><div>Name</div></th>
-            <th><div>Description</div></th>
-            <th class='column-150' data-type='boolean' data-direction='asc'>
-                <div>Enabled</div>
-            </th>
-            <th class='column-200' data-type='date'>
-                <div class='row-reverse'>Updated At</div>
-            </th>
-            <th class='column-100 text-center' data-type='exclude'>Actions</th>
-        </tr>
-        </thead>
-        <tbody id='flags'></tbody>
-    </table>
+            <button
+                type="button"
+                class="btn btn-primary"
+                onclick='ownDb.handleFormToggle(ownDb.formType.create)'
+            >
+                <i class='fa-solid fa-plus'></i>
+                Create New
+            </button>
+        </div>
 
-    <div id='form' class='form-wrapper stack hidden'>
-        <hr />
-        <h2 class='add'>Add new flag</h2>
-        <h2 class='edit'>Edit flag</h2>
+        <table class='table table-bordered'>
+            <thead>
+            <tr>
+                <th data-id='name'>
+                    <div>Name</div>
+                </th>
+                <th data-id='description'>
+                    <div>Description</div>
+                </th>
+                <th class='column-150' data-id='enabled' data-type='boolean'>
+                    <div>Enabled</div>
+                </th>
+                <th class='column-200' data-id='updated' data-type='date'>
+                    <div class='row-reverse'>Updated At</div>
+                </th>
+                <th class='column-100' data-type='exclude'>
+                    <div class='text-center'>Actions</div>
+                </th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
 
-        <p class='add'>New flags will be enabled by default</p>
-
-        <form class='stack'>
-            <div class='form-grid'>
-                <fieldset>
-                    <label for='name'>Name</label>
-                    <input type='text' id='name' name='name' maxlength='25' onkeyup='showRealName()' />
-                    <div>
-                        (max 25 of letters, numbers, and dash "-")
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <label for='description'>Description</label>
-                    <input type='text' id='description' name='description' />
-                </fieldset>
-            </div>
-
-            <div class='stack stack-row stack-gap-large'>
-                <button class='btn btn-warning' type='button' onclick='handleCancelForm()'>Cancel</button>
-                <button class='btn btn-primary' type='button' onclick='submitForm()'>Submit</button>
-            </div>
-        </form>
+        <div class='form-wrapper stack'></div>
     </div>
 </main>
 
-<script src='/bottom.js'></script>
+<script src='/own-db.js'></script>
 </body>
 </html>
