@@ -12,8 +12,6 @@ export class AppController {
   @Get()
   @Render('index')
   async root() {
-    const flagsOwn = await this.service.getAllFlags();
-    const flagsSingle = await this.singleService.getAllFlagsSDB();
-    return { flagsOwn, flagsSingle };
+    return {};
   }
 }

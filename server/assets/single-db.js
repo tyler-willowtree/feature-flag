@@ -10,6 +10,17 @@ const singleDb = (() => {
   let flagEditing;
 
   const queries = {
+    getAll: () => `query GetAllFlagsSDB {
+      getAllFlagsSDB {
+        id
+        name
+        description
+        localEnabled
+        stagingEnabled
+        productionEnabled
+        updatedAt
+      }
+    }`,
     toggle: (id, data) => `mutation ToggleFlagSDB {
       toggleFlagSDB(id: ${id}, data: ${data}) {
         id
@@ -510,14 +521,11 @@ const singleDb = (() => {
     if (!flagsArr.length) {
       createNoFlagsFoundRow();
     }
+
+    setListeners();
   };
 
-  /** ----- SETUP ----- */
-  const setup = () => {
-    const newFlags = JSON.parse(window.flagsSingle.replaceAll('&#34;', '"'));
-
-    createContent(newFlags);
-
+  const setListeners = () => {
     [].forEach.call(tableHeaders, (header, index) => {
       const columnId = header.dataset.id;
       header.addEventListener('click', () => {
@@ -533,8 +541,25 @@ const singleDb = (() => {
       });
     });
 
-    newFlags.length > 0 &&
-      table.querySelector('[data-id="localEnabled"]').click();
+    flags.length > 0 && table.querySelector('[data-id="localEnabled"]').click();
+  };
+
+  const callGetAllFlags = () => {
+    const { url, body, headers, method } = getApiConfig(queries.getAll());
+
+    fetch(url, { method, headers, body })
+      .then((res) => res.json())
+      .then((result) => {
+        const { getAllFlagsSDB } = result.data;
+        flags.push(...getAllFlagsSDB);
+        createContent(getAllFlagsSDB);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  /** ----- SETUP ----- */
+  const setup = () => {
+    callGetAllFlags();
   };
 
   /** ----- RESET ----- */

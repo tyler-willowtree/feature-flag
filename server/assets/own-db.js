@@ -10,6 +10,15 @@ const ownDb = (() => {
   let flagEditing;
 
   const queries = {
+    getAll: () => `query GetAllFlags {
+      getAllFlags {
+        id
+        name
+        description
+        enabled
+        updatedAt
+      }
+    }`,
     toggle: (id) => `mutation ToggleFlag {
       toggleFlag(id: ${id}) {
         id
@@ -446,6 +455,25 @@ const ownDb = (() => {
   };
 
   // general
+  const setListeners = () => {
+    [].forEach.call(tableHeaders, (header, index) => {
+      const columnId = header.dataset.id;
+      header.addEventListener('click', () => {
+        sortColumn(index, columnId);
+
+        tableHeaders.forEach((hdr) => {
+          const colId = hdr.dataset.id;
+          if (colId !== columnId) {
+            directions[colId] = '';
+            hdr.dataset.direction = '';
+          }
+        });
+      });
+    });
+
+    flags.length > 0 && table.querySelector('[data-id="enabled"]').click();
+  };
+
   const createContent = (flagsArr) => {
     content.innerHTML = `
       <div class="stack stack-gap-large">
@@ -479,30 +507,26 @@ const ownDb = (() => {
     if (!flagsArr.length) {
       createNoFlagsFoundRow();
     }
+
+    setListeners();
+  };
+
+  const callGetAllFlags = () => {
+    const { url, body, headers, method } = getApiConfig(queries.getAll());
+
+    fetch(url, { method, headers, body })
+      .then((res) => res.json())
+      .then((result) => {
+        const { getAllFlags } = result.data;
+        flags.push(...getAllFlags);
+        createContent(getAllFlags);
+      })
+      .catch((err) => console.log(err));
   };
 
   /** ----- SETUP ----- */
   const setup = () => {
-    const newFlags = JSON.parse(window.flagsOwn.replaceAll('&#34;', '"'));
-
-    createContent(newFlags);
-
-    [].forEach.call(tableHeaders, (header, index) => {
-      const columnId = header.dataset.id;
-      header.addEventListener('click', () => {
-        sortColumn(index, columnId);
-
-        tableHeaders.forEach((hdr) => {
-          const colId = hdr.dataset.id;
-          if (colId !== columnId) {
-            directions[colId] = '';
-            hdr.dataset.direction = '';
-          }
-        });
-      });
-    });
-
-    table.querySelector('[data-id="enabled"]').click();
+    callGetAllFlags();
   };
 
   /** ----- RESET ----- */
@@ -518,6 +542,7 @@ const ownDb = (() => {
     tableBody = null;
     table = null;
     content.innerHTML = '';
+    flags.length = 0;
   };
 
   return {
