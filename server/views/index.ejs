@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <script>
         window.flagsOwn = `<%= JSON.stringify(flagsOwn) %>`;
+        window.flagsSingle = `<%= JSON.stringify(flagsSingle) %>`;
         window.dayjs = dayjs;
     </script>
 </head>
@@ -18,9 +19,38 @@
 <main class='stack stack-gap-large'>
     <h1>&nbsp;&nbsp;Feature Flags&nbsp;&nbsp;</h1>
 
+    <div>
+        <h6>Options for how DBs are set up</h6>
+        <div id='radio-group' class='stack stack-gap-small'>
+            <label for='radio-button-own'>
+                <input
+                    type='radio'
+                    id='radio-button-own'
+                    name='radio-group'
+                    value='own'
+                    onchange='ownDb.reset(); ownDb.setup()'
+                />
+                Each environment has its own DB
+            </label>
+
+            <label for='radio-button-single'>
+                <input
+                    type='radio'
+                    id='radio-button-single'
+                    name='radio-group'
+                    value='single'
+                    onchange='singleDb.reset(); singleDb.setup()'
+                />
+                Each environment uses the same DB
+            </label>
+        </div>
+        <hr/>
+    </div>
+
     <div id='content'></div>
 </main>
 
 <script src='/own-db.js'></script>
+<script src='/single-db.js'></script>
 </body>
 </html>

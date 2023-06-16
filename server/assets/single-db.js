@@ -1,4 +1,4 @@
-const ownDb = (() => {
+const singleDb = (() => {
   const dayjs = window.dayjs;
 
   /** ----- VARIABLES ----- */
@@ -10,39 +10,47 @@ const ownDb = (() => {
   let flagEditing;
 
   const queries = {
-    toggle: (id) => `mutation ToggleFlag {
-      toggleFlag(id: ${id}) {
+    toggle: (id, data) => `mutation ToggleFlagSDB {
+      toggleFlagSDB(id: ${id}, data: ${data}) {
         id
         name
         description
-        enabled
+        localEnabled
+        stagingEnabled
+        productionEnabled
         updatedAt
       }
     }`,
-    create: (data) => `mutation CreateFlag {
-      createFlag(${data}) {
+    create: (data) => `mutation CreateFlagSDB {
+      createFlagSDB(${data}) {
         id
         name
         description
-        enabled
+        localEnabled
+        stagingEnabled
+        productionEnabled
         updatedAt
       }
     }`,
-    update: (id, data) => `mutation updateFlag {
-      updateFlag(id: ${id}, ${data}) {
+    update: (id, data) => `mutation updateFlagSDB {
+      updateFlagSDB(id: ${id}, ${data}) {
         id
         name
         description
-        enabled
+        localEnabled
+        stagingEnabled
+        productionEnabled
         updatedAt
       }
     }`,
-    delete: (id) => `mutation DeleteFlag {
-      deleteFlag(id: ${id}) {
+    delete: (id) => `mutation DeleteFlagSDB {
+      deleteFlagSDB(id: ${id}) {
         id
         name
         description
-        enabled
+        localEnabled
+        stagingEnabled
+        productionEnabled
         updatedAt
       }
     }`,
@@ -89,16 +97,18 @@ const ownDb = (() => {
     };
   };
 
-  const callToggleFlag = (id) => {
+  const callToggleFlag = (id, data) => {
     const { flagIndex } = getTableRowAndFlagData(id);
-    const { url, body, headers, method } = getApiConfig(queries.toggle(id));
+    const { url, body, headers, method } = getApiConfig(
+      queries.toggle(id, data)
+    );
 
     fetch(url, { method, headers, body })
       .then((res) => res.json())
       .then((result) => {
-        const { toggleFlag } = result.data;
-        flags[flagIndex] = toggleFlag;
-        updateTableRow(toggleFlag);
+        const { toggleFlagSDB } = result.data;
+        flags[flagIndex] = toggleFlagSDB;
+        updateTableRow(toggleFlagSDB);
       })
       .catch((err) => console.log(err));
   };
@@ -115,7 +125,7 @@ const ownDb = (() => {
   const createNoFlagsFoundRow = () => {
     tableBody.innerHTML = `
         <tr class='empty'>
-          <td colspan='5' class='text-center'>No flags found</td>
+          <td colspan='7' class='text-center'>No flags found</td>
         </tr>
       `;
 
@@ -143,8 +153,10 @@ const ownDb = (() => {
         <tr>
           <th data-id='name' data-type='text'><div>Name</div></th>
           <th data-id='description' data-type='text'><div>Description</div></th>
-          <th data-id='enabled' data-type='boolean' class='column-150'><div>Enabled</div></th>
-          <th data-id='updatedAt' data-type='date' class='column-200'><div class='row-reverse'>Updated At</div></th>
+          <th data-id='localEnabled' data-type='boolean' class='column-140'><div>Local</div></th>
+          <th data-id='stagingEnabled' data-type='boolean' class='column-140'><div>Staging</div></th>
+          <th data-id='productionEnabled' data-type='boolean' class='column-140'><div>Production</div></th>
+          <th data-id='updatedAt' data-type='date' class='column-180'><div class='row-reverse'>Updated At</div></th>
           <th data-type='exclude' class='column-100'><div class='text-center'>Actions</div></th>
         </tr>
       </thead>
@@ -164,18 +176,36 @@ const ownDb = (() => {
     return { flag, flagIndex, row, rowIndex };
   };
 
-  const whichEnableMark = (flag) => {
-    if (flag.enabled) {
+  const whichEnableMark = (flag, key) => {
+    if (flag[key]) {
       return 'fa-check';
     }
     return 'fa-xmark';
   };
 
-  const whichFlagToggle = (flag) => {
-    if (flag.enabled) {
+  const whichFlagToggle = (flag, key) => {
+    if (flag[key]) {
       return 'fa-toggle-off';
     }
     return 'fa-toggle-on';
+  };
+
+  const createToggleCell = (flag, key) => {
+    return `
+    <td>
+      <div class='stack stack-row stack-justified-around stack-align-center'>
+        <i class='fa-solid ${whichEnableMark(flag, key)} fa-lg'></i>
+        <button
+          class='icon toggle'
+          onclick='singleDb.callToggleFlag(${flag.id}, "{${key}: ${!flag[
+      key
+    ]}}")'
+        >
+         <i class='fa-solid ${whichFlagToggle(flag, key)} fa-lg'></i>
+        </button>
+        </div>
+      </td>
+`;
   };
 
   const createTableRowHtml = (flag) => {
@@ -183,27 +213,24 @@ const ownDb = (() => {
     <tr data-row='${flag.id}'>
       <td>${flag.name}</td>
       <td>${flag.description}</td>
-      <td class='text-center'>
-        <i class='fa-solid ${whichEnableMark(flag)} fa-lg'></i>
-      </td>
+      ${createToggleCell(flag, 'localEnabled')}
+      ${createToggleCell(flag, 'stagingEnabled')}
+      ${createToggleCell(flag, 'productionEnabled')}
       <td class='text-right'>${formatDate(flag.updatedAt)}</td>
       <td>
         <div style='display: flex; column-gap: 16px;'>
-          <button class='icon delete' onclick='ownDb.callDeleteFlag(${
+          <button class='icon delete' onclick='singleDb.callDeleteFlag(${
             flag.id
           })'>
             <i class='fa-solid fa-xmark fa-xl'></i>
           </button>
           <button
             class='icon edit'
-            onclick='ownDb.handleFormToggle(ownDb.formType.update, ${flag.id})'
+            onclick='singleDb.handleFormToggle(singleDb.formType.update, ${
+              flag.id
+            })'
           >
             <i class='fa-solid fa-pen'></i>
-          </button>
-          <button class='icon toggle' onclick='ownDb.callToggleFlag(${
-            flag.id
-          })'>
-            <i class='fa-solid ${whichFlagToggle(flag)} fa-lg'></i>
           </button>
         </div>
       </td>
@@ -309,16 +336,16 @@ const ownDb = (() => {
     searchWrapper.innerHTML = `
       <form>
         <fieldset class='stack stack-row'>
-          <input type='search' id='search-own' placeholder='Search'>
+          <input type='search' id='search-single' placeholder='Search'>
   
-          <button type='button' onclick='ownDb.handleSearchCancel()'>
+          <button type='button' onclick='singleDb.handleSearchCancel()'>
             Cancel
           </button>
         </fieldset>
       </form>
     `;
 
-    searchInput = searchWrapper.querySelector('input#search-own');
+    searchInput = searchWrapper.querySelector('input#search-single');
     searchButton = searchWrapper.querySelector('button');
     searchInput.addEventListener('keyup', handleSearchInput);
   };
@@ -367,7 +394,7 @@ const ownDb = (() => {
               name='name'
               maxlength='25'
               value='${values.name}'
-              onkeyup='ownDb.updateNameCase()'
+              onkeyup='singleDb.updateNameCase()'
             />
             <div>(max 25 of letters, numbers, and dashes "-")</div>
           </fieldset>
@@ -379,10 +406,10 @@ const ownDb = (() => {
         </div>
 
         <div class='stack stack-row stack-gap-large'>
-          <button class='btn btn-warning' type='button' onclick='ownDb.handleFormCancel()'>
+          <button class='btn btn-warning' type='button' onclick='singleDb.handleFormCancel()'>
             Cancel
           </button>
-          <button class='btn btn-primary' type='button' onclick='ownDb.handleFormSubmit("${type}")'>
+          <button class='btn btn-primary' type='button' onclick='singleDb.handleFormSubmit("${type}")'>
             Submit
           </button>
         </div>
@@ -408,7 +435,7 @@ const ownDb = (() => {
       <h2>${type} flag</h2>
       ${
         type === formType.create
-          ? '<p>New flags will be enabled by default</p>'
+          ? '<p>New flags will be enabled in all environments by default</p>'
           : ''
       }
       ${createFormElement(type, values)}
@@ -434,7 +461,9 @@ const ownDb = (() => {
       .then((res) => res.json())
       .then((result) => {
         const flag =
-          result.data[type === formType.create ? 'createFlag' : 'updateFlag'];
+          result.data[
+            type === formType.create ? 'createFlagSDB' : 'updateFlagSDB'
+          ];
         if (type === formType.create) {
           createNewTableRow(flag, false, 0);
         } else {
@@ -449,7 +478,7 @@ const ownDb = (() => {
   const createContent = (flagsArr) => {
     content.innerHTML = `
       <div class="stack stack-gap-large">
-        <h2>Option where each environment has its own database</h2>
+        <h2>Option where each environment shares a single database</h2>
       
         <div class='stack stack-no-gap'>
           <div class='title'>
@@ -457,13 +486,15 @@ const ownDb = (() => {
             <button
               type="button"
               class="btn btn-primary"
-              onclick='ownDb.handleFormToggle(ownDb.formType.create)'
+              onclick='singleDb.handleFormToggle(singleDb.formType.create)'
             >
               <i class='fa-solid fa-plus'></i>
               Create New
             </button>
           </div>
           
+          <div class="sudo-th">Enabled</div>
+         
           <table></table>
         </div>
         
@@ -483,7 +514,7 @@ const ownDb = (() => {
 
   /** ----- SETUP ----- */
   const setup = () => {
-    const newFlags = JSON.parse(window.flagsOwn.replaceAll('&#34;', '"'));
+    const newFlags = JSON.parse(window.flagsSingle.replaceAll('&#34;', '"'));
 
     createContent(newFlags);
 
@@ -502,7 +533,8 @@ const ownDb = (() => {
       });
     });
 
-    table.querySelector('[data-id="enabled"]').click();
+    newFlags.length > 0 &&
+      table.querySelector('[data-id="localEnabled"]').click();
   };
 
   /** ----- RESET ----- */

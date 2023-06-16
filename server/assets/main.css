@@ -58,12 +58,24 @@ th div.row-reverse {
   margin-bottom: 20px;
 }
 
+.column-50 {
+  width: 50px;
+}
+
 .column-100 {
   width: 100px;
 }
 
+.column-140 {
+  width: 140px;
+}
+
 .column-150 {
   width: 150px;
+}
+
+.column-180 {
+  width: 180px;
 }
 
 .column-200 {
@@ -87,6 +99,15 @@ th div.row-reverse {
   margin-top: 4px;
 }
 
+.sudo-th {
+  width: 420px;
+  margin: 0 284px 0 auto;
+  border: 1px solid #DEE2E6;
+  border-bottom: 0;
+  text-align: center;
+  font-weight: 700;
+}
+
 .stack {
   display: flex;
   flex-direction: column;
@@ -103,6 +124,14 @@ th div.row-reverse {
 
 .stack-gap-large {
   gap: 30px;
+}
+
+.stack-justified-around {
+  justify-content: space-around;
+}
+
+.stack-align-center {
+  align-items: center;
 }
 
 button.icon {
