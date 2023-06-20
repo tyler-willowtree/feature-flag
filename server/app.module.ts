@@ -5,6 +5,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { FeatureFlagResolver } from 'server/featureFlag.resolver';
 import { FeatureFlagService } from 'server/featureFlag.service';
+import { FeatureFlagSingleDbResolver } from 'server/featureFlagSingleDb.resolver';
+import { FeatureFlagSingleDbService } from 'server/featureFlagSingleDb.service';
 import { PrismaService } from 'server/prisma.service';
 import { AppController } from './app.controller';
 
@@ -28,6 +30,12 @@ import { AppController } from './app.controller';
     }),
   ],
   controllers: [AppController],
-  providers: [PrismaService, FeatureFlagResolver, FeatureFlagService],
+  providers: [
+    PrismaService,
+    FeatureFlagResolver,
+    FeatureFlagService,
+    FeatureFlagSingleDbResolver,
+    FeatureFlagSingleDbService,
+  ],
 })
 export class AppModule {}

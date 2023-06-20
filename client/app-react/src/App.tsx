@@ -10,7 +10,9 @@ function App() {
     <div className="body">
       <h1>Feature Flag Example (React)</h1>
 
-      <h2>All available flags</h2>
+      <h2>
+        All available flags <span>(uses single database option)</span>
+      </h2>
       {error && <div>{error.message}</div>}
       {loading && <div>Loading...</div>}
       {flags && (

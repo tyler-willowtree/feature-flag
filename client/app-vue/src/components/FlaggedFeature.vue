@@ -41,5 +41,5 @@ const { result, loading, error } = useQuery<Query, QueryGetFlagByNameArgs>(
 <template>
   <p v-if="error">{{ error.message }}</p>
   <p v-if="loading">Loading...</p>
-  <slot v-else-if="result.getFlagByName"></slot>
+  <slot v-else-if="result.getFlagByName && result.getFlagByName.enabled"></slot>
 </template>

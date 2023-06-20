@@ -16,6 +16,7 @@ module.exports = {
     new Dotenv(),
     new HtmlWebpackPlugin({
       template: './src/index.html',
+      favicon: './src/favicon.ico',
     }),
     new MiniCssExtractPlugin({
       filename: '[name].css',

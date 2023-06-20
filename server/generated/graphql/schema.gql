@@ -16,14 +16,41 @@ type FeatureFlag {
   updatedAt: DateTime!
 }
 
+type FeatureFlagSingleDb {
+  createdAt: DateTime!
+  description: String!
+  id: Int!
+  localEnabled: Boolean!
+  name: String!
+  productionEnabled: Boolean!
+  stagingEnabled: Boolean!
+  updatedAt: DateTime!
+}
+
+input FeatureFlagSingleDbToggleUniqueInput {
+  localEnabled: Boolean
+  productionEnabled: Boolean
+  stagingEnabled: Boolean
+}
+
+input FeatureFlagToggleInput {
+  enabled: Boolean!
+}
+
 type Mutation {
   createFlag(description: String!, name: String!): FeatureFlag!
+  createFlagSDB(description: String!, name: String!): FeatureFlagSingleDb!
   deleteFlag(id: Int!): FeatureFlag!
-  toggleFlag(id: Int!): FeatureFlag!
+  deleteFlagSDB(id: Int!): FeatureFlagSingleDb!
+  toggleFlag(data: FeatureFlagToggleInput!, id: Int!): FeatureFlag!
+  toggleFlagSDB(data: FeatureFlagSingleDbToggleUniqueInput!, id: Int!): FeatureFlagSingleDb!
   updateFlag(description: String!, id: Int!, name: String!): FeatureFlag!
+  updateFlagSDB(description: String!, id: Int!, name: String!): FeatureFlagSingleDb!
 }
 
 type Query {
   getAllFlags: [FeatureFlag!]!
+  getAllFlagsSDB: [FeatureFlagSingleDb!]!
   getFlagByName(name: String!): FeatureFlag
+  getFlagByNameSDB(name: String!): FeatureFlagSingleDb
 }

@@ -7,7 +7,7 @@ customElements.define(
         <h5>Flag name: '${name}'</h5>
         <hr/>
         <flagged-feature flag-key="${name}">
-          <div>For feature ${name}</div>
+          <div>Feature for ${name}</div>
         </flagged-feature
       </div>`;
     }

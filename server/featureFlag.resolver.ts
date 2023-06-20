@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { FeatureFlagService } from 'server/featureFlag.service';
-import { FeatureFlag } from 'server/featureFlag.type';
+import { FeatureFlag, FeatureFlagToggleInput } from 'server/featureFlag.type';
 
 @Resolver()
 export class FeatureFlagResolver {
@@ -34,8 +34,11 @@ export class FeatureFlagResolver {
   }
 
   @Mutation(() => FeatureFlag)
-  async toggleFlag(@Args('id') id: number): Promise<FeatureFlag> {
-    return this.service.toggleFlag(id);
+  async toggleFlag(
+    @Args('id') id: number,
+    @Args('data') data: FeatureFlagToggleInput
+  ): Promise<FeatureFlag> {
+    return this.service.toggleFlag(id, data);
   }
 
   @Mutation(() => FeatureFlag)

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FeatureFlag } from 'server/featureFlag.type';
+import { FeatureFlag, FeatureFlagToggleInput } from 'server/featureFlag.type';
 import { PrismaService } from 'server/prisma.service';
 
 @Injectable()
@@ -42,14 +42,13 @@ export class FeatureFlagService {
     });
   }
 
-  async toggleFlag(id: number): Promise<FeatureFlag> {
-    const flag = await this.prisma.featureFlag.findUnique({
-      where: { id },
-    });
-
+  async toggleFlag(
+    id: number,
+    data: FeatureFlagToggleInput
+  ): Promise<FeatureFlag> {
     return this.prisma.featureFlag.update({
       where: { id },
-      data: { enabled: flag ? !flag.enabled : false },
+      data,
     });
   }
 

@@ -2,82 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>Feature Flag</title>
 
     <link rel="stylesheet" href="/main.css">
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-    <script>
-        window.flags = `<%= JSON.stringify(flags) %>`;
-    </script>
     <script src='/main.js'></script>
 </head>
 <body class="container">
-<main>
-    <div class='title'>
-        <h1>Feature Flags</h1>
-        <button type="button" class="btn btn-primary" onclick='toggleFormOpen("create")'>
-            <i class='fa-solid fa-plus'></i>
-            New
-        </button>
+<main class='stack stack-gap-large'>
+    <h1>&nbsp;&nbsp;Feature Flags&nbsp;&nbsp;</h1>
+
+    <div>
+        <h6>Options for how environments & databases are set up</h6>
+        <div id='radio-group' class='stack stack-gap-small'>
+            <label for='radio-button-own'>
+                <input
+                    type='radio'
+                    id='radio-button-own'
+                    name='radio-group'
+                    value='own'
+                    onchange='dbType.setup("own")'
+                />
+                Individual Databases
+            </label>
+
+            <label for='radio-button-single'>
+                <input
+                    type='radio'
+                    id='radio-button-single'
+                    name='radio-group'
+                    value='single'
+                    onchange='dbType.setup("single")'
+                />
+                Single Database
+            </label>
+        </div>
+        <hr/>
     </div>
 
-    <div style='margin-bottom: 30px'>
-        <fieldset class='stack stack-row'>
-            <label for='search'>Search</label>
-            <input type='search' id='search' onkeyup='handleSearch()'>
-
-            <button type='button' onclick='handleClearSearch()'>Cancel</button>
-        </fieldset>
-    </div>
-
-    <table class='table table-bordered'>
-        <thead>
-        <tr>
-            <th><div>Name</div></th>
-            <th><div>Description</div></th>
-            <th class='column-150' data-type='boolean' data-direction='asc'>
-                <div>Enabled</div>
-            </th>
-            <th class='column-200' data-type='date'>
-                <div class='row-reverse'>Updated At</div>
-            </th>
-            <th class='column-100 text-center' data-type='exclude'>Actions</th>
-        </tr>
-        </thead>
-        <tbody id='flags'></tbody>
-    </table>
-
-    <div id='form' class='form-wrapper stack hidden'>
-        <hr />
-        <h2 class='add'>Add new flag</h2>
-        <h2 class='edit'>Edit flag</h2>
-
-        <p class='add'>New flags will be enabled by default</p>
-
-        <form class='stack'>
-            <div class='form-grid'>
-                <fieldset>
-                    <label for='name'>Name</label>
-                    <input type='text' id='name' name='name' maxlength='25' onkeyup='showRealName()' />
-                    <div>
-                        (max 25 of letters, numbers, and dash "-")
-                    </div>
-                </fieldset>
-
-                <fieldset>
-                    <label for='description'>Description</label>
-                    <input type='text' id='description' name='description' />
-                </fieldset>
-            </div>
-
-            <div class='stack stack-row stack-gap-large'>
-                <button class='btn btn-warning' type='button' onclick='handleCancelForm()'>Cancel</button>
-                <button class='btn btn-primary' type='button' onclick='submitForm()'>Submit</button>
-            </div>
-        </form>
-    </div>
+    <div id='content'></div>
 </main>
-
-<script src='/bottom.js'></script>
 </body>
 </html>
