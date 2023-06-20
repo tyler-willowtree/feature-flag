@@ -16,7 +16,7 @@
     <h1>&nbsp;&nbsp;Feature Flags&nbsp;&nbsp;</h1>
 
     <div>
-        <h6>Options for how DBs are set up</h6>
+        <h6>Options for how environments & databases are set up</h6>
         <div id='radio-group' class='stack stack-gap-small'>
             <label for='radio-button-own'>
                 <input
@@ -26,7 +26,7 @@
                     value='own'
                     onchange='dbType.setup("own")'
                 />
-                Each environment has its own DB
+                Individual Databases
             </label>
 
             <label for='radio-button-single'>
@@ -37,7 +37,7 @@
                     value='single'
                     onchange='dbType.setup("single")'
                 />
-                Each environment uses the same DB
+                Single Database
             </label>
         </div>
         <hr/>

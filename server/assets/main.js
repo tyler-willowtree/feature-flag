@@ -287,7 +287,13 @@ const dbType = (() => {
   const createMainContent = () => {
     content.innerHTML = `
       <div class="stack stack-gap-large">
-        <h2>Option where each environment shares a single database</h2>
+        <h2>
+          ${
+            dbOption === 'own'
+              ? 'Options where each environment has its own database'
+              : 'Option where each environment shares a single database'
+          }
+        </h2>
       
         <div class='stack stack-no-gap'>
           <div class='title'>
