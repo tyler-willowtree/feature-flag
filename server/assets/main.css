@@ -25,6 +25,10 @@ hr {
   margin-bottom: 0;
 }
 
+.table tbody td {
+  vertical-align: middle;
+}
+
 th div {
   display: flex;
   justify-content: space-between;
