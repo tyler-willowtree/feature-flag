@@ -21,9 +21,9 @@ const fakeNames = ['non-exist', 'test-84', 'test-85', 'test-86']
 
 <template>
   <div class="body">
-    <h1>Feature Flags (Vue)</h1>
+    <h1>Feature Flags Example (Vue)</h1>
 
-    <h2>All available flags</h2>
+    <h2>All available flags <span>(uses single database option)</span></h2>
 
     <div v-if="error">{error.message}</div>
     <div v-if="loading">Loading...</div>

@@ -34,6 +34,7 @@ customElements.define(
               this.setup();
             } else {
               this.innerHTML = '';
+              this.remove();
             }
           })
           .catch((err) => {

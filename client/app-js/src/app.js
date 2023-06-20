@@ -21,7 +21,8 @@ const buildFlagSection = (flags, sectionName) => {
   const parent = document.getElementById(sectionName);
   const element = document.createElement('flag-section');
   element.setAttribute('names', flags.join(', '));
-  parent.appendChild(element);
+  parent.after(element);
+  parent.remove();
 };
 
 fetch(process.env.JS_APP_API_URL, {
