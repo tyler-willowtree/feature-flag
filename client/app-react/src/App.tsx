@@ -1,6 +1,6 @@
 import React from 'react';
-import { FlagSection } from './FlagSection';
-import { useGetAllFlags } from './queries';
+import { FlagSection } from "FlagSection";
+import { useGetAllFlags } from "queries";
 
 function App() {
   const { flags, error, loading } = useGetAllFlags();
