@@ -30,7 +30,16 @@ function App() {
 
           <hr />
 
-          <h2>Flags that are enabled (allow code to be used)</h2>
+          <h2>Flags that are not enabled (allow code to be used)</h2>
+          <FlagSection
+            names={flags
+              .filter((flag) => !flag.enabled)
+              .map((flag) => flag.name)}
+          />
+
+          <hr />
+
+          <h2>Flags that are enabled (hide code)</h2>
           <FlagSection
             names={flags
               .filter((flag) => flag.enabled)
@@ -39,11 +48,12 @@ function App() {
 
           <hr />
 
-          <h2>Flags that are not enabled (hide code)</h2>
+          <h2>Flags that are enabled (hide code, show elseElement)</h2>
           <FlagSection
             names={flags
-              .filter((flag) => !flag.enabled)
+              .filter((flag) => flag.enabled)
               .map((flag) => flag.name)}
+            showElseElement
           />
 
           <hr />

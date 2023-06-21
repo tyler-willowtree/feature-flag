@@ -15,7 +15,14 @@ import { gql } from 'graphql-tag'
  * Example:
  * <FlaggedFeature flagKey="spp-snackbar"><Snackbar /></FlaggedFeature>
  *
- * If a flag is set to true or key does not exist in the file, the feature will not render
+ * If a flag is set to true or does not exist in the db, the feature will not render
+ * Or there is also an optional elseElement prop that can be passed in to render something
+ * else if the flag is set to true
+ *
+ * Example:
+ * <FlaggedFeature flagKey="spp-snackbar" elseElement={<div>Snackbar is disabled</div>}><Snackbar /></FlaggedFeature>
+ *
+ * If the flag is set to true or doesn't exist in the db, the elseElement will render
  *
  * When flag is no longer needed, ie when feature is complete, tested, and usable
  * Remove it from the DB and remove this component as the wrapper
@@ -41,5 +48,8 @@ const { result, loading, error } = useQuery<Query, QueryGetFlagByNameArgs>(
 <template>
   <p v-if="error">{{ error.message }}</p>
   <p v-if="loading">Loading...</p>
-  <slot v-else-if="result.getFlagByName && result.getFlagByName.enabled"></slot>
+  <template v-else>
+    <slot v-if="result.getFlagByName && !result.getFlagByName.enabled" name="default"></slot>
+    <slot v-else name="elseElement"></slot>
+  </template>
 </template>
