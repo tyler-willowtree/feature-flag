@@ -1,14 +1,7 @@
-const template = document.createElement('template');
-template.innerHTML = '<slot name="feature"></slot>';
-
 customElements.define(
   'flagged-feature',
   class extends HTMLElement {
     connectedCallback() {
-      this.apiCall();
-    }
-
-    apiCall() {
       const flag = this.getAttribute('flag-key');
 
       return new Promise(() => {
@@ -29,22 +22,22 @@ customElements.define(
           .then((result) => {
             if (
               result.data.getFlagByName &&
-              result.data.getFlagByName.enabled
+              !result.data.getFlagByName.enabled
             ) {
-              this.setup();
+              this.innerHTML = this.querySelector('[slot="feature"]').innerHTML;
             } else {
-              this.innerHTML = '';
-              this.remove();
+              const elseElement = this.querySelector('[slot="elseElement"]');
+              if (elseElement) {
+                this.innerHTML = elseElement.innerHTML;
+              } else {
+                this.remove();
+              }
             }
           })
           .catch((err) => {
             this.innerHTML = `<p>Something went wrong (${err})</p>`;
           });
       });
-    }
-
-    setup() {
-      this.appendChild(template.content.cloneNode(true));
     }
   }
 );

@@ -38,16 +38,24 @@ const fakeNames = ['non-exist', 'test-84', 'test-85', 'test-86']
 
       <hr />
 
-      <h2>Flags that are enabled (allow code to be used)</h2>
+      <h2>Flags that are not enabled (allow code to be used)</h2>
+      <FlagSection
+        :names="result.getAllFlags.filter((flag) => !flag.enabled).map((flag) => flag.name)"
+      />
+
+      <hr />
+
+      <h2>Flags that are enabled (hide code)</h2>
       <FlagSection
         :names="result.getAllFlags.filter((flag) => flag.enabled).map((flag) => flag.name)"
       />
 
       <hr />
 
-      <h2>Flags that are not enabled (hide code)</h2>
+      <h2>Flags that are enabled (hide code, show elseElement)</h2>
       <FlagSection
-        :names="result.getAllFlags.filter((flag) => !flag.enabled).map((flag) => flag.name)"
+        :names="result.getAllFlags.filter((flag) => flag.enabled).map((flag) => flag.name)"
+        :showElseElement="true"
       />
 
       <hr />

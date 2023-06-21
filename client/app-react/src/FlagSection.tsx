@@ -1,7 +1,10 @@
 import React from 'react';
-import { FlaggedFeature } from './components/FlaggedFeature';
+import { FlaggedFeature } from 'components/FlaggedFeature';
 
-export const FlagSection: React.FC<{ names: string[] }> = ({ names }) => {
+export const FlagSection: React.FC<{
+  names: string[];
+  showElseElement?: boolean;
+}> = ({ names, showElseElement }) => {
   return (
     <div className="stacked stacked-row stacked-justified-between largeRowGap">
       {names.map((flagName) => (
@@ -10,7 +13,10 @@ export const FlagSection: React.FC<{ names: string[] }> = ({ names }) => {
 
           <hr />
 
-          <FlaggedFeature flagKey={flagName}>
+          <FlaggedFeature
+            flagKey={flagName}
+            elseElement={showElseElement ? <div>Feature not found</div> : null}
+          >
             <div>Feature for {flagName}</div>
           </FlaggedFeature>
         </div>

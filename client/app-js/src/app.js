@@ -17,10 +17,13 @@ const buildAllFlags = (flags) => {
   });
 };
 
-const buildFlagSection = (flags, sectionName) => {
+const buildFlagSection = (flags, sectionName, showElse = false) => {
   const parent = document.getElementById(sectionName);
   const element = document.createElement('flag-section');
   element.setAttribute('names', flags.join(', '));
+  if (showElse) {
+    element.setAttribute('elseElement', 'true');
+  }
   parent.after(element);
   parent.remove();
 };
@@ -50,4 +53,5 @@ fetch(process.env.JS_APP_API_URL, {
       .map((flag) => flag.name);
     buildFlagSection(enabled, 'enabled-flags');
     buildFlagSection(disabled, 'disabled-flags');
+    buildFlagSection(enabled, 'enabled-flags-else', true);
   });

@@ -3,6 +3,7 @@ import FlaggedFeature from '@/components/FlaggedFeature.vue'
 
 defineProps<{
   names: string[]
+  showElseElement?: boolean
 }>()
 </script>
 
@@ -14,6 +15,9 @@ defineProps<{
       <hr />
 
       <FlaggedFeature :flagKey="flagName">
+        <template v-if="showElseElement" #elseElement>
+          <div>Feature not found</div>
+        </template>
         <div>Feature for {{ flagName }}</div>
       </FlaggedFeature>
     </div>
