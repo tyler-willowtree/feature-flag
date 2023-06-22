@@ -16,7 +16,7 @@ defineProps<{
 
       <FlaggedFeature :flagKey="flagName">
         <template v-if="showElseElement" #elseElement>
-          <div>Feature not found</div>
+          <div>Coming soon</div>
         </template>
         <div>Feature for {{ flagName }}</div>
       </FlaggedFeature>

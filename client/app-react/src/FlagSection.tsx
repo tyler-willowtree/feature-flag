@@ -15,7 +15,7 @@ export const FlagSection: React.FC<{
 
           <FlaggedFeature
             flagKey={flagName}
-            elseElement={showElseElement ? <div>Feature not found</div> : null}
+            elseElement={showElseElement ? <div>Coming soon</div> : null}
           >
             <div>Feature for {flagName}</div>
           </FlaggedFeature>

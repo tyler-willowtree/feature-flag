@@ -9,7 +9,7 @@ customElements.define(
         <hr/>
         <flagged-feature flag-key="${name}">
           <div slot="feature">Feature for ${name}</div>
-          ${showElse ? '<div slot="elseElement">Feature not found</div> ' : ''}
+          ${showElse ? '<div slot="elseElement">Coming soon</div> ' : ''}
         </flagged-feature
       </div>`;
     }

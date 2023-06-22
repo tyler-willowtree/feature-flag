@@ -90,8 +90,17 @@ const dbType = (() => {
       row: [
         { id: 'name' },
         { id: 'description' },
-        { id: 'enabled', divClassList: ['text-center'], isToggleColumn: true },
-        { id: 'updatedAt', class: ['text-right'] },
+        {
+          id: 'enabled',
+          divClassList: [
+            'stack',
+            'stack-row',
+            'stack-justified-around',
+            'stack-align-center',
+          ],
+          isToggleColumn: true,
+        },
+        { id: 'updatedAt', divClassList: ['text-right'], type: 'date' },
         { id: 'actions', includeToggle: true, toggle: 'enabled' },
       ],
     },
@@ -181,7 +190,7 @@ const dbType = (() => {
           toggle: 'productionEnabled',
           isToggleColumn: true,
         },
-        { id: 'updatedAt' },
+        { id: 'updatedAt', divClassList: ['text-right'], type: 'date' },
         { id: 'actions' },
       ],
     },
@@ -395,11 +404,11 @@ const dbType = (() => {
       const rowOptData = rowOpts.find((opt) => opt.id === key);
       if (rowOptData) {
         const cell = row.insertCell();
-
-        if (rowOptData.isToggleColumn) {
-          const div = document.createElement('div');
+        const div = document.createElement('div');
+        if (rowOptData.divClassList)
           div.classList.add(...rowOptData.divClassList);
 
+        if (rowOptData.isToggleColumn) {
           const { mark } = whichFlagToggle(flag, key);
           const icon = document.createElement('i');
           icon.classList.add('fa-solid', mark, 'fa-lg');
@@ -409,12 +418,12 @@ const dbType = (() => {
             const toggle = createToggleElement(flag, rowOptData.toggle);
             div.append(toggle);
           }
-          cell.append(div);
-        } else if (key === 'updatedAt') {
-          cell.innerText = formatDate(value);
+        } else if (rowOptData.type && rowOptData.type === 'date') {
+          div.innerText = formatDate(value);
         } else {
-          cell.innerText = `${value}`;
+          div.innerText = `${value}`;
         }
+        cell.append(div);
       }
     });
 
@@ -580,8 +589,8 @@ const dbType = (() => {
     const multiplier = direction === 'asc' ? 1 : -1;
 
     clonedRows.sort((rowA, rowB) => {
-      const cellA = rowA.querySelectorAll('td')[index].innerHTML;
-      const cellB = rowB.querySelectorAll('td')[index].innerHTML;
+      const cellA = rowA.querySelectorAll('td')[index].firstChild.innerHTML;
+      const cellB = rowB.querySelectorAll('td')[index].firstChild.innerHTML;
 
       const a = transformData(index, cellA);
       const b = transformData(index, cellB);
