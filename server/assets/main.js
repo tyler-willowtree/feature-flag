@@ -1,17 +1,3 @@
-/**
- * Server side rendering of the main page
- *
- * Table of Contents
- * - VARIABLES
- * - FUNCTIONS
- * - HTML STUFF
- * - SORTING
- * - SEARCH
- * - API CALLS
- * - ADD EDIT FORM
- * - SETUP & RESET
- */
-
 const dbType = (() => {
   /** ----- VARIABLES ----- */
   const removeRegex = /[^A-Za-z0-9-]/gi;

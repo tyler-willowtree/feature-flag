@@ -9,7 +9,13 @@
 
     <link rel="stylesheet" href="/main.css">
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-    <script src='/main.js'></script>
+    <script src="/components.js"></script>
+    <script src='/setup.js'></script>
+    <script>
+        const handleRadioSelect = (type) => {
+          new PageSetup(type);
+        };
+    </script>
 </head>
 <body class="container">
 <main class='stack stack-gap-large'>
@@ -24,9 +30,9 @@
                     id='radio-button-own'
                     name='radio-group'
                     value='own'
-                    onchange='dbType.setup("own")'
+                    onchange='handleRadioSelect("own")'
                 />
-                Individual Databases
+                Own Databases
             </label>
 
             <label for='radio-button-single'>
@@ -35,9 +41,9 @@
                     id='radio-button-single'
                     name='radio-group'
                     value='single'
-                    onchange='dbType.setup("single")'
+                    onchange='handleRadioSelect("shared")'
                 />
-                Single Database
+                Shared Database
             </label>
         </div>
         <hr/>
