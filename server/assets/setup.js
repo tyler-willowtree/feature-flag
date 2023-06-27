@@ -185,6 +185,7 @@ const tableOptions = {
 };
 
 const dbOptions = ['own', 'shared'];
+const formTypes = { create: 'create', update: 'update' };
 
 /* NOTE: dayjs must be included in the head prior to this file */
 class PageSetup {
@@ -198,6 +199,7 @@ class PageSetup {
   #perPage = 5;
   #currentPage = 1;
   #currentPageForArray = 0;
+  #editing;
 
   #content;
   #searchForm;
@@ -314,23 +316,6 @@ class PageSetup {
   }
 
   /* Public methods */
-  handleSortClick(id) {
-    if (this.#sortBy.id === id) {
-      this.#sortBy.direction = this.#toggleDirection(this.#sortBy.direction);
-    } else {
-      this.#sortBy = { id, direction: 'asc' };
-    }
-    this.#setPage(1);
-    this.#sortColumn();
-    this.#createPagedFlags();
-  }
-
-  handleSearchChange(searchString) {
-    this.#searchString = searchString;
-    this.#setPage(1);
-    this.#createPagedFlags();
-  }
-
   handlePageChange(direction) {
     if (direction === 'prev' && this.#currentPage > 1) {
       this.#currentPage--;
@@ -344,21 +329,133 @@ class PageSetup {
     }
   }
 
-  handleAddNewFlag(data) {
-    this.#allFlags.unshift(data);
+  handleSearchChange(searchString) {
+    this.#searchString = searchString;
     this.#setPage(1);
     this.#createPagedFlags();
   }
 
-  handleDeleteFlag(id) {
-    this.#allFlags = this.#allFlags.filter((flag) => flag.id !== id);
+  handleSortClick(id) {
+    if (this.#sortBy.id === id) {
+      this.#sortBy.direction = this.#toggleDirection(this.#sortBy.direction);
+    } else {
+      this.#sortBy = { id, direction: 'asc' };
+    }
+    this.#setPage(1);
+    this.#sortColumn();
     this.#createPagedFlags();
   }
 
-  handleEditFlag(data) {
-    const index = this.#allFlags.findIndex((flag) => flag.id === data.id);
-    this.#allFlags[index] = data;
-    this.#createPagedFlags();
+  handleAddEditFormCancel() {
+    this.#editing = null;
+    // close form
+  }
+
+  handleAddEditFormOpen(formType, flag) {
+    if (formType === formTypes.update) {
+      this.#editing = flag;
+      // open and populate form
+    }
+  }
+
+  handleAddEditFormSubmit(formType) {
+    const name = this.#addEditForm.querySelector('#name').value;
+    const description = this.#addEditForm.querySelector('#description').value;
+    let queryData = `name: "${name}", description: "${description}"`;
+
+    if (formType === formTypes.create) {
+      this.addFlag(queryData);
+    } else {
+      queryData += `, id: "${this.#editing.id}"`;
+      this.editFlag(queryData);
+    }
+  }
+
+  handleDeleteFlag(id) {
+    this.deleteFlag(id);
+  }
+
+  handleToggleFlag(id, key) {
+    this.toggleFlag(id, key);
+  }
+
+  /* API Calls */
+  addFlag(data) {
+    const { body, headers, method, url } = this.#buildMutation('create', data);
+    fetch(url, { method, headers, body })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.errors) {
+          throw new Error(res.errors[0].message);
+        }
+        const data = res.data[graphQlOptions[this.#db].mutations.create];
+        if (data) {
+          this.#allFlags.unshift(data);
+          this.#setPage(1);
+          this.#createPagedFlags();
+        }
+      })
+      .catch((err) => console.log(err));
+  }
+
+  deleteFlag(id) {
+    const { body, headers, method, url } = this.#buildMutation(
+      'delete',
+      `id: ${id}`
+    );
+    fetch(url, { method, headers, body })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.errors) {
+          throw new Error(res.errors[0].message);
+        }
+        const data = res.data[graphQlOptions[this.#db].mutations.delete];
+        if (data) {
+          this.#allFlags = this.#allFlags.filter((flag) => flag.id !== id);
+          this.#createPagedFlags();
+        }
+      })
+      .catch((err) => console.log(err));
+  }
+
+  editFlag(data) {
+    const { body, headers, method, url } = this.#buildMutation('update', data);
+    fetch(url, { method, headers, body })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.errors) {
+          throw new Error(res.errors[0].message);
+        }
+        const data = res.data[graphQlOptions[this.#db].mutations.update];
+        if (data) {
+          const index = this.#allFlags.findIndex((flag) => flag.id === data.id);
+          this.#allFlags[index] = data;
+          this.#createPagedFlags();
+        }
+      })
+      .catch((err) => console.log(err));
+  }
+
+  toggleFlag(id, key) {
+    const flag = this.#allFlags.find((flag) => flag.id === id);
+    const { body, headers, method, url } = this.#buildMutation(
+      'toggle',
+      `id: ${id}, data: {${key}: ${!flag[key]}}`
+    );
+    fetch(url, { method, headers, body })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.errors) {
+          throw new Error(res.errors[0].message);
+        }
+        const data = res.data[graphQlOptions[this.#db].mutations.toggle];
+        if (data) {
+          const index = this.#allFlags.findIndex((flag) => flag.id === id);
+          this.#allFlags[index] = data;
+          this.#createPagedFlags();
+        }
+      })
+      .catch((err) => console.log(err));
   }
 
   /* Setup */
