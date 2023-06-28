@@ -571,7 +571,7 @@ class PageSetup {
             // +1 to index due to row having id at 0
             const cell = entries[index + 1];
             if (cell) {
-              let str = '';
+              let str;
               if (opt.type === 'date') {
                 str = this.#formatDate(cell[1]);
               } else {
