@@ -354,6 +354,8 @@ class PageSetup {
     this.#searchString = searchString.toLowerCase();
     this.#setPage(1);
     this.#createPagedFlags();
+    this.#updateCustomTableBody();
+    this.#updateCustomTablePagination();
   }
 
   handleSortClick(id) {
@@ -497,6 +499,7 @@ class PageSetup {
           this.#allFlags = this.#allFlags.filter((flag) => flag.id !== id);
           this.#createPagedFlags();
           this.#updateCustomTableBody();
+          this.#updateCustomTablePagination();
         }
       })
       .catch((err) => console.log(err));
@@ -680,8 +683,8 @@ class PageSetup {
     input.setAttribute('type', 'search');
     input.setAttribute('id', 'search');
     input.setAttribute('placeholder', 'Search');
-    input.addEventListener('keyup', (e) => {
-      this.handleSearchChange(e.target.value);
+    input.addEventListener('keyup', () => {
+      this.handleSearchChange(input.value);
     });
 
     const cancelButton = this.#htmlCreateButton({
@@ -689,6 +692,7 @@ class PageSetup {
       label: 'Cancel',
       className: 'secondary',
       clickHandler: () => {
+        input.value = '';
         this.handleSearchChange('');
       },
     });
@@ -713,11 +717,7 @@ class PageSetup {
     this.#content.innerHTML = `
       <div class="stack stack-gap-large">
         <h2>
-          ${
-            this.#db === 'own'
-              ? 'Options where each environment has its own database'
-              : 'Option where each environment shares a single database'
-          }
+          ${h2Titles[this.#db]}
         </h2>
       
         <div class='stack stack-no-gap'>
