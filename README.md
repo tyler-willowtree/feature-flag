@@ -1,3 +1,82 @@
 # Feature Flags
 
-> Uses Nestjs, Prisma, GraphQL, and EJS to create a feature flagging system.
+> Backend uses Nestjs, Prisma, GraphQL, MySQL, EJS, and Web components to create a feature flagging system along with a page on the server side to create, edit, toggle, and delete flags.
+> All of these languages can be changed out to your liking, with a some update to the code.
+> 
+> There are examples of the frontend in different languages including React, Vue and Web components. React and Vue use Prisma & GraphQL, while Web components just uses fetch.
+
+## Server/API
+### Installation
+
+Update `docker-compose.yml` to your liking, then run the following:
+```bash
+$ docker-compose up -d
+$ npm install
+```
+Create a `.env` file in the root of the project and add the following:
+```dotenv
+DATABASE_URL="mysql://<username>:<password>@<host>:<port>/<database>"
+```
+
+### Running the app
+
+```bash
+# development
+$ npm run start:dev
+```
+
+## Clients
+### Installation
+
+```bash
+$ cd client/app-<language_of_choice>
+$ npm install
+```
+Create a `.env` file in the root of the chosen client and add the following:
+```dotenv
+# Vue
+VITE_APP_API_URL="http://localhost:<port_of_server_or_3010>/graphql"
+
+# React
+REACT_APP_API_URL="http://localhost:<port_of_server_or_3010>/graphql"
+
+# Web components
+JS_APP_API_URL="http://localhost:<port_of_server_or_3010>/graphql"
+```
+
+### Running the app
+
+```bash
+# development
+$ npm run start
+```
+
+## Understanding How Feature Flags Work
+Think of the flag itself as being enabled/disabled not the feature behind the flag. So if a flag is set to true or does not exist in the database, the feature will not render.
+
+### Creating a flag
+To create a flag, you can use the page on the server side, or you can use the GraphQL playground. The GraphQL playground can be accessed at `http://localhost:<port_of_server_or_3010>/graphql`. The 
+GraphQL playground will allow you to do all the things the server side page can do. Names need to be unique and should include the name of the feature you are trying to toggle.
+
+#### Example of creating a flag using the GraphQL playground
+```graphql
+mutation Mutation($description: String!, $name: String!) {
+    createFlag(description: $description, name: $name) {
+        description
+        enabled
+        id
+        name
+        updatedAt
+    }
+}
+```
+Variables:
+```json
+{
+  "name": "example-flag",
+  "description": "This is an example flag"
+}
+```
+
+On the client side, you will need to wrap the feature you want to toggle using the `FlaggedFeature` component and pass in the `name` of the flag you created above. This component will check if the 
+flag is enabled or not. If the flag exists and is enabled, the component will render the feature, if not, it will not render the feature, or render an alternate component if specified.
