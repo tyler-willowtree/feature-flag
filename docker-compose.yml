@@ -1,0 +1,19 @@
+version: '3.3'
+
+services:
+  db-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: "MYSQL_ROOT_PASSWORD"
+      MYSQL_USER: "MYSQL_USER"
+      MYSQL_PASSWORD: "MYSQL_PASSWORD"
+      MYSQL_DB: "MYSQL_DB"
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  db:
