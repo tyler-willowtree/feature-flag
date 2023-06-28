@@ -193,7 +193,6 @@ const h2Titles = {
 
 /* NOTE: dayjs must be included in the head prior to this file */
 class PageSetup {
-  // private items
   #db = null;
   #allFlags = [];
   #pagedFlags = [[]];
@@ -215,7 +214,6 @@ class PageSetup {
 
   constructor(type) {
     if (dbOptions.includes(type)) {
-      // console.group(`Initializing for "${type}"`);
       this.#db = type;
       this.#content = document.getElementById('content');
       this.initialize();
@@ -224,29 +222,7 @@ class PageSetup {
     }
   }
 
-  /* General Methods */
-  #formatDate(date) {
-    return dayjs(date).format('MMM DD, YY h:mm a');
-  }
-
-  #getApiConfig(query) {
-    return {
-      url: '/graphql',
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query }),
-    };
-  }
-
-  #buildQuery(name) {
-    const { queries, returns } = graphQlOptions[this.#db];
-    return this.#getApiConfig(`query ${queries[name]} {
-      ${queries[name]} {
-        ${returns.join('\n')}
-      }
-    }`);
-  }
-
+  /* ------ General Methods ------ */
   #buildMutation(name, variables) {
     const { mutations, returns } = graphQlOptions[this.#db];
     return this.#getApiConfig(`mutation ${mutations[name]} {
@@ -256,17 +232,13 @@ class PageSetup {
     }`);
   }
 
-  #transformData(data) {
-    const row = tableOptions[this.#db].headers;
-    const colType = row.find((cell) => this.#sortBy.id === cell.id).type;
-    if (colType === 'date') {
-      return this.#formatDate(data);
-    } else if (colType === 'boolean') {
-      return Boolean(data);
-    } else if (colType === 'number') {
-      return Number(data);
-    }
-    return data;
+  #buildQuery(name) {
+    const { queries, returns } = graphQlOptions[this.#db];
+    return this.#getApiConfig(`query ${queries[name]} {
+      ${queries[name]} {
+        ${returns.join('\n')}
+      }
+    }`);
   }
 
   #createPagedFlags() {
@@ -290,6 +262,19 @@ class PageSetup {
     }, []);
   }
 
+  #formatDate(date) {
+    return dayjs(date).format('MMM DD, YY h:mm a');
+  }
+
+  #getApiConfig(query) {
+    return {
+      url: '/graphql',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query }),
+    };
+  }
+
   #htmlCreateButton({ type, className, icon, label, clickHandler }) {
     const button = document.createElement('button');
     button.type = type;
@@ -304,9 +289,27 @@ class PageSetup {
     return button;
   }
 
-  /* Sort Methods */
+  #transformData(data) {
+    const row = tableOptions[this.#db].headers;
+    const colType = row.find((cell) => this.#sortBy.id === cell.id).type;
+    if (colType === 'date') {
+      return this.#formatDate(data);
+    } else if (colType === 'boolean') {
+      return Boolean(data);
+    } else if (colType === 'number') {
+      return Number(data);
+    }
+    return data;
+  }
+
+  /* ------ Sort Methods ------ */
   #toggleDirection(direction) {
     return direction === 'asc' ? 'desc' : 'asc';
+  }
+
+  #setPage(page) {
+    this.#currentPage = page;
+    this.#currentPageForArray = page - 1;
   }
 
   #sortColumn() {
@@ -329,138 +332,7 @@ class PageSetup {
     this.#allFlags.sort(sortFn);
   }
 
-  #setPage(page) {
-    this.#currentPage = page;
-    this.#currentPageForArray = page - 1;
-  }
-
-  /* Public methods */
-  handlePageChange(direction) {
-    if (direction === 'prev' && this.#currentPage > 1) {
-      this.#currentPage--;
-      this.#currentPageForArray--;
-    } else if (
-      direction === 'next' &&
-      this.#currentPage < this.#pagedFlags.length
-    ) {
-      this.#currentPage++;
-      this.#currentPageForArray++;
-    }
-    this.#updateCustomTableBody();
-    this.#updateCustomTablePagination();
-  }
-
-  handleSearchChange(searchString) {
-    this.#searchString = searchString.toLowerCase();
-    this.#setPage(1);
-    this.#createPagedFlags();
-    this.#updateCustomTableBody();
-    this.#updateCustomTablePagination();
-  }
-
-  handleSortClick(id) {
-    if (this.#sortBy.id === id) {
-      this.#sortBy.direction = this.#toggleDirection(this.#sortBy.direction);
-    } else {
-      this.#sortBy = { id, direction: 'asc' };
-    }
-    this.#setPage(1);
-    this.#sortColumn();
-    this.#createPagedFlags();
-  }
-
-  handleAddEditFormCancel() {
-    this.#updateAddEditForm(false);
-    this.#editing = null;
-  }
-
-  handleAddEditFormOpen(formType, flag) {
-    if (formType === formTypes.update) {
-      this.#editing = flag;
-    } else {
-      this.#editing = null;
-    }
-    this.#updateAddEditForm(true);
-  }
-
-  handleAddEditFormSubmit() {
-    const name = this.#addEditForm.querySelector('#name').value;
-    const description = this.#addEditForm.querySelector('#description').value;
-    let queryData = `name: "${name}", description: "${description}"`;
-
-    if (this.#editing === null) {
-      this.addFlag(queryData);
-    } else {
-      queryData += `, id: ${this.#editing.id}`;
-      this.editFlag(queryData);
-    }
-  }
-
-  handleDeleteFlag(id) {
-    this.deleteFlag(id);
-  }
-
-  handleToggleFlag(id, key, bool) {
-    this.toggleFlag(id, key, bool);
-  }
-
-  createTableRowCell(params, isActions = false) {
-    if (isActions) {
-      return this.#buildActionCell(params);
-    } else {
-      return this.#buildCell(params);
-    }
-  }
-
-  createPaginationButton(direction) {
-    const button = document.createElement('button');
-    button.classList.add('btn', 'btn-primary');
-    button.addEventListener('click', () => {
-      this.handlePageChange(direction);
-      this.#checkPaginationButtons();
-    });
-    const icon = document.createElement('i');
-    icon.classList.add(
-      'fa-solid',
-      `fa-caret-${direction === 'prev' ? 'left' : 'right'}`
-    );
-    button.append(icon);
-
-    if (direction === 'prev') {
-      this.#prevButton = button;
-    } else {
-      this.#nextButton = button;
-    }
-
-    return button;
-  }
-
-  createAddEditFormButton(type) {
-    if (type === 'submit') {
-      return this.#htmlCreateButton({
-        type: 'button',
-        className: 'primary',
-        label: 'Submit',
-        clickHandler: this.handleAddEditFormSubmit.bind(this),
-      });
-    }
-
-    return this.#htmlCreateButton({
-      type: 'button',
-      className: 'secondary',
-      label: 'Cancel',
-      clickHandler: this.handleAddEditFormCancel.bind(this),
-    });
-  }
-
-  updateCasing(str) {
-    return str
-      .split(' ')
-      .map((word) => word.toLowerCase().replace(/[^A-Za-z0-9-]/gi, ''))
-      .join('-');
-  }
-
-  /* API Calls */
+  /* ------ API Calls ------ */
   addFlag(data) {
     const { body, headers, method, url } = this.#buildMutation('create', data);
 
@@ -548,62 +420,7 @@ class PageSetup {
       .catch((err) => console.log(err));
   }
 
-  /* Update Components */
-  #updateCustomTableHead() {
-    this.#tableHead.setAttribute(
-      'columns',
-      JSON.stringify(tableOptions[this.#db].headers)
-    );
-    this.#tableHead.setAttribute('sort-by', this.#sortBy.id);
-    this.#tableHead.setAttribute('sort-direction', this.#sortBy.direction);
-  }
-
-  #updateCustomTableBody() {
-    const colOpts = tableOptions[this.#db].headers;
-    const rowOpts = tableOptions[this.#db].rows;
-    const rows = this.#pagedFlags[this.#currentPageForArray].map((item) => {
-      const entries = Object.entries(item);
-      return {
-        id: item.id,
-        ...Object.assign(
-          {},
-          ...colOpts.map((opt, index) => {
-            // +1 to index due to row having id at 0
-            const cell = entries[index + 1];
-            if (cell) {
-              let str;
-              if (opt.type === 'date') {
-                str = this.#formatDate(cell[1]);
-              } else {
-                str = cell[1];
-              }
-              return { [cell[0]]: str };
-            }
-          })
-        ),
-      };
-    });
-
-    this.#tableBody.setAttribute('rows', JSON.stringify(rows));
-    this.#tableBody.setAttribute('row-options', JSON.stringify(rowOpts));
-    this.#tableBody.setAttribute('col-options', JSON.stringify(colOpts));
-  }
-
-  #updateCustomTablePagination() {
-    const flatArr = this.#pagedFlags.flat();
-    const showingStart = this.#currentPageForArray * this.#perPage + 1;
-    const showingEnd =
-      showingStart + this.#pagedFlags[this.#currentPageForArray].length - 1;
-    const totalPages = this.#pagedFlags.length;
-
-    this.#pagination.setAttribute('showing-start', showingStart);
-    this.#pagination.setAttribute('showing-end', showingEnd);
-    this.#pagination.setAttribute('total-rows', `${flatArr.length}`);
-    this.#pagination.setAttribute('current-page', this.#currentPage);
-    this.#pagination.setAttribute('total-pages', totalPages);
-    this.#checkPaginationButtons();
-  }
-
+  /* ------ Update Components ------ */
   #checkPaginationButtons() {
     if (this.#currentPage === 1) {
       this.#prevButton.setAttribute('disabled', true);
@@ -665,41 +482,129 @@ class PageSetup {
     }
   }
 
-  /* Create/Build Components */
-  #createSearchForm() {
-    const form = document.createElement('form');
-    form.className = 'form-inline';
-
-    const formGroup = document.createElement('div');
-    formGroup.className = 'form-group';
-
-    const label = document.createElement('label');
-    label.className = 'sr-only';
-    label.setAttribute('for', 'search');
-    label.textContent = 'Search';
-
-    const input = document.createElement('input');
-    input.className = 'form-control';
-    input.setAttribute('type', 'search');
-    input.setAttribute('id', 'search');
-    input.setAttribute('placeholder', 'Search');
-    input.addEventListener('keyup', () => {
-      this.handleSearchChange(input.value);
+  #updateCustomTableBody() {
+    const colOpts = tableOptions[this.#db].headers;
+    const rowOpts = tableOptions[this.#db].rows;
+    const rows = this.#pagedFlags[this.#currentPageForArray].map((item) => {
+      const entries = Object.entries(item);
+      return {
+        id: item.id,
+        ...Object.assign(
+          {},
+          ...colOpts.map((opt, index) => {
+            // +1 to index due to row having id at 0
+            const cell = entries[index + 1];
+            if (cell) {
+              let str;
+              if (opt.type === 'date') {
+                str = this.#formatDate(cell[1]);
+              } else {
+                str = cell[1];
+              }
+              return { [cell[0]]: str };
+            }
+          })
+        ),
+      };
     });
 
-    const cancelButton = this.#htmlCreateButton({
-      type: 'button',
-      label: 'Cancel',
-      className: 'secondary',
-      clickHandler: () => {
-        input.value = '';
-        this.handleSearchChange('');
-      },
-    });
+    this.#tableBody.setAttribute('rows', JSON.stringify(rows));
+    this.#tableBody.setAttribute('row-options', JSON.stringify(rowOpts));
+    this.#tableBody.setAttribute('col-options', JSON.stringify(colOpts));
+  }
 
-    formGroup.append(label, input, cancelButton);
-    form.append(formGroup);
-    return form;
+  #updateCustomTableHead() {
+    this.#tableHead.setAttribute(
+      'columns',
+      JSON.stringify(tableOptions[this.#db].headers)
+    );
+    this.#tableHead.setAttribute('sort-by', this.#sortBy.id);
+    this.#tableHead.setAttribute('sort-direction', this.#sortBy.direction);
+  }
+
+  #updateCustomTablePagination() {
+    const flatArr = this.#pagedFlags.flat();
+    const showingStart = this.#currentPageForArray * this.#perPage + 1;
+    const showingEnd =
+      showingStart + this.#pagedFlags[this.#currentPageForArray].length - 1;
+    const totalPages = this.#pagedFlags.length;
+
+    this.#pagination.setAttribute('showing-start', showingStart);
+    this.#pagination.setAttribute('showing-end', showingEnd);
+    this.#pagination.setAttribute('total-rows', `${flatArr.length}`);
+    this.#pagination.setAttribute('current-page', this.#currentPage);
+    this.#pagination.setAttribute('total-pages', totalPages);
+    this.#checkPaginationButtons();
+  }
+
+  /*  ------ Create/Build Components ------ */
+  #buildActionButton(item, action) {
+    const button = document.createElement('button');
+    const icon = document.createElement('i');
+
+    if (action === 'delete') {
+      button.classList.add('icon', 'delete');
+      icon.classList.add('fa-solid', 'fa-trash', 'fa-lg');
+      button.addEventListener('click', () => {
+        this.handleDeleteFlag(item.id);
+      });
+    } else if (action === 'edit') {
+      button.classList.add('icon', 'edit');
+      icon.classList.add('fa-solid', 'fa-pencil', 'fa-lg');
+      button.addEventListener('click', () => {
+        dbClass.handleAddEditFormOpen('update', item);
+      });
+    }
+
+    button.append(icon);
+    return button;
+  }
+
+  #buildActionCell(params) {
+    const { row, rowOpt } = params;
+    const td = document.createElement('td');
+    const div = document.createElement('div');
+    div.classList.add('actions');
+    div.append(this.#buildActionButton(row, 'delete'));
+    div.append(this.#buildActionButton(row, 'edit'));
+
+    if (rowOpt.includeToggle) {
+      const toggle = this.#createToggleButton(row, rowOpt.toggle);
+      div.append(toggle);
+    }
+
+    td.append(div);
+    return td;
+  }
+
+  #buildCell(params) {
+    const { cellData, row, rowOpt } = params;
+    const td = document.createElement('td');
+    const div = document.createElement('div');
+    const whichToggles = {
+      mark: !cellData ? 'xmark' : 'check',
+      button: !cellData ? 'on' : 'off',
+    };
+
+    if (rowOpt.divClassList) {
+      div.classList.add(...rowOpt.divClassList);
+    }
+
+    if (rowOpt.isToggleColumn) {
+      const icon = document.createElement('i');
+      icon.classList.add('fa', `fa-${whichToggles.mark}`, 'fa-lg');
+      div.append(icon);
+
+      if (rowOpt.includeToggle) {
+        const toggle = this.#createToggleButton(row, rowOpt.toggle);
+        div.append(toggle);
+      }
+    } else {
+      div.innerText = cellData;
+    }
+
+    td.append(div);
+    return td;
   }
 
   #createPageContent() {
@@ -752,6 +657,42 @@ class PageSetup {
     this.#updateCustomTablePagination();
   }
 
+  #createSearchForm() {
+    const form = document.createElement('form');
+    form.className = 'form-inline';
+
+    const formGroup = document.createElement('div');
+    formGroup.className = 'form-group';
+
+    const label = document.createElement('label');
+    label.className = 'sr-only';
+    label.setAttribute('for', 'search');
+    label.textContent = 'Search';
+
+    const input = document.createElement('input');
+    input.className = 'form-control';
+    input.setAttribute('type', 'search');
+    input.setAttribute('id', 'search');
+    input.setAttribute('placeholder', 'Search');
+    input.addEventListener('keyup', () => {
+      this.handleSearchChange(input.value);
+    });
+
+    const cancelButton = this.#htmlCreateButton({
+      type: 'button',
+      label: 'Cancel',
+      className: 'secondary',
+      clickHandler: () => {
+        input.value = '';
+        this.handleSearchChange('');
+      },
+    });
+
+    formGroup.append(label, input, cancelButton);
+    form.append(formGroup);
+    return form;
+  }
+
   #createToggleButton(row, key) {
     const button = document.createElement('button');
     button.classList.add('icon', 'toggle');
@@ -767,76 +708,133 @@ class PageSetup {
     return button;
   }
 
-  #buildActionButton(item, action) {
-    const button = document.createElement('button');
-    const icon = document.createElement('i');
-
-    if (action === 'delete') {
-      button.classList.add('icon', 'delete');
-      icon.classList.add('fa-solid', 'fa-trash', 'fa-lg');
-      button.addEventListener('click', () => {
-        this.handleDeleteFlag(item.id);
-      });
-    } else if (action === 'edit') {
-      button.classList.add('icon', 'edit');
-      icon.classList.add('fa-solid', 'fa-pencil', 'fa-lg');
-      button.addEventListener('click', () => {
-        dbClass.handleAddEditFormOpen('update', item);
+  /* ------ Public methods ------ */
+  createAddEditFormButton(type) {
+    if (type === 'submit') {
+      return this.#htmlCreateButton({
+        type: 'button',
+        className: 'primary',
+        label: 'Submit',
+        clickHandler: this.handleAddEditFormSubmit.bind(this),
       });
     }
 
+    return this.#htmlCreateButton({
+      type: 'button',
+      className: 'secondary',
+      label: 'Cancel',
+      clickHandler: this.handleAddEditFormCancel.bind(this),
+    });
+  }
+
+  createPaginationButton(direction) {
+    const button = document.createElement('button');
+    button.classList.add('btn', 'btn-primary');
+    button.addEventListener('click', () => {
+      this.handlePageChange(direction);
+      this.#checkPaginationButtons();
+    });
+    const icon = document.createElement('i');
+    icon.classList.add(
+      'fa-solid',
+      `fa-caret-${direction === 'prev' ? 'left' : 'right'}`
+    );
     button.append(icon);
+
+    if (direction === 'prev') {
+      this.#prevButton = button;
+    } else {
+      this.#nextButton = button;
+    }
+
     return button;
   }
 
-  #buildCell(params) {
-    const { cellData, row, rowOpt } = params;
-    const td = document.createElement('td');
-    const div = document.createElement('div');
-    const whichToggles = {
-      mark: !cellData ? 'xmark' : 'check',
-      button: !cellData ? 'on' : 'off',
-    };
-
-    if (rowOpt.divClassList) {
-      div.classList.add(...rowOpt.divClassList);
-    }
-
-    if (rowOpt.isToggleColumn) {
-      const icon = document.createElement('i');
-      icon.classList.add('fa', `fa-${whichToggles.mark}`, 'fa-lg');
-      div.append(icon);
-
-      if (rowOpt.includeToggle) {
-        const toggle = this.#createToggleButton(row, rowOpt.toggle);
-        div.append(toggle);
-      }
+  createTableRowCell(params, isActions = false) {
+    if (isActions) {
+      return this.#buildActionCell(params);
     } else {
-      div.innerText = cellData;
+      return this.#buildCell(params);
     }
-
-    td.append(div);
-    return td;
   }
 
-  #buildActionCell(params) {
-    const { row, rowOpt } = params;
-    const td = document.createElement('td');
-    const div = document.createElement('div');
-    div.classList.add('actions');
-    div.append(this.#buildActionButton(row, 'delete'));
-    div.append(this.#buildActionButton(row, 'edit'));
-
-    if (rowOpt.includeToggle) {
-      const toggle = this.#createToggleButton(row, rowOpt.toggle);
-      div.append(toggle);
-    }
-
-    td.append(div);
-    return td;
+  handleAddEditFormCancel() {
+    this.#updateAddEditForm(false);
+    this.#editing = null;
   }
 
-  /* Setup */
+  handleAddEditFormOpen(formType, flag) {
+    if (formType === formTypes.update) {
+      this.#editing = flag;
+    } else {
+      this.#editing = null;
+    }
+    this.#updateAddEditForm(true);
+  }
+
+  handleAddEditFormSubmit() {
+    const name = this.#addEditForm.querySelector('#name').value;
+    const description = this.#addEditForm.querySelector('#description').value;
+    let queryData = `name: "${name}", description: "${description}"`;
+
+    if (this.#editing === null) {
+      this.addFlag(queryData);
+    } else {
+      queryData += `, id: ${this.#editing.id}`;
+      this.editFlag(queryData);
+    }
+  }
+
+  handleDeleteFlag(id) {
+    this.deleteFlag(id);
+  }
+
+  handlePageChange(direction) {
+    if (direction === 'prev' && this.#currentPage > 1) {
+      this.#currentPage--;
+      this.#currentPageForArray--;
+    } else if (
+      direction === 'next' &&
+      this.#currentPage < this.#pagedFlags.length
+    ) {
+      this.#currentPage++;
+      this.#currentPageForArray++;
+    }
+    this.#updateCustomTableBody();
+    this.#updateCustomTablePagination();
+  }
+
+  handleSearchChange(searchString) {
+    this.#searchString = searchString.toLowerCase();
+    this.#setPage(1);
+    this.#createPagedFlags();
+    this.#updateCustomTableBody();
+    this.#updateCustomTablePagination();
+  }
+
+  handleSortClick(id) {
+    if (this.#sortBy.id === id) {
+      this.#sortBy.direction = this.#toggleDirection(this.#sortBy.direction);
+    } else {
+      this.#sortBy = { id, direction: 'asc' };
+    }
+    this.#setPage(1);
+    this.#sortColumn();
+    this.#createPagedFlags();
+  }
+
+  handleToggleFlag(id, key, bool) {
+    this.toggleFlag(id, key, bool);
+  }
+
+  updateCasing(str) {
+    return str
+      .split(' ')
+      .map((word) => word.toLowerCase().replace(/[^A-Za-z0-9-]/gi, ''))
+      .join('-');
+  }
+
+  /* ------ Setup ------ */
   #setup() {
     // setup sortBy
     if (!Object.keys(this.#sortBy).length) {
@@ -859,10 +857,9 @@ class PageSetup {
 
     // create page content
     this.#createPageContent();
-
-    // console.groupEnd(); // Main group
   }
 
+  /* ------ Initialize ------ */
   initialize() {
     const { body, headers, method, url } = this.#buildQuery('get');
     fetch(url, { method, headers, body })
