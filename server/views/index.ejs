@@ -8,52 +8,39 @@
     <title>Feature Flag</title>
 
     <link rel="stylesheet" href="/main.css">
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="/components/flagged-feature.js"></script>
     <script>
-      let dbClass = '';
       const handleRadioSelect = (type) => {
-        dbClass = new PageSetup(type);
+        window.location.href = `/${type}`;
       };
     </script>
-    <script src="/components/table-head.js"></script>
-    <script src="/components/table-body.js"></script>
-    <script src="/components/table-pagination.js"></script>
-    <script src="/components/add-edit-form.js"></script>
-    <script src='/setup.js'></script>
 </head>
 <body class="container">
+
+<flagged-feature flag-key="<%= exampleFlag %>">
+    <template slot="feature">
+        <div class="alert alert-success">
+            <strong><%= label %></strong> You can see this flagged feature!
+            <div><%= note %></div>
+        </div>
+    </template>
+</flagged-feature>
+
 <main class='stack stack-gap-large'>
     <h1>&nbsp;&nbsp;Feature Flags&nbsp;&nbsp;</h1>
 
     <div>
-        <h6>Options for how environments & databases are set up</h6>
-        <div id='radio-group' class='stack stack-gap-small'>
-            <label for='radio-button-own'>
-                <input
-                    type='radio'
-                    id='radio-button-own'
-                    name='radio-group'
-                    value='own'
-                    onchange='handleRadioSelect("own")'
-                />
-                Own Databases
-            </label>
+        <h6>Select the option for how environments & databases are set up</h6>
+        <div id='radio-group' class='stack stack-gap-large'>
+            <button class="btn btn-primary" type='button' onclick='handleRadioSelect("own")'>
+                Own: Each environment has its own database
+            </button>
 
-            <label for='radio-button-single'>
-                <input
-                    type='radio'
-                    id='radio-button-single'
-                    name='radio-group'
-                    value='single'
-                    onchange='handleRadioSelect("shared")'
-                />
-                Shared Database
-            </label>
+            <button class="btn btn-primary" type='button' onclick='handleRadioSelect("shared")'>
+                Shared: Each environment shares a single database
+            </button>
         </div>
-        <hr/>
     </div>
-
-    <div id='content'></div>
 </main>
 </body>
 </html>

@@ -13,10 +13,12 @@ h1 {
 
 h2 {
   text-align: center;
+  margin-bottom: 0;
 }
 
 h6 {
   text-decoration: underline;
+  margin-bottom: 20px;
 }
 
 hr {
@@ -211,3 +213,31 @@ button.icon.toggle {
   gap: 30px;
 }
 
+/* Example header */
+header.alert {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+header a,
+header a:visited {
+  color: inherit;
+}
+
+header a:hover {
+  cursor: pointer;
+}
+
+header a.active {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.example-note {
+  width: 280px;
+  margin: auto 0 auto auto;
+  font-size: 14px;
+  text-align: right;
+  border-left: 2px solid rgba(12, 84, 96, 0.4)
+}
