@@ -31,22 +31,28 @@ const updateTableBody = (element) => {
   const rowOptionsArray = JSON.parse(rowOptions);
   const rowsArray = JSON.parse(rows);
 
-  rowsArray.forEach((row) => {
-    const tr = document.createElement('tr');
-    tr.setAttribute('data-row', row.id);
-    colOptionsArray.forEach((option, index) => {
-      tr.append(
-        dbClass.createTableRowCell(
-          {
-            row: row,
-            rowOpt: rowOptionsArray[index],
-            cellData: row[option.id],
-          },
-          option.id === 'actions'
-        )
-      );
-    });
+  if (rowsArray.length) {
+    rowsArray.forEach((row) => {
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-row', row.id);
+      colOptionsArray.forEach((option, index) => {
+        tr.append(
+          dbClass.createTableRowCell(
+            {
+              row: row,
+              rowOpt: rowOptionsArray[index],
+              cellData: row[option.id],
+            },
+            option.id === 'actions'
+          )
+        );
+      });
 
+      element.append(tr);
+    });
+  } else {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="${colOptionsArray.length}" class="text-center">No flagged features found</td>`;
     element.append(tr);
-  });
+  }
 };

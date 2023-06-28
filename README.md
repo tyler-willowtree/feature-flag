@@ -28,12 +28,17 @@ Note: you can run the server with both in order to make a choice.
 
 ### Running the app
 
+If this is the first time running the app, you will need to run the following commands to create the table and seed it with the example flag.
+
+```bash
+$ yarn migrate
+$ yarn seed
+```
+
 ```bash
 # development
 $ yarn start:dev
 ```
-
-If this is the first time running the app, you will need to run the `yarn seed` command to seed the database with the default flags.
 
 If you are still deciding on which database option to use, you can go to `http://localhost:<port_of_server_or_3010>/` to see the server side see both examples, otherwise you can go to 
 `http://localhost:<port_of_server_or_3010>/<DB_OPTION>` to see the page of your choice directly.

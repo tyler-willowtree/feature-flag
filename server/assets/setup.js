@@ -255,6 +255,9 @@ class PageSetup {
       }
       return acc;
     }, []);
+    if (!this.#pagedFlags.length) {
+      this.#pagedFlags.push([]);
+    }
   }
 
   #formatDate(date) {
@@ -417,16 +420,18 @@ class PageSetup {
 
   /* ------ Update Components ------ */
   #checkPaginationButtons() {
-    if (this.#currentPage === 1) {
-      this.#prevButton.setAttribute('disabled', true);
-    } else {
-      this.#prevButton.removeAttribute('disabled');
-    }
+    if (this.#pagedFlags[0].length) {
+      if (this.#currentPage === 1) {
+        this.#prevButton.setAttribute('disabled', true);
+      } else {
+        this.#prevButton.removeAttribute('disabled');
+      }
 
-    if (this.#currentPage === this.#pagedFlags.length) {
-      this.#nextButton.setAttribute('disabled', true);
-    } else {
-      this.#nextButton.removeAttribute('disabled');
+      if (this.#currentPage === this.#pagedFlags.length) {
+        this.#nextButton.setAttribute('disabled', true);
+      } else {
+        this.#nextButton.removeAttribute('disabled');
+      }
     }
   }
 

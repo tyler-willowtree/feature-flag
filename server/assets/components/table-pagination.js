@@ -33,7 +33,17 @@ const updateTablePagination = (element) => {
   const showFrom = element.getAttribute('showing-start');
   const showTo = element.getAttribute('showing-end');
 
-  if (!currentPage || !totalPages || !totalRows || !showFrom || !showTo) return;
+  if (
+    !currentPage ||
+    !totalPages ||
+    !totalRows ||
+    !showFrom ||
+    !showTo ||
+    Number(totalRows) === 0
+  ) {
+    element.innerHTML = '';
+    return;
+  }
   element.innerHTML = '';
 
   const leftSide = document.createElement('div');
