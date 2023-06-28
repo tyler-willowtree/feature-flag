@@ -9,11 +9,15 @@
 
     <link rel="stylesheet" href="/main.css">
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-    <script src="/components.js"></script>
+    <script>let dbClass = '';</script>
+    <script src="/components/table-head.js"></script>
+    <script src="/components/table-body.js"></script>
+    <script src="/components/table-pagination.js"></script>
+    <script src="/components/add-edit-form.js"></script>
     <script src='/setup.js'></script>
     <script>
         const handleRadioSelect = (type) => {
-          new PageSetup(type);
+          dbClass = new PageSetup(type);
         };
     </script>
 </head>

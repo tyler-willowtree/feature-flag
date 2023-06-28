@@ -52,7 +52,7 @@ const tableOptions = {
       {
         id: 'enabled',
         label: 'Enabled',
-        class: ['column-150'],
+        classList: ['column-150'],
         sortable: true,
         type: 'boolean',
         // defaultSort: 'asc',
@@ -60,7 +60,7 @@ const tableOptions = {
       {
         id: 'updatedAt',
         label: 'Updated At',
-        class: ['column-200'],
+        classList: ['column-200'],
         divClassList: ['row-reverse'],
         sortable: true,
         type: 'date',
@@ -68,13 +68,13 @@ const tableOptions = {
       {
         id: 'actions',
         label: 'Actions',
-        class: ['column-100'],
+        classList: ['column-100'],
         divClassList: ['text-center'],
         sortable: false,
         type: 'actions',
       },
     ],
-    row: [
+    rows: [
       { id: 'name' },
       { id: 'description' },
       {
@@ -103,7 +103,7 @@ const tableOptions = {
       {
         id: 'localEnabled',
         label: 'Local',
-        class: ['column-140'],
+        classList: ['column-140'],
         sortable: true,
         type: 'boolean',
         defaultSort: 'desc',
@@ -111,21 +111,21 @@ const tableOptions = {
       {
         id: 'stagingEnabled',
         label: 'Staging',
-        class: ['column-140'],
+        classList: ['column-140'],
         sortable: true,
         type: 'boolean',
       },
       {
         id: 'productionEnabled',
         label: 'Production',
-        class: ['column-140'],
+        classList: ['column-140'],
         sortable: true,
         type: 'boolean',
       },
       {
         id: 'updatedAt',
         label: 'Updated At',
-        class: ['column-180'],
+        classList: ['column-180'],
         divClassList: ['row-reverse'],
         sortable: true,
         type: 'date',
@@ -133,13 +133,13 @@ const tableOptions = {
       {
         id: 'actions',
         label: 'Actions',
-        class: ['column-100'],
+        classList: ['column-100'],
         divClassList: ['text-center'],
         sortable: false,
         type: 'actions',
       },
     ],
-    row: [
+    rows: [
       { id: 'name' },
       { id: 'description' },
       {
@@ -186,6 +186,10 @@ const tableOptions = {
 
 const dbOptions = ['own', 'shared'];
 const formTypes = { create: 'create', update: 'update' };
+const h2Titles = {
+  own: 'Options where each environment has its own database',
+  shared: 'Option where each environment shares a single database',
+};
 
 /* NOTE: dayjs must be included in the head prior to this file */
 class PageSetup {
@@ -202,15 +206,16 @@ class PageSetup {
   #editing;
 
   #content;
-  #searchForm;
   #tableHead;
   #tableBody;
   #pagination;
+  #prevButton;
+  #nextButton;
   #addEditForm;
 
   constructor(type) {
     if (dbOptions.includes(type)) {
-      console.group(`Initializing for "${type}"`);
+      // console.group(`Initializing for "${type}"`);
       this.#db = type;
       this.#content = document.getElementById('content');
       this.initialize();
@@ -285,6 +290,20 @@ class PageSetup {
     }, []);
   }
 
+  #htmlCreateButton({ type, className, icon, label, clickHandler }) {
+    const button = document.createElement('button');
+    button.type = type;
+    button.classList.add('btn', `btn-${className}`);
+    button.textContent = label;
+    button.addEventListener('click', clickHandler);
+    if (icon) {
+      const iconEl = document.createElement('i');
+      iconEl.classList.add('fas', `fa-${icon}`);
+      button.prepend(iconEl);
+    }
+    return button;
+  }
+
   /* Sort Methods */
   #toggleDirection(direction) {
     return direction === 'asc' ? 'desc' : 'asc';
@@ -327,10 +346,12 @@ class PageSetup {
       this.#currentPage++;
       this.#currentPageForArray++;
     }
+    this.#updateCustomTableBody();
+    this.#updateCustomTablePagination();
   }
 
   handleSearchChange(searchString) {
-    this.#searchString = searchString;
+    this.#searchString = searchString.toLowerCase();
     this.#setPage(1);
     this.#createPagedFlags();
   }
@@ -347,26 +368,28 @@ class PageSetup {
   }
 
   handleAddEditFormCancel() {
+    this.#updateAddEditForm(false);
     this.#editing = null;
-    // close form
   }
 
   handleAddEditFormOpen(formType, flag) {
     if (formType === formTypes.update) {
       this.#editing = flag;
-      // open and populate form
+    } else {
+      this.#editing = null;
     }
+    this.#updateAddEditForm(true);
   }
 
-  handleAddEditFormSubmit(formType) {
+  handleAddEditFormSubmit() {
     const name = this.#addEditForm.querySelector('#name').value;
     const description = this.#addEditForm.querySelector('#description').value;
     let queryData = `name: "${name}", description: "${description}"`;
 
-    if (formType === formTypes.create) {
+    if (this.#editing === null) {
       this.addFlag(queryData);
     } else {
-      queryData += `, id: "${this.#editing.id}"`;
+      queryData += `, id: ${this.#editing.id}`;
       this.editFlag(queryData);
     }
   }
@@ -375,13 +398,70 @@ class PageSetup {
     this.deleteFlag(id);
   }
 
-  handleToggleFlag(id, key) {
-    this.toggleFlag(id, key);
+  handleToggleFlag(id, key, bool) {
+    this.toggleFlag(id, key, bool);
+  }
+
+  createTableRowCell(params, isActions = false) {
+    if (isActions) {
+      return this.#buildActionCell(params);
+    } else {
+      return this.#buildCell(params);
+    }
+  }
+
+  createPaginationButton(direction) {
+    const button = document.createElement('button');
+    button.classList.add('btn', 'btn-primary');
+    button.addEventListener('click', () => {
+      this.handlePageChange(direction);
+      this.#checkPaginationButtons();
+    });
+    const icon = document.createElement('i');
+    icon.classList.add(
+      'fa-solid',
+      `fa-caret-${direction === 'prev' ? 'left' : 'right'}`
+    );
+    button.append(icon);
+
+    if (direction === 'prev') {
+      this.#prevButton = button;
+    } else {
+      this.#nextButton = button;
+    }
+
+    return button;
+  }
+
+  createAddEditFormButton(type) {
+    if (type === 'submit') {
+      return this.#htmlCreateButton({
+        type: 'button',
+        className: 'primary',
+        label: 'Submit',
+        clickHandler: this.handleAddEditFormSubmit.bind(this),
+      });
+    }
+
+    return this.#htmlCreateButton({
+      type: 'button',
+      className: 'secondary',
+      label: 'Cancel',
+      clickHandler: this.handleAddEditFormCancel.bind(this),
+    });
+  }
+
+  updateCasing(str) {
+    return str
+      .split(' ')
+      .map((word) => word.toLowerCase().replace(/[^A-Za-z0-9-]/gi, ''))
+      .join('-');
   }
 
   /* API Calls */
   addFlag(data) {
     const { body, headers, method, url } = this.#buildMutation('create', data);
+
     fetch(url, { method, headers, body })
       .then((res) => res.json())
       .then((res) => {
@@ -393,6 +473,9 @@ class PageSetup {
           this.#allFlags.unshift(data);
           this.#setPage(1);
           this.#createPagedFlags();
+          this.handleAddEditFormCancel();
+          this.#updateCustomTableBody();
+          this.#updateCustomTablePagination();
         }
       })
       .catch((err) => console.log(err));
@@ -413,6 +496,7 @@ class PageSetup {
         if (data) {
           this.#allFlags = this.#allFlags.filter((flag) => flag.id !== id);
           this.#createPagedFlags();
+          this.#updateCustomTableBody();
         }
       })
       .catch((err) => console.log(err));
@@ -431,16 +515,18 @@ class PageSetup {
           const index = this.#allFlags.findIndex((flag) => flag.id === data.id);
           this.#allFlags[index] = data;
           this.#createPagedFlags();
+          this.handleAddEditFormCancel();
+          this.#updateCustomTableBody();
+          this.#updateCustomTablePagination();
         }
       })
       .catch((err) => console.log(err));
   }
 
-  toggleFlag(id, key) {
-    const flag = this.#allFlags.find((flag) => flag.id === id);
+  toggleFlag(id, key, bool) {
     const { body, headers, method, url } = this.#buildMutation(
       'toggle',
-      `id: ${id}, data: {${key}: ${!flag[key]}}`
+      `id: ${id}, data: {${key}: ${bool}}`
     );
     fetch(url, { method, headers, body })
       .then((res) => res.json())
@@ -453,9 +539,301 @@ class PageSetup {
           const index = this.#allFlags.findIndex((flag) => flag.id === id);
           this.#allFlags[index] = data;
           this.#createPagedFlags();
+          this.#updateCustomTableBody();
         }
       })
       .catch((err) => console.log(err));
+  }
+
+  /* Update Components */
+  #updateCustomTableHead() {
+    this.#tableHead.setAttribute(
+      'columns',
+      JSON.stringify(tableOptions[this.#db].headers)
+    );
+    this.#tableHead.setAttribute('sort-by', this.#sortBy.id);
+    this.#tableHead.setAttribute('sort-direction', this.#sortBy.direction);
+  }
+
+  #updateCustomTableBody() {
+    const colOpts = tableOptions[this.#db].headers;
+    const rowOpts = tableOptions[this.#db].rows;
+    const rows = this.#pagedFlags[this.#currentPageForArray].map((item) => {
+      const entries = Object.entries(item);
+      return {
+        id: item.id,
+        ...Object.assign(
+          {},
+          ...colOpts.map((opt, index) => {
+            // +1 to index due to row having id at 0
+            const cell = entries[index + 1];
+            if (cell) {
+              let str = '';
+              if (opt.type === 'date') {
+                str = this.#formatDate(cell[1]);
+              } else {
+                str = cell[1];
+              }
+              return { [cell[0]]: str };
+            }
+          })
+        ),
+      };
+    });
+
+    this.#tableBody.setAttribute('rows', JSON.stringify(rows));
+    this.#tableBody.setAttribute('row-options', JSON.stringify(rowOpts));
+    this.#tableBody.setAttribute('col-options', JSON.stringify(colOpts));
+  }
+
+  #updateCustomTablePagination() {
+    const flatArr = this.#pagedFlags.flat();
+    const showingStart = this.#currentPageForArray * this.#perPage + 1;
+    const showingEnd =
+      showingStart + this.#pagedFlags[this.#currentPageForArray].length - 1;
+    const totalPages = this.#pagedFlags.length;
+
+    this.#pagination.setAttribute('showing-start', showingStart);
+    this.#pagination.setAttribute('showing-end', showingEnd);
+    this.#pagination.setAttribute('total-rows', `${flatArr.length}`);
+    this.#pagination.setAttribute('current-page', this.#currentPage);
+    this.#pagination.setAttribute('total-pages', totalPages);
+    this.#checkPaginationButtons();
+  }
+
+  #checkPaginationButtons() {
+    if (this.#currentPage === 1) {
+      this.#prevButton.setAttribute('disabled', true);
+    } else {
+      this.#prevButton.removeAttribute('disabled');
+    }
+
+    if (this.#currentPage === this.#pagedFlags.length) {
+      this.#nextButton.setAttribute('disabled', true);
+    } else {
+      this.#nextButton.removeAttribute('disabled');
+    }
+  }
+
+  #updateAddEditForm(show) {
+    if (show) {
+      this.#addEditForm.setAttribute('show', true);
+      const fields = [
+        {
+          name: 'name',
+          label: 'Name',
+          type: 'text',
+          value: this.#editing ? this.#editing.name : '',
+          maxLength: 25,
+          actions: [
+            {
+              name: 'keyup',
+              functionName: 'updateCasing',
+              overwritesValue: true,
+            },
+          ],
+        },
+        {
+          name: 'description',
+          label: 'Description',
+          type: 'text',
+          value: this.#editing ? this.#editing.description : '',
+        },
+      ];
+
+      if (this.#editing) {
+        this.#addEditForm.setAttribute('add-edit', 'edit');
+        this.#addEditForm.setAttribute('title', 'Edit Flag');
+        this.#addEditForm.setAttribute(
+          'subtitle',
+          'Use the toggle to change the flag status.'
+        );
+      } else {
+        this.#addEditForm.setAttribute('add-edit', 'add');
+        this.#addEditForm.setAttribute('title', 'Add Flag');
+        this.#addEditForm.setAttribute(
+          'subtitle',
+          'New flags will be enabled in all environments by default.'
+        );
+      }
+      this.#addEditForm.setAttribute('fields', JSON.stringify(fields));
+    } else {
+      this.#addEditForm.removeAttribute('show');
+    }
+  }
+
+  /* Create/Build Components */
+  #createSearchForm() {
+    const form = document.createElement('form');
+    form.className = 'form-inline';
+
+    const formGroup = document.createElement('div');
+    formGroup.className = 'form-group';
+
+    const label = document.createElement('label');
+    label.className = 'sr-only';
+    label.setAttribute('for', 'search');
+    label.textContent = 'Search';
+
+    const input = document.createElement('input');
+    input.className = 'form-control';
+    input.setAttribute('type', 'search');
+    input.setAttribute('id', 'search');
+    input.setAttribute('placeholder', 'Search');
+    input.addEventListener('keyup', (e) => {
+      this.handleSearchChange(e.target.value);
+    });
+
+    const cancelButton = this.#htmlCreateButton({
+      type: 'button',
+      label: 'Cancel',
+      className: 'secondary',
+      clickHandler: () => {
+        this.handleSearchChange('');
+      },
+    });
+
+    formGroup.append(label, input, cancelButton);
+    form.append(formGroup);
+    return form;
+  }
+
+  #createPageContent() {
+    const addNewButton = this.#htmlCreateButton({
+      type: 'button',
+      label: 'Create New',
+      className: 'primary',
+      clickHandler: () => {
+        this.handleAddEditFormOpen(formTypes.create);
+      },
+      icon: 'plus',
+    });
+    const searchForm = this.#createSearchForm();
+
+    this.#content.innerHTML = `
+      <div class="stack stack-gap-large">
+        <h2>
+          ${
+            this.#db === 'own'
+              ? 'Options where each environment has its own database'
+              : 'Option where each environment shares a single database'
+          }
+        </h2>
+      
+        <div class='stack stack-no-gap'>
+          <div class='title'>
+            <div class='search-form'></div>
+          </div>
+          
+          <table class="table table-bordered">
+            <thead is="custom-table-head"></thead>
+            <tbody is="custom-table-body"></tbody>
+          </table>
+          <div is="custom-table-pagination" class="pagination"></div>
+        </div>
+        
+        <div class='form-wrapper'>
+          <form is="custom-form" id="add-edit-form" class="stack"></form>
+        </div>
+      </div>
+    `;
+    const title = this.#content.querySelector('.title');
+    title.appendChild(addNewButton);
+    const search = this.#content.querySelector('.search-form');
+    search.appendChild(searchForm);
+
+    this.#tableHead = this.#content.querySelector('thead');
+    this.#tableBody = this.#content.querySelector('tbody');
+    this.#pagination = this.#content.querySelector('.pagination');
+    this.#addEditForm = this.#content.querySelector('form#add-edit-form');
+
+    this.#updateCustomTableHead();
+    this.#updateCustomTableBody();
+    this.#updateCustomTablePagination();
+  }
+
+  #createToggleButton(row, key) {
+    const button = document.createElement('button');
+    button.classList.add('icon', 'toggle');
+
+    const icon = document.createElement('i');
+    icon.classList.add('fas', `fa-toggle-${row[key] ? 'off' : 'on'}`, 'fa-lg');
+
+    button.addEventListener('click', () => {
+      this.handleToggleFlag(row.id, key, !row[key]);
+    });
+
+    button.appendChild(icon);
+    return button;
+  }
+
+  #buildActionButton(item, action) {
+    const button = document.createElement('button');
+    const icon = document.createElement('i');
+
+    if (action === 'delete') {
+      button.classList.add('icon', 'delete');
+      icon.classList.add('fa-solid', 'fa-trash', 'fa-lg');
+      button.addEventListener('click', () => {
+        this.handleDeleteFlag(item.id);
+      });
+    } else if (action === 'edit') {
+      button.classList.add('icon', 'edit');
+      icon.classList.add('fa-solid', 'fa-pencil', 'fa-lg');
+      button.addEventListener('click', () => {
+        dbClass.handleAddEditFormOpen('update', item);
+      });
+    }
+
+    button.append(icon);
+    return button;
+  }
+
+  #buildCell(params) {
+    const { cellData, row, rowOpt } = params;
+    const td = document.createElement('td');
+    const div = document.createElement('div');
+    const whichToggles = {
+      mark: !cellData ? 'xmark' : 'check',
+      button: !cellData ? 'on' : 'off',
+    };
+
+    if (rowOpt.divClassList) {
+      div.classList.add(...rowOpt.divClassList);
+    }
+
+    if (rowOpt.isToggleColumn) {
+      const icon = document.createElement('i');
+      icon.classList.add('fa', `fa-${whichToggles.mark}`, 'fa-lg');
+      div.append(icon);
+
+      if (rowOpt.includeToggle) {
+        const toggle = this.#createToggleButton(row, rowOpt.toggle);
+        div.append(toggle);
+      }
+    } else {
+      div.innerText = cellData;
+    }
+
+    td.append(div);
+    return td;
+  }
+
+  #buildActionCell(params) {
+    const { row, rowOpt } = params;
+    const td = document.createElement('td');
+    const div = document.createElement('div');
+    div.classList.add('actions');
+    div.append(this.#buildActionButton(row, 'delete'));
+    div.append(this.#buildActionButton(row, 'edit'));
+
+    if (rowOpt.includeToggle) {
+      const toggle = this.#createToggleButton(row, rowOpt.toggle);
+      div.append(toggle);
+    }
+
+    td.append(div);
+    return td;
   }
 
   /* Setup */
@@ -479,74 +857,10 @@ class PageSetup {
     // setup paged flags
     this.#createPagedFlags();
 
-    console.groupCollapsed('Setup');
-    console.log('searchString', this.#searchString);
-    console.log('sortBy', this.#sortBy);
-    console.log('currentPage', this.#currentPage);
-    console.log('currentPageForArray', this.#currentPageForArray);
-    console.log('pagedFlags', this.#pagedFlags);
-    console.groupEnd();
+    // create page content
+    this.#createPageContent();
 
-    // TESTS ONLY
-    /*console.groupCollapsed('Add, Edit and Delete flag');
-    console.groupCollapsed('Add new');
-    this.handleAddNewFlag({
-      id: 300,
-      name: 'test-flag',
-      description: 'This is a new flag',
-      enabled: true,
-      updatedAt: dayjs().format(),
-    });
-    console.log('currentPage', this.#currentPage);
-    console.log('allFlags', this.#allFlags);
-    console.log('pagedFlags', this.#pagedFlags);
-    console.groupEnd();
-
-    console.groupCollapsed('Edit');
-    this.handleEditFlag({
-      id: 300,
-      name: 'test-flag',
-      description: 'This is a new and edited flag',
-      enabled: true,
-      updatedAt: dayjs().format(),
-    });
-    console.log('currentPage', this.#currentPage);
-    console.log('allFlags', this.#allFlags);
-    console.log('pagedFlags', this.#pagedFlags);
-    console.groupEnd();
-
-    console.groupCollapsed('Delete');
-    this.handleDeleteFlag(300);
-    console.log('currentPage', this.#currentPage);
-    console.log('allFlags', this.#allFlags);
-    console.log('pagedFlags', this.#pagedFlags);
-    console.groupEnd();
-    console.groupEnd();*/
-
-    /*console.groupCollapsed('Next page');
-    this.handlePageChange('next');
-    console.log('currentPage', this.#currentPage);
-    console.log('currentPageForArray', this.#currentPageForArray);
-    console.groupEnd();*/
-
-    /*console.groupCollapsed('Sort by updatedAt');
-    this.handleSortClick('updatedAt');
-    console.log('sortBy', this.#sortBy);
-    console.log('pagedFlags', this.#pagedFlags);
-    console.log('currentPage', this.#currentPage);
-    console.log('currentPageForArray', this.#currentPageForArray);
-    console.groupEnd();*/
-
-    /*console.groupCollapsed('Search for "and"');
-    this.handleSearchChange('and');
-    console.log('sortBy', this.#sortBy);
-    console.log('searchString', this.#searchString);
-    console.log('pagedFlags', this.#pagedFlags);
-    console.log('currentPage', this.#currentPage);
-    console.log('currentPageForArray', this.#currentPageForArray);
-    console.groupEnd();*/
-
-    console.groupEnd(); // Main group
+    // console.groupEnd(); // Main group
   }
 
   initialize() {

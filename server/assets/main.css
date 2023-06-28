@@ -42,7 +42,7 @@ th div.text-center {
   justify-content: center;
 }
 
-th:not([data-type="exclude"]):hover {
+th.sortable:hover {
   cursor: pointer;
   color: #6C757D;
 }
@@ -57,6 +57,11 @@ th[data-direction="desc"] div::after {
 
 th div.row-reverse {
   flex-direction: row-reverse;
+}
+
+.actions {
+  display: flex;
+  column-gap: 16px;
 }
 
 .title {
@@ -142,6 +147,13 @@ th div.row-reverse {
   align-items: center;
 }
 
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
 button.icon {
   border: 3px solid transparent;
   border-radius: 10px;
@@ -165,36 +177,37 @@ button.icon.toggle {
   color: #007BFF;
 }
 
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  margin-top: 6px;
+}
+
+.pagination .pages {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .form-wrapper {
   width: 725px;
+  margin: 0 auto;
 }
 
-.form-wrapper h2 {
-  text-transform: capitalize;
+.form-group-wrapper {
+  padding: 0 20px;
 }
 
-.form-wrapper form {
-  gap: 20px;
+.form-wrapper form p {
+  text-align: center;
 }
 
-.form-wrapper form fieldset {
-  column-gap: 10px;
-  align-items: center;
+.form-wrapper form .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 30px;
 }
 
-label {
-  margin-bottom: unset;
-}
-
-#form .add,
-#form .edit {
-  display: none;
-}
-
-#form.create .add {
-  display: block;
-}
-
-#form.update .edit {
-  display: block;
-}
