@@ -18,6 +18,10 @@ Create a `.env` file in the root of the project and add the following:
 DATABASE_URL="mysql://<username>:<password>@<host>:<port>/<database>"
 ```
 
+Choose which database option you want to use ("own" or "shared") and update the `prisma/schema.prisma` file accordingly.
+
+Note: you can run the server with both in order to make a choice.
+
 ### Running the app
 
 ```bash
@@ -78,5 +82,6 @@ Variables:
 }
 ```
 
-On the client side, you will need to wrap the feature you want to toggle using the `FlaggedFeature` component and pass in the `name` of the flag you created above. This component will check if the 
+#### On the client side
+You will need to wrap the feature you want to toggle using the `FlaggedFeature` component and pass in the `name` of the flag you created above. This component will check if the 
 flag is enabled or not. If the flag exists and is enabled, the component will render the feature, if not, it will not render the feature, or render an alternate component if specified.
