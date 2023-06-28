@@ -41,7 +41,6 @@ const tableOptions = {
         label: 'Name',
         sortable: true,
         type: 'text',
-        defaultSort: 'asc',
       },
       {
         id: 'description',
@@ -55,7 +54,7 @@ const tableOptions = {
         classList: ['column-150'],
         sortable: true,
         type: 'boolean',
-        // defaultSort: 'asc',
+        defaultSort: 'desc',
       },
       {
         id: 'updatedAt',
@@ -813,6 +812,9 @@ class PageSetup {
     this.#setPage(1);
     this.#sortColumn();
     this.#createPagedFlags();
+    this.#updateCustomTableHead();
+    this.#updateCustomTableBody();
+    this.#updateCustomTablePagination();
   }
 
   handleToggleFlag(id, key, bool) {
