@@ -186,10 +186,6 @@ const tableOptions = {
 
 const dbOptions = ['own', 'shared'];
 const formTypes = { create: 'create', update: 'update' };
-const h2Titles = {
-  own: 'Options where each environment has its own database',
-  shared: 'Option where each environment shares a single database',
-};
 
 /* NOTE: dayjs must be included in the head prior to this file */
 class PageSetup {
@@ -621,10 +617,6 @@ class PageSetup {
 
     this.#content.innerHTML = `
       <div class="stack stack-gap-large">
-        <h2>
-          ${h2Titles[this.#db]}
-        </h2>
-      
         <div class='stack stack-no-gap'>
           <div class='title'>
             <div class='search-form'></div>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Feature Flag</title>
+
+    <link rel="stylesheet" href="/main.css">
+    <script>
+        let dbClass;
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="/components/table-head.js"></script>
+    <script src="/components/table-body.js"></script>
+    <script src="/components/table-pagination.js"></script>
+    <script src="/components/add-edit-form.js"></script>
+    <script src="/components/flagged-feature.js"></script>
+    <script src='/setup.js'></script>
+</head>
+<body class="container">
+<flagged-feature flag-key="<%= exampleFlag %>">
+    <template slot="feature">
+        <header class="alert alert-info">
+            <a class="active" href="/own">Own Databases</a>
+            <a class="" href="/shared">Shared Database</a>
+            <p class="example-note"><strong><%= label %></strong> <%= note %></p>
+        </header>
+    </template>
+</flagged-feature>
+
+<main class='stack stack-gap-large'>
+    <h1>&nbsp;&nbsp;Feature Flags&nbsp;&nbsp;</h1>
+
+    <div id='content'></div>
+</main>
+<script>
+  dbClass = new PageSetup('own')
+</script>
+</body>
+</html>
