@@ -41,7 +41,6 @@ const tableOptions = {
         label: 'Name',
         sortable: true,
         type: 'text',
-        defaultSort: 'asc',
       },
       {
         id: 'description',
@@ -55,7 +54,7 @@ const tableOptions = {
         classList: ['column-150'],
         sortable: true,
         type: 'boolean',
-        // defaultSort: 'asc',
+        defaultSort: 'desc',
       },
       {
         id: 'updatedAt',
@@ -577,10 +576,6 @@ class PageSetup {
     const { cellData, row, rowOpt } = params;
     const td = document.createElement('td');
     const div = document.createElement('div');
-    const whichToggles = {
-      mark: !cellData ? 'xmark' : 'check',
-      button: !cellData ? 'on' : 'off',
-    };
 
     if (rowOpt.divClassList) {
       div.classList.add(...rowOpt.divClassList);
@@ -588,7 +583,7 @@ class PageSetup {
 
     if (rowOpt.isToggleColumn) {
       const icon = document.createElement('i');
-      icon.classList.add('fa', `fa-${whichToggles.mark}`, 'fa-lg');
+      icon.classList.add('fa', `fa-${!cellData ? 'xmark' : 'check'}`, 'fa-lg');
       div.append(icon);
 
       if (rowOpt.includeToggle) {
@@ -813,6 +808,9 @@ class PageSetup {
     this.#setPage(1);
     this.#sortColumn();
     this.#createPagedFlags();
+    this.#updateCustomTableHead();
+    this.#updateCustomTableBody();
+    this.#updateCustomTablePagination();
   }
 
   handleToggleFlag(id, key, bool) {

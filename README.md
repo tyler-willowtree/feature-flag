@@ -1,17 +1,21 @@
 # Feature Flags
 
-> Backend uses Nestjs, Prisma, GraphQL, MySQL, EJS, and Web components to create a feature flagging system along with a page on the server side to create, edit, toggle, and delete flags.
+> Fullstack example of using feature flags in an application.
+> 
+> Backend uses Nestjs, Prisma, GraphQL, MySQL (using docker), EJS, and Web components to create a feature flagging system along with a page on the server side to create, edit, toggle, and 
+> delete flags.
 > All of these languages can be changed out to your liking, with a some update to the code.
 > 
-> There are examples of the frontend in different languages including React, Vue and Web components. React and Vue use Prisma & GraphQL, while Web components just uses fetch.
+> There are examples of the frontend in different languages including React, Vue and Web components. React and Vue use Prisma & GraphQL, while Web components just uses fetch. Again the way in 
+> which data is fetched can be updated to your liking.
 
-## Server/API
+## Server/API/Database
 ### Installation
 
 Update `docker-compose.yml` to your liking, then run the following:
 ```bash
 $ docker-compose up -d
-$ npm install
+$ yarn
 ```
 Create a `.env` file in the root of the project and add the following:
 ```dotenv
@@ -26,25 +30,30 @@ Note: you can run the server with both in order to make a choice.
 
 ```bash
 # development
-$ npm run start:dev
+$ yarn start:dev
 ```
+
+If this is the first time running the app, you will need to run the `yarn seed` command to seed the database with the default flags.
+
+If you are still deciding on which database option to use, you can go to `http://localhost:<port_of_server_or_3010>/` to see the server side see both examples, otherwise you can go to 
+`http://localhost:<port_of_server_or_3010>/<DB_OPTION>` to see the page of your choice directly.
 
 ## Clients
 ### Installation
 
 ```bash
 $ cd client/app-<language_of_choice>
-$ npm install
+$ yarn
 ```
-Create a `.env` file in the root of the chosen client and add the following:
+Create a `.env` file in the root of the chosen client (ex: `client/app-react/`) and add the following:
 ```dotenv
-# Vue
+# For Vue client
 VITE_APP_API_URL="http://localhost:<port_of_server_or_3010>/graphql"
 
-# React
+# For React client
 REACT_APP_API_URL="http://localhost:<port_of_server_or_3010>/graphql"
 
-# Web components
+# For Web component client
 JS_APP_API_URL="http://localhost:<port_of_server_or_3010>/graphql"
 ```
 
@@ -52,7 +61,7 @@ JS_APP_API_URL="http://localhost:<port_of_server_or_3010>/graphql"
 
 ```bash
 # development
-$ npm run start
+$ yarn start
 ```
 
 ## Understanding How Feature Flags Work

@@ -73,6 +73,10 @@ th div.row-reverse {
   margin-bottom: 20px;
 }
 
+.note {
+  text-align: center;
+}
+
 .column-50 {
   width: 50px;
 }
