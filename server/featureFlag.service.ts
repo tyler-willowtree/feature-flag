@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { paramCase } from 'change-case';
 import { FeatureFlag, FeatureFlagToggleInput } from 'server/featureFlag.type';
 import { PrismaService } from 'server/prisma.service';
+import { getPast } from 'server/utils';
 
 @Injectable()
 export class FeatureFlagService {
@@ -19,10 +21,24 @@ export class FeatureFlagService {
   async createFlag(name: string, description: string): Promise<FeatureFlag> {
     return this.prisma.featureFlag.create({
       data: {
-        name,
+        name: paramCase(name),
         description,
         enabled: true,
         updatedAt: new Date(),
+      },
+    });
+  }
+
+  async createExampleFlag(
+    name: string,
+    description: string
+  ): Promise<FeatureFlag> {
+    return this.prisma.featureFlag.create({
+      data: {
+        name: paramCase(name),
+        description,
+        enabled: Math.random() > 0.5,
+        updatedAt: getPast().format(),
       },
     });
   }
@@ -35,7 +51,7 @@ export class FeatureFlagService {
     return this.prisma.featureFlag.update({
       where: { id },
       data: {
-        name,
+        name: paramCase(name),
         description,
         updatedAt: new Date(),
       },

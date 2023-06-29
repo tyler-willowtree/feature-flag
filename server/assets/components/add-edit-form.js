@@ -34,9 +34,11 @@ const updateFlagForm = (element) => {
   const hrs = [document.createElement('hr'), document.createElement('hr')];
 
   const header = document.createElement('h2');
+  header.classList.add('text-center');
   header.innerHTML = title;
 
   const subHeader = document.createElement('p');
+  subHeader.classList.add('text-center');
   subHeader.innerHTML = subtitle;
 
   const groupWrapper = document.createElement('div');
@@ -44,10 +46,11 @@ const updateFlagForm = (element) => {
 
   const groups = fields.map((field) => {
     const group = document.createElement('div');
-    group.classList.add('form-group');
+    group.classList.add('mb-3');
 
     const label = document.createElement('label');
     label.setAttribute('for', field.name);
+    label.classList.add('form-label');
     label.innerHTML = field.label;
 
     const input = document.createElement('input');
@@ -59,6 +62,13 @@ const updateFlagForm = (element) => {
     if (field.maxLength) {
       input.setAttribute('maxlength', field.maxLength);
     }
+    if (field.extraText) {
+      const extraText = document.createElement('div');
+      extraText.classList.add('form-text', 'text-muted');
+      extraText.innerHTML = field.extraText;
+      group.append(extraText);
+    }
+
     if (field.actions) {
       field.actions.forEach((action) => {
         input.addEventListener(action.name, (e) => {
@@ -69,7 +79,7 @@ const updateFlagForm = (element) => {
       });
     }
 
-    group.append(label, input);
+    group.prepend(label, input);
     return group;
   });
 

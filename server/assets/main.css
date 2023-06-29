@@ -1,23 +1,4 @@
-/*
-.form-wrapper {
-  width: 725px;
-  margin: 0 auto;
-}
 
-.form-group-wrapper {
-  padding: 0 20px;
-}
-
-.form-wrapper form p {
-  text-align: center;
-}
-
-.form-wrapper form .actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 30px;
-}
-*/
 header a.active {
   opacity: 0.5;
   pointer-events: none;
@@ -79,4 +60,24 @@ th[data-direction="desc"] div::after {
 
 th div.row-reverse {
   flex-direction: row-reverse;
+}
+
+/* ---- FORMS ---- */
+#add-edit-form {
+  width: 725px;
+  margin: 0 auto;
+}
+
+#add-edit-form .form-group-wrapper {
+  padding: 0 40px;
+}
+
+#add-edit-form p {
+  text-align: center;
+}
+
+#add-edit-form .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 30px;
 }

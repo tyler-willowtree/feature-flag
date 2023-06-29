@@ -31,6 +31,8 @@
     "@nestjs/graphql": "^11.0.6",
     "@nestjs/platform-express": "^9.0.0",
     "@prisma/client": "^4.15.0",
+    "change-case": "^4.1.2",
+    "dayjs": "^1.11.8",
     "ejs": "^3.1.9",
     "graphql": "^16.6.0",
     "reflect-metadata": "^0.1.13",
@@ -38,6 +40,8 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "4.0.1",
+    "@graphql-codegen/typescript": "4.0.0",
+    "@graphql-codegen/typescript-document-nodes": "4.0.0",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
@@ -59,9 +63,7 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.2.0",
-    "typescript": "^5.0.0",
-    "@graphql-codegen/typescript": "4.0.0",
-    "@graphql-codegen/typescript-document-nodes": "4.0.0"
+    "typescript": "^5.0.0"
   },
   "jest": {
     "moduleFileExtensions": [

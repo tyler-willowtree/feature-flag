@@ -8,6 +8,7 @@ const graphQlOptions = {
       update: 'updateFlag',
       toggle: 'toggleFlag',
       delete: 'deleteFlag',
+      example: 'createExampleFlag',
     },
     returns: ['id', 'name', 'description', 'enabled', 'updatedAt'],
   },
@@ -20,6 +21,7 @@ const graphQlOptions = {
       update: 'updateFlagSDB',
       toggle: 'toggleFlagSDB',
       delete: 'deleteFlagSDB',
+      example: 'createExampleFlagSDB',
     },
     returns: [
       'id',
@@ -41,7 +43,6 @@ const tableOptions = {
         label: 'Name',
         sortable: true,
         type: 'text',
-        width: '220px',
       },
       {
         id: 'description',
@@ -106,21 +107,21 @@ const tableOptions = {
         sortable: true,
         type: 'boolean',
         defaultSort: 'desc',
-        width: '140px',
+        width: '130px',
       },
       {
         id: 'stagingEnabled',
         label: 'Staging',
         sortable: true,
         type: 'boolean',
-        width: '140px',
+        width: '130px',
       },
       {
         id: 'productionEnabled',
         label: 'Production',
         sortable: true,
         type: 'boolean',
-        width: '140px',
+        width: '130px',
       },
       {
         id: 'updatedAt',
@@ -258,6 +259,13 @@ class PageSetup {
     }, []);
     if (!this.#pagedFlags.length) {
       this.#pagedFlags.push([]);
+    }
+
+    if (
+      this.#currentPageForArray > 0 &&
+      !this.#pagedFlags[this.#currentPageForArray]
+    ) {
+      this.handlePageChange('prev');
     }
   }
 
@@ -474,6 +482,7 @@ class PageSetup {
               overwritesValue: true,
             },
           ],
+          extraText: 'Max 25 characters',
         },
         {
           name: 'description',
@@ -513,9 +522,8 @@ class PageSetup {
         id: item.id,
         ...Object.assign(
           {},
-          ...colOpts.map((opt, index) => {
-            // +1 to index due to row having id at 0
-            const cell = entries[index + 1];
+          ...colOpts.map((opt) => {
+            const cell = entries.find((entry) => entry[0] === opt.id);
             if (cell) {
               let str;
               if (opt.type === 'date') {
@@ -878,20 +886,43 @@ class PageSetup {
   updateCasing(str) {
     return str
       .split(' ')
-      .map((word) => word.toLowerCase().replace(/[^A-Za-z0-9-]/gi, ''))
+      .map((word) => word.toLowerCase().replace(/[^A-Za-z0-9-]/gi, ' '))
       .join('-');
   }
 
-  updateDbWithExamples() {
+  async updateDbWithExamples() {
+    const bodies = [];
     const arr = [];
     arr.length = 10;
     arr.fill(this.#currentIndexCount);
     arr.forEach((cc, index) => {
       const count = index + cc;
-      const queryData = `name: "example-flag-${count}", description: "This is example flag number ${count}"`;
-      this.addFlag(queryData);
+      const data = `name: "Example Flag ${count}", description: "This is example flag number ${count}"`;
+      bodies.push(this.#buildMutation('example', data));
     });
     this.#currentIndexCount += 10;
+
+    const callEach = async (theMeat) => {
+      const fetchData = await fetch(theMeat.url, {
+        method: theMeat.method,
+        headers: theMeat.headers,
+        body: theMeat.body,
+      });
+      return fetchData.json();
+    };
+
+    await Promise.all(bodies.map((bod) => callEach(bod))).then((res) => {
+      res.forEach((item) => {
+        const flag = item.data[graphQlOptions[this.#db].mutations.example];
+        this.#allFlags.push(flag);
+      });
+      this.#setPage(1);
+      this.#sortColumn();
+      this.#createPagedFlags();
+      this.#updateCustomTableHead();
+      this.#updateCustomTableBody();
+      this.#updateCustomTablePagination();
+    });
   }
 
   /* ------ Setup ------ */
@@ -928,7 +959,9 @@ class PageSetup {
         if (res.errors) {
           throw new Error(res.errors[0].message);
         }
-        this.#allFlags = res.data[graphQlOptions[this.#db].queries.get];
+        const data = res.data[graphQlOptions[this.#db].queries.get];
+        this.#allFlags = data;
+        this.#currentIndexCount = data.length + 1;
         this.#setup();
       })
       .catch((err) => console.error(err));
