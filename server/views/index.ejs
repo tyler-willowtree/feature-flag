@@ -7,22 +7,34 @@
 
     <title>Feature Flag</title>
 
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+        crossorigin="anonymous"
+    >
     <link rel="stylesheet" href="/main.css">
+
     <script>
       let dbClass;
       const handleRadioSelect = (type) => {
         window.location.href = `/${type}`;
       };
+      const handleExamples = () => {
+        dbClass.updateDbWithExamples();
+      };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script defer src="/fontawesome/solid.min.js"></script>
+    <script defer src="/fontawesome/fontawesome.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <script src="/components/table-head.js"></script>
     <script src="/components/table-body.js"></script>
     <script src="/components/table-pagination.js"></script>
     <script src="/components/add-edit-form.js"></script>
     <script src="/components/flagged-feature.js"></script>
-    <script src='/setup.js'></script>
+    <script src='/main.js'></script>
 </head>
-<body class="container">
+<body class="container py-2">
 <flagged-feature flag-key="<%= exampleFlag %>">
     <% if (!option) { %>
         <template slot="feature">
@@ -33,38 +45,72 @@
         </template>
     <% } else { %>
         <template slot="feature">
-            <header class="alert alert-info">
-                <a class="<%= ownActive %>" href="/own">Own Databases</a>
-                <a class="<%= sharedActive %>" href="/shared">Shared Database</a>
-                <p class="example-note"><strong><%= label %></strong> <%= note %></p>
+            <header class="alert alert-info p-2">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col container">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <a class="alert-link <%= ownActive %>" href="/own">Own Databases</a>
+                                </div>
+                                <div class="col">
+                                    <a class="alert-link <%= sharedActive %>" href="/shared">Shared Database</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4 small">
+                            <strong><%= label %></strong> <%= note %>
+                        </div>
+                    </div>
+                </div>
             </header>
         </template>
     <% } %>
 </flagged-feature>
 
-<main class='stack stack-gap-large'>
-    <div>
-        <h1>&nbsp;&nbsp;Feature Flags&nbsp;&nbsp;</h1>
+<main>
+    <div class="text-center my-5">
+        <h1 class="text-decoration-underline">&nbsp;&nbsp;Feature Flags&nbsp;&nbsp;</h1>
         <% if (option) { %>
-            <div class="note">Flags that are enabled will be hidden!</div>
+            <div class="col-12">Flags that are enabled will be hidden!</div>
         <% } %>
     </div>
 
+    <% if (option) { %>
+        <flagged-feature flag-key="<%= exampleFlag %>">
+            <template slot="feature">
+                <div class="d-grid my-5">
+                    <button class="btn btn-secondary" onclick="handleExamples()">
+                        Add example flags
+                        <span class="small">(this is part of 'all-example-header' flag)</span>
+                    </button>
+                </div>
+            </template>
+        </flagged-feature>
+    <% } %>
+
     <div id='content'>
         <% if (!option) { %>
-            <h6>Select the option for how environments & databases are set up</h6>
-            <div id='radio-group' class='stack stack-gap-large'>
-                <button class="btn btn-primary" type='button' onclick='handleRadioSelect("own")'>
-                    Own: Each environment has its own database
-                </button>
+            <div class="text-center">
+                <div class="h5 mb-3">Select the option for how environments & databases are set up</div>
+                <div>
+                    <button class="btn btn-primary px-5" type='button' onclick='handleRadioSelect("own")'>
+                        Own: Each environment has its own database
+                    </button>
 
-                <button class="btn btn-primary" type='button' onclick='handleRadioSelect("shared")'>
-                    Shared: Each environment shares a single database
-                </button>
+                    <button class="btn btn-primary px-5" type='button' onclick='handleRadioSelect("shared")'>
+                        Shared: Each environment shares a single database
+                    </button>
+                </div>
             </div>
         <% } %>
     </div>
 </main>
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"
+></script>
 <script>
     <% if (option) { %>
     dbClass = new PageSetup('<%= option %>')

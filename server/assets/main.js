@@ -41,6 +41,7 @@ const tableOptions = {
         label: 'Name',
         sortable: true,
         type: 'text',
+        width: '220px',
       },
       {
         id: 'description',
@@ -51,26 +52,26 @@ const tableOptions = {
       {
         id: 'enabled',
         label: 'Enabled',
-        classList: ['column-150'],
         sortable: true,
         type: 'boolean',
         defaultSort: 'desc',
+        width: '120px',
       },
       {
         id: 'updatedAt',
         label: 'Updated At',
-        classList: ['column-200'],
         divClassList: ['row-reverse'],
         sortable: true,
         type: 'date',
+        width: '180px',
       },
       {
         id: 'actions',
         label: 'Actions',
-        classList: ['column-100'],
         divClassList: ['text-center'],
         sortable: false,
         type: 'actions',
+        width: '167px',
       },
     ],
     rows: [
@@ -78,21 +79,21 @@ const tableOptions = {
       { id: 'description' },
       {
         id: 'enabled',
-        divClassList: [
-          'stack',
-          'stack-row',
-          'stack-justified-around',
-          'stack-align-center',
-        ],
+        divClassList: ['text-center'],
         isToggleColumn: true,
       },
-      { id: 'updatedAt', divClassList: ['text-right'], type: 'date' },
+      { id: 'updatedAt', divClassList: ['text-end'], type: 'date' },
       { id: 'actions', includeToggle: true, toggle: 'enabled' },
     ],
   },
   shared: {
     headers: [
-      { id: 'name', label: 'Name', sortable: true, type: 'text' },
+      {
+        id: 'name',
+        label: 'Name',
+        sortable: true,
+        type: 'text',
+      },
       {
         id: 'description',
         label: 'Description',
@@ -102,40 +103,40 @@ const tableOptions = {
       {
         id: 'localEnabled',
         label: 'Local',
-        classList: ['column-140'],
         sortable: true,
         type: 'boolean',
         defaultSort: 'desc',
+        width: '140px',
       },
       {
         id: 'stagingEnabled',
         label: 'Staging',
-        classList: ['column-140'],
         sortable: true,
         type: 'boolean',
+        width: '140px',
       },
       {
         id: 'productionEnabled',
         label: 'Production',
-        classList: ['column-140'],
         sortable: true,
         type: 'boolean',
+        width: '140px',
       },
       {
         id: 'updatedAt',
         label: 'Updated At',
-        classList: ['column-180'],
         divClassList: ['row-reverse'],
         sortable: true,
         type: 'date',
+        width: '180px',
       },
       {
         id: 'actions',
         label: 'Actions',
-        classList: ['column-100'],
         divClassList: ['text-center'],
         sortable: false,
         type: 'actions',
+        width: '115px',
       },
     ],
     rows: [
@@ -144,10 +145,9 @@ const tableOptions = {
       {
         id: 'localEnabled',
         divClassList: [
-          'stack',
-          'stack-row',
-          'stack-justified-around',
-          'stack-align-center',
+          'd-flex',
+          'justify-content-around',
+          'align-items-center',
         ],
         includeToggle: true,
         toggle: 'localEnabled',
@@ -156,10 +156,9 @@ const tableOptions = {
       {
         id: 'stagingEnabled',
         divClassList: [
-          'stack',
-          'stack-row',
-          'stack-justified-around',
-          'stack-align-center',
+          'd-flex',
+          'justify-content-around',
+          'align-items-center',
         ],
         includeToggle: true,
         toggle: 'stagingEnabled',
@@ -168,16 +167,15 @@ const tableOptions = {
       {
         id: 'productionEnabled',
         divClassList: [
-          'stack',
-          'stack-row',
-          'stack-justified-around',
-          'stack-align-center',
+          'd-flex',
+          'justify-content-around',
+          'align-items-center',
         ],
         includeToggle: true,
         toggle: 'productionEnabled',
         isToggleColumn: true,
       },
-      { id: 'updatedAt', divClassList: ['text-right'], type: 'date' },
+      { id: 'updatedAt', divClassList: ['text-end'], type: 'date' },
       { id: 'actions' },
     ],
   },
@@ -206,6 +204,9 @@ class PageSetup {
   #prevButton;
   #nextButton;
   #addEditForm;
+
+  // for examples only
+  #currentIndexCount = 1;
 
   constructor(type) {
     if (dbOptions.includes(type)) {
@@ -273,17 +274,38 @@ class PageSetup {
     };
   }
 
-  #htmlCreateButton({ type, className, icon, label, clickHandler }) {
+  #htmlCreateButton({
+    type,
+    className,
+    icon,
+    label,
+    clickHandler,
+    extraClasses,
+  }) {
     const button = document.createElement('button');
     button.type = type;
     button.classList.add('btn', `btn-${className}`);
+    if (extraClasses) {
+      button.classList.add(...extraClasses);
+    }
     button.textContent = label;
     button.addEventListener('click', clickHandler);
     if (icon) {
       const iconEl = document.createElement('i');
-      iconEl.classList.add('fas', `fa-${icon}`);
+      iconEl.classList.add('fa-solid', `fa-${icon}`);
       button.prepend(iconEl);
     }
+    return button;
+  }
+
+  #htmlCreateIconButton({ icon, clickHandler, type }) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.classList.add('btn', 'btn-icon', type);
+    button.addEventListener('click', clickHandler);
+    const iconEl = document.createElement('i');
+    iconEl.classList.add('fa-solid', `fa-${icon}`, 'fa-lg');
+    button.appendChild(iconEl);
     return button;
   }
 
@@ -538,39 +560,32 @@ class PageSetup {
   }
 
   /*  ------ Create/Build Components ------ */
-  #buildActionButton(item, action) {
-    const button = document.createElement('button');
-    const icon = document.createElement('i');
-
-    if (action === 'delete') {
-      button.classList.add('icon', 'delete');
-      icon.classList.add('fa-solid', 'fa-trash', 'fa-lg');
-      button.addEventListener('click', () => {
-        this.handleDeleteFlag(item.id);
-      });
-    } else if (action === 'edit') {
-      button.classList.add('icon', 'edit');
-      icon.classList.add('fa-solid', 'fa-pencil', 'fa-lg');
-      button.addEventListener('click', () => {
-        dbClass.handleAddEditFormOpen('update', item);
-      });
-    }
-
-    button.append(icon);
-    return button;
-  }
-
   #buildActionCell(params) {
     const { row, rowOpt } = params;
     const td = document.createElement('td');
     const div = document.createElement('div');
     div.classList.add('actions');
-    div.append(this.#buildActionButton(row, 'delete'));
-    div.append(this.#buildActionButton(row, 'edit'));
+    const delButton = this.#htmlCreateIconButton({
+      icon: 'trash',
+      clickHandler: () => this.handleDeleteFlag(row.id),
+      type: 'delete',
+    });
+    const editButton = this.#htmlCreateIconButton({
+      icon: 'pencil',
+      clickHandler: () => dbClass.handleAddEditFormOpen('update', row),
+      type: 'edit',
+    });
+    div.append(delButton);
+    div.append(editButton);
 
     if (rowOpt.includeToggle) {
-      const toggle = this.#createToggleButton(row, rowOpt.toggle);
-      div.append(toggle);
+      const toggleBtn = this.#htmlCreateIconButton({
+        icon: row[rowOpt.toggle] ? 'toggle-off' : 'toggle-on',
+        clickHandler: () =>
+          this.handleToggleFlag(row.id, rowOpt.toggle, !row[rowOpt.toggle]),
+        type: 'toggle',
+      });
+      div.append(toggleBtn);
     }
 
     td.append(div);
@@ -578,8 +593,11 @@ class PageSetup {
   }
 
   #buildCell(params) {
-    const { cellData, row, rowOpt } = params;
+    const { cellData, row, rowOpt, index } = params;
     const td = document.createElement('td');
+    if (index === 0) {
+      td.setAttribute('scope', 'row');
+    }
     const div = document.createElement('div');
 
     if (rowOpt.divClassList) {
@@ -588,12 +606,21 @@ class PageSetup {
 
     if (rowOpt.isToggleColumn) {
       const icon = document.createElement('i');
-      icon.classList.add('fa', `fa-${!cellData ? 'xmark' : 'check'}`, 'fa-lg');
+      icon.classList.add(
+        'fa-solid',
+        `fa-${!cellData ? 'xmark' : 'check'}`,
+        'fa-lg'
+      );
       div.append(icon);
 
       if (rowOpt.includeToggle) {
-        const toggle = this.#createToggleButton(row, rowOpt.toggle);
-        div.append(toggle);
+        const toggleBtn = this.#htmlCreateIconButton({
+          icon: row[rowOpt.toggle] ? 'toggle-off' : 'toggle-on',
+          clickHandler: () =>
+            this.handleToggleFlag(row.id, rowOpt.toggle, !row[rowOpt.toggle]),
+          type: 'toggle',
+        });
+        div.append(toggleBtn);
       }
     } else {
       div.innerText = cellData;
@@ -604,44 +631,29 @@ class PageSetup {
   }
 
   #createPageContent() {
-    const addNewButton = this.#htmlCreateButton({
-      type: 'button',
-      label: 'Create New',
-      className: 'primary',
-      clickHandler: () => {
-        this.handleAddEditFormOpen(formTypes.create);
-      },
-      icon: 'plus',
-    });
-    const searchForm = this.#createSearchForm();
-
     this.#content.innerHTML = `
-      <div class="stack stack-gap-large">
-        <div class='stack stack-no-gap'>
-          <div class='title'>
-            <div class='search-form'></div>
-          </div>
-          
-          <table class="table table-bordered">
-            <thead is="custom-table-head"></thead>
-            <tbody is="custom-table-body"></tbody>
-          </table>
-          <div is="custom-table-pagination" class="pagination"></div>
-        </div>
-        
-        <div class='form-wrapper'>
-          <form is="custom-form" id="add-edit-form" class="stack"></form>
-        </div>
-      </div>
+      <div id="top-section" class='d-flex align-items-center mb-2'></div>
+      
+      <table class="table table-bordered border-primary align-middle">
+        <thead is="custom-table-head"></thead>
+        <tbody is="custom-table-body" class="table-group-divider border-primary"></tbody>
+      </table>
+      
+      <div
+        is="custom-table-pagination"
+        id="pagination"
+        class='d-flex align-items-center align-items-center'
+       ></div>
+      
+      <form is="custom-form" id="add-edit-form" class="mt-5"></form>
     `;
-    const title = this.#content.querySelector('.title');
-    title.appendChild(addNewButton);
-    const search = this.#content.querySelector('.search-form');
-    search.appendChild(searchForm);
+
+    const topSection = this.#content.querySelector('#top-section');
+    topSection.append(...this.#createTopSection());
 
     this.#tableHead = this.#content.querySelector('thead');
     this.#tableBody = this.#content.querySelector('tbody');
-    this.#pagination = this.#content.querySelector('.pagination');
+    this.#pagination = this.#content.querySelector('#pagination');
     this.#addEditForm = this.#content.querySelector('form#add-edit-form');
 
     this.#updateCustomTableHead();
@@ -651,24 +663,25 @@ class PageSetup {
 
   #createSearchForm() {
     const form = document.createElement('form');
-    form.className = 'form-inline';
+    form.classList.add('row', 'row-cols-lg-auto', 'g-0', 'align-items-center');
 
-    const formGroup = document.createElement('div');
-    formGroup.className = 'form-group';
+    const inputWrapper = document.createElement('div');
 
     const label = document.createElement('label');
-    label.className = 'sr-only';
+    label.classList.add('visually-hidden');
     label.setAttribute('for', 'search');
     label.textContent = 'Search';
 
     const input = document.createElement('input');
-    input.className = 'form-control';
+    input.id = 'search';
+    input.classList.add('form-control');
     input.setAttribute('type', 'search');
-    input.setAttribute('id', 'search');
     input.setAttribute('placeholder', 'Search');
     input.addEventListener('keyup', () => {
       this.handleSearchChange(input.value);
     });
+
+    inputWrapper.append(label, input);
 
     const cancelButton = this.#htmlCreateButton({
       type: 'button',
@@ -680,24 +693,24 @@ class PageSetup {
       },
     });
 
-    formGroup.append(label, input, cancelButton);
-    form.append(formGroup);
+    form.append(inputWrapper, cancelButton);
     return form;
   }
 
-  #createToggleButton(row, key) {
-    const button = document.createElement('button');
-    button.classList.add('icon', 'toggle');
-
-    const icon = document.createElement('i');
-    icon.classList.add('fas', `fa-toggle-${row[key] ? 'off' : 'on'}`, 'fa-lg');
-
-    button.addEventListener('click', () => {
-      this.handleToggleFlag(row.id, key, !row[key]);
+  #createTopSection() {
+    const searchForm = this.#createSearchForm();
+    const addNewButton = this.#htmlCreateButton({
+      type: 'button',
+      label: 'Create New',
+      className: 'primary',
+      clickHandler: () => {
+        this.handleAddEditFormOpen(formTypes.create);
+      },
+      icon: 'plus',
+      extraClasses: ['ms-auto'],
     });
 
-    button.appendChild(icon);
-    return button;
+    return [searchForm, addNewButton];
   }
 
   /* ------ Public methods ------ */
@@ -740,6 +753,46 @@ class PageSetup {
     }
 
     return button;
+  }
+
+  createPerPageInput() {
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('row', 'row-cols-auto', 'g-3', 'align-items-center');
+
+    const label = document.createElement('div');
+    label.textContent = 'Per page';
+
+    const inputWrapper = document.createElement('div');
+
+    const select = document.createElement('select');
+    select.classList.add('form-select');
+    select.setAttribute('aria-label', 'Rows per page');
+    select.addEventListener('change', (e) => {
+      this.#perPage = Number(e.target.value);
+      this.#currentPage = 1;
+      this.#createPagedFlags();
+      this.#updateCustomTableBody();
+      this.#updateCustomTablePagination();
+    });
+    const options = [
+      { label: '5', value: '5' },
+      { label: '10', value: '10' },
+      { label: '15', value: '15' },
+      { label: '20', value: '20' },
+    ];
+    options.forEach((opt) => {
+      const option = document.createElement('option');
+      option.setAttribute('value', opt.value);
+      option.textContent = opt.label;
+      if (this.#perPage === Number(opt.value)) {
+        option.setAttribute('selected', '');
+      }
+      select.append(option);
+    });
+    inputWrapper.append(select);
+
+    wrapper.append(inputWrapper, label);
+    return wrapper;
   }
 
   createTableRowCell(params, isActions = false) {
@@ -827,6 +880,18 @@ class PageSetup {
       .split(' ')
       .map((word) => word.toLowerCase().replace(/[^A-Za-z0-9-]/gi, ''))
       .join('-');
+  }
+
+  updateDbWithExamples() {
+    const arr = [];
+    arr.length = 10;
+    arr.fill(this.#currentIndexCount);
+    arr.forEach((cc, index) => {
+      const count = index + cc;
+      const queryData = `name: "example-flag-${count}", description: "This is example flag number ${count}"`;
+      this.addFlag(queryData);
+    });
+    this.#currentIndexCount += 10;
   }
 
   /* ------ Setup ------ */

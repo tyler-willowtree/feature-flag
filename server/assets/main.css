@@ -1,40 +1,60 @@
-@import "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css";
-@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css";
-@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/svg-with-js.min.css";
-
-body {
-  padding-top: 50px;
+/*
+.form-wrapper {
+  width: 725px;
+  margin: 0 auto;
 }
 
-h1 {
+.form-group-wrapper {
+  padding: 0 20px;
+}
+
+.form-wrapper form p {
   text-align: center;
-  text-decoration: underline;
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 0;
+.form-wrapper form .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 30px;
+}
+*/
+header a.active {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-h6 {
-  text-decoration: underline;
-  margin-bottom: 20px;
+/* ---- BUTTONS ---- */
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 
-hr {
-  width: 100%;
-  border-color: black;
-  border-radius: 50%;
+.btn.btn-icon {
+  border: 3px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  transition: border 0.5s ease-in-out;
 }
 
-.table {
-  margin-bottom: 0;
+.btn.btn-icon:hover {
+  border-color: #6C757D;
 }
 
-.table tbody td {
-  vertical-align: middle;
+.btn.btn-icon.delete {
+  color: #DC3545;
 }
 
+.btn.btn-icon.edit {
+  color: #28A745;
+}
+
+.btn.btn-icon.toggle {
+  color: #007BFF;
+}
+
+/* ---- TABLES ---- */
 th div {
   display: flex;
   justify-content: space-between;
@@ -59,189 +79,4 @@ th[data-direction="desc"] div::after {
 
 th div.row-reverse {
   flex-direction: row-reverse;
-}
-
-.actions {
-  display: flex;
-  column-gap: 16px;
-}
-
-.title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.note {
-  text-align: center;
-}
-
-.column-50 {
-  width: 50px;
-}
-
-.column-100 {
-  width: 100px;
-}
-
-.column-140 {
-  width: 140px;
-}
-
-.column-150 {
-  width: 150px;
-}
-
-.column-180 {
-  width: 180px;
-}
-
-.column-200 {
-  width: 200px;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 20px;
-  align-items: start;
-}
-
-
-.form-grid fieldset input {
-  width: 100%;
-}
-
-.form-grid fieldset div {
-  font-size: 0.85em;
-  margin-top: 4px;
-}
-
-.sudo-th {
-  width: 420px;
-  margin: 0 284px 0 auto;
-  border: 1px solid #DEE2E6;
-  border-bottom: 0;
-  text-align: center;
-  font-weight: 700;
-}
-
-.stack {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.stack-no-gap {
-  gap: 0;
-}
-
-.stack.stack-row {
-  flex-direction: row;
-}
-
-.stack-gap-large {
-  gap: 30px;
-}
-
-.stack-justified-around {
-  justify-content: space-around;
-}
-
-.stack-align-center {
-  align-items: center;
-}
-
-.btn {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-}
-
-button.icon {
-  border: 3px solid transparent;
-  border-radius: 10px;
-  background: transparent;
-  transition: border 0.5s ease-in-out;
-}
-
-button.icon:hover {
-  border-color: #6C757D;
-}
-
-button.icon.delete {
-  color: #DC3545;
-}
-
-button.icon.edit {
-  color: #28A745;
-}
-
-button.icon.toggle {
-  color: #007BFF;
-}
-
-.pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 0 12px;
-  margin-top: 6px;
-}
-
-.pagination .pages {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.form-wrapper {
-  width: 725px;
-  margin: 0 auto;
-}
-
-.form-group-wrapper {
-  padding: 0 20px;
-}
-
-.form-wrapper form p {
-  text-align: center;
-}
-
-.form-wrapper form .actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 30px;
-}
-
-/* Example header */
-header.alert {
-  display: flex;
-  align-items: center;
-  gap: 40px;
-}
-
-header a,
-header a:visited {
-  color: inherit;
-}
-
-header a:hover {
-  cursor: pointer;
-}
-
-header a.active {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.example-note {
-  width: 280px;
-  margin: auto 0 auto auto;
-  font-size: 14px;
-  text-align: right;
-  border-left: 2px solid rgba(12, 84, 96, 0.4)
 }
