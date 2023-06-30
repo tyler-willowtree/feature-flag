@@ -24,6 +24,23 @@ hr {
   width: 100%;
 }
 
+nav {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 20px;
+  margin-bottom: 30px;
+}
+
+nav a {
+  color: black;
+}
+
+nav a.active {
+  color: green;
+}
+
 .stacked {
   display: flex;
   flex-direction: column;
