@@ -25,6 +25,14 @@ export class FeatureFlagResolver {
   }
 
   @Mutation(() => FeatureFlag)
+  async createExampleFlag(
+    @Args('name') name: string,
+    @Args('description') description: string
+  ): Promise<FeatureFlag> {
+    return this.service.createExampleFlag(name, description);
+  }
+
+  @Mutation(() => FeatureFlag)
   async updateFlag(
     @Args('id') id: number,
     @Args('name') name: string,

@@ -30,6 +30,14 @@ export class FeatureFlagSingleDbResolver {
   }
 
   @Mutation(() => FeatureFlagSingleDb)
+  async createExampleFlagSDB(
+    @Args('name') name: string,
+    @Args('description') description: string
+  ): Promise<FeatureFlagSingleDb> {
+    return this.service.createExampleFlagSDB(name, description);
+  }
+
+  @Mutation(() => FeatureFlagSingleDb)
   async updateFlagSDB(
     @Args('id') id: number,
     @Args('name') name: string,

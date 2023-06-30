@@ -33,9 +33,10 @@ const updateTableHead = (element) => {
   const ths = columnsArray.map((column) => {
     const th = document.createElement('th');
     th.setAttribute('data-id', column.id);
+    th.setAttribute('scope', 'col');
 
-    if (column.classList) {
-      th.classList.add(...column.classList);
+    if (column.width) {
+      th.style.width = column.width;
     }
 
     if (column.sortable) {

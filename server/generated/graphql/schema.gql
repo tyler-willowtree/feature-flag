@@ -38,6 +38,8 @@ input FeatureFlagToggleInput {
 }
 
 type Mutation {
+  createExampleFlag(description: String!, name: String!): FeatureFlag!
+  createExampleFlagSDB(description: String!, name: String!): FeatureFlagSingleDb!
   createFlag(description: String!, name: String!): FeatureFlag!
   createFlagSDB(description: String!, name: String!): FeatureFlagSingleDb!
   deleteFlag(id: Int!): FeatureFlag!
