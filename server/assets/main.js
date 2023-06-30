@@ -318,7 +318,7 @@ class PageSetup {
     const row = tableOptions[this.#db].headers;
     const colType = row.find((cell) => this.#sortBy.id === cell.id).type;
     if (colType === 'date') {
-      return this.#formatDate(data);
+      return dayjs(data);
     } else if (colType === 'boolean') {
       return Boolean(data);
     } else if (colType === 'number') {

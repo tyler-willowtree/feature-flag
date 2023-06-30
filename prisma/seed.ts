@@ -11,7 +11,7 @@ const featureFlag = {
 };
 
 const main = async (name: any) => {
-  console.log(`Start seeding ${name} table.`);
+  console.log(`Start seeding featureFlag table.`);
 
   if (prisma['featureFlag']) {
     const { id, ...rest } = name;
@@ -21,12 +21,12 @@ const main = async (name: any) => {
       create: rest,
     });
 
-    console.log(`\tSeeded ${name} table with id: ${done.id}`);
+    console.log(`\tSeeded featureFlag table with id: ${done.id}`);
   } else {
-    console.log(`\tNo such table: ${name}`);
+    console.log(`\tNo such table: featureFlag`);
   }
 
-  console.log(`Populated ${name} table.`);
+  console.log(`Populated featureFlag table.`);
 };
 
 main(featureFlag)
