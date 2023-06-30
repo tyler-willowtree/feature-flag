@@ -778,9 +778,9 @@ class PageSetup {
     select.addEventListener('change', (e) => {
       this.#perPage = Number(e.target.value);
       this.#currentPage = 1;
+      this.#currentPageForArray = 0;
       this.#createPagedFlags();
-      this.#updateCustomTableBody();
-      this.#updateCustomTablePagination();
+      this.handlePageChange('next');
     });
     const options = [
       { label: '5', value: '5' },
