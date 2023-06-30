@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 const data = {
   id: 1,
-  name: 'all-example-header',
+  name: 'a-example-only',
   description: 'Example header for server side pages',
   enabled: false,
   updatedAt: new Date(),
