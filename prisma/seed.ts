@@ -2,34 +2,34 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const data = {
+const featureFlag = {
   id: 1,
-  name: 'all-example-header',
-  description: 'Example header for server side pages',
+  name: 'a-example-only',
+  description: 'Example for different items on server and client sides',
   enabled: false,
   updatedAt: new Date(),
 };
 
-const main = async () => {
-  console.log(`Start seeding featureFlag table.`);
+const main = async (name: any) => {
+  console.log(`Start seeding ${name} table.`);
 
   if (prisma['featureFlag']) {
-    const { id, ...rest } = data;
+    const { id, ...rest } = name;
     const done = await prisma.featureFlag.upsert({
       where: { id },
       update: rest,
       create: rest,
     });
 
-    console.log(`\tSeeded featureFlag table with id: ${done.id}`);
+    console.log(`\tSeeded ${name} table with id: ${done.id}`);
   } else {
-    console.log(`\tNo such table: featureFlag`);
+    console.log(`\tNo such table: ${name}`);
   }
 
-  console.log(`Populated featureFlag table.`);
+  console.log(`Populated ${name} table.`);
 };
 
-main()
+main(featureFlag)
   .then(async () => {
     await prisma.$disconnect();
   })

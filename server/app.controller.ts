@@ -6,9 +6,9 @@ export class AppController {
   @Render('index')
   async root() {
     return {
-      exampleFlag: 'all-example-header',
+      exampleFlag: 'a-example-only',
       label: 'Success!',
-      note: "You can remove this by toggling, or deleting the flag for 'all-example-header' on the Own Databases page",
+      note: "You can remove this by toggling, or deleting the flag for 'a-example-only' on the Own Databases page",
       option: null,
     };
   }
@@ -17,9 +17,9 @@ export class AppController {
   @Render('index')
   async own() {
     return {
-      exampleFlag: 'all-example-header',
+      exampleFlag: 'a-example-only',
       label: 'NOTE:',
-      note: "You can remove this by toggling, or deleting the flag for 'all-example-header' here",
+      note: "You can remove this by toggling, or deleting the flag for 'a-example-only' here",
       option: 'own',
       ownActive: 'active',
       sharedActive: '',
@@ -30,9 +30,9 @@ export class AppController {
   @Render('index')
   async shared() {
     return {
-      exampleFlag: 'all-example-header',
+      exampleFlag: 'a-example-only',
       label: 'NOTE:',
-      note: "You can remove this by toggling, or deleting the flag for 'all-example-header' on the Own Databases page",
+      note: "You can remove this by toggling, or deleting the flag for 'a-example-only' on the Own Databases page",
       option: 'shared',
       ownActive: '',
       sharedActive: 'active',
