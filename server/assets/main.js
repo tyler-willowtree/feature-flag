@@ -206,9 +206,6 @@ class PageSetup {
   #nextButton;
   #addEditForm;
 
-  // for examples only
-  #currentIndexCount = 1;
-
   constructor(type) {
     if (dbOptions.includes(type)) {
       this.#db = type;
@@ -891,16 +888,35 @@ class PageSetup {
   }
 
   async updateDbWithExamples() {
+    const randomString = (length) => {
+      let result = '';
+      const characters = 'abcdefghijklmnopqrstuvwxyz';
+      let charactersLength = characters.length;
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(
+          Math.floor(Math.random() * charactersLength)
+        );
+      }
+      return result;
+    };
+
     const bodies = [];
     const arr = [];
     arr.length = 10;
-    arr.fill(this.#currentIndexCount);
-    arr.forEach((cc, index) => {
-      const count = index + cc;
-      const data = `name: "Example Flag ${count}", description: "This is example flag number ${count}"`;
+    arr.fill('');
+    arr.forEach(() => {
+      const randomLengths = [
+        Math.ceil(Math.random() * 6) + 1,
+        Math.ceil(Math.random() * 5) + 1,
+        Math.ceil(Math.random() * 8) + 1,
+      ];
+      const data = `name: "${randomString(randomLengths[0])}-${randomString(
+        randomLengths[1]
+      )}-${randomString(
+        randomLengths[2]
+      )}", description: "This is example flag only"`;
       bodies.push(this.#buildMutation('example', data));
     });
-    this.#currentIndexCount += 10;
 
     const callEach = async (theMeat) => {
       const fetchData = await fetch(theMeat.url, {
@@ -959,9 +975,7 @@ class PageSetup {
         if (res.errors) {
           throw new Error(res.errors[0].message);
         }
-        const data = res.data[graphQlOptions[this.#db].queries.get];
-        this.#allFlags = data;
-        this.#currentIndexCount = data.length + 1;
+        this.#allFlags = res.data[graphQlOptions[this.#db].queries.get];
         this.#setup();
       })
       .catch((err) => console.error(err));
