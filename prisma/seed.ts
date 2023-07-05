@@ -7,6 +7,9 @@ const data = {
   name: 'a-example-only',
   description: 'Example header for server side pages',
   enabled: false,
+  enablePercentage: 100,
+  onCount: 10,
+  offCount: 0,
   updatedAt: new Date(),
 };
 

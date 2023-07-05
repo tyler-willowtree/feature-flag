@@ -3,7 +3,7 @@ import { paramCase } from 'change-case';
 import {
   FeatureFlagSingleDb,
   FeatureFlagSingleDbToggleUniqueInput,
-} from 'server/featureFlagSingleDb.type';
+} from 'server/featureFlagSingleDb/featureFlagSingleDb.type';
 import { PrismaService } from 'server/prisma.service';
 import { getPast } from 'server/utils';
 

@@ -24,6 +24,13 @@ export const Examples: React.FC = () => {
                   Name: <code>{flag.name}</code>
                   <br />
                   Enabled: <code>{flag.enabled ? 'true' : 'false'}</code>
+                  <br />
+                  Percentage: <code>{flag.enablePercentage}</code>
+                  <br />
+                  On/Off:{' '}
+                  <code>
+                    {flag.onCount}/{flag.offCount}
+                  </code>
                 </div>
               ))}
           </div>

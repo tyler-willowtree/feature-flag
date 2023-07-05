@@ -9,6 +9,9 @@ export const useGetAllFlags = () => {
           id
           name
           enabled
+          enablePercentage
+          onCount
+          offCount
         }
       }
     `,
@@ -30,6 +33,9 @@ export const useGetFlagByName = (name: string) => {
           id
           name
           enabled
+          enablePercentage
+          onCount
+          offCount
         }
       }
     `,

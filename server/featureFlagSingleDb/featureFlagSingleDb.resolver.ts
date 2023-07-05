@@ -1,9 +1,9 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { FeatureFlagSingleDbService } from 'server/featureFlagSingleDb.service';
+import { FeatureFlagSingleDbService } from 'server/featureFlagSingleDb/featureFlagSingleDb.service';
 import {
   FeatureFlagSingleDb,
   FeatureFlagSingleDbToggleUniqueInput,
-} from 'server/featureFlagSingleDb.type';
+} from 'server/featureFlagSingleDb/featureFlagSingleDb.type';
 
 @Resolver()
 export class FeatureFlagSingleDbResolver {

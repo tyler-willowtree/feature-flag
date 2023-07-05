@@ -1,6 +1,12 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { FeatureFlagService } from 'server/featureFlag.service';
-import { FeatureFlag, FeatureFlagToggleInput } from 'server/featureFlag.type';
+import { FeatureFlagService } from 'server/featureFlag/featureFlag.service';
+import {
+  FeatureFlag,
+  FeatureFlagCreateInput,
+  FeatureFlagPercentageUpdateInput,
+  FeatureFlagToggleInput,
+  FeatureFlagUpdateInput,
+} from 'server/featureFlag/featureFlag.type';
 
 @Resolver()
 export class FeatureFlagResolver {
@@ -18,27 +24,30 @@ export class FeatureFlagResolver {
 
   @Mutation(() => FeatureFlag)
   async createFlag(
-    @Args('name') name: string,
-    @Args('description') description: string
+    @Args('data') data: FeatureFlagCreateInput
   ): Promise<FeatureFlag> {
-    return this.service.createFlag(name, description);
+    return this.service.createFlag(data);
   }
 
   @Mutation(() => FeatureFlag)
-  async createExampleFlag(
-    @Args('name') name: string,
-    @Args('description') description: string
-  ): Promise<FeatureFlag> {
-    return this.service.createExampleFlag(name, description);
+  async createExampleFlag(): Promise<FeatureFlag> {
+    return this.service.createExampleFlag();
   }
 
   @Mutation(() => FeatureFlag)
   async updateFlag(
     @Args('id') id: number,
-    @Args('name') name: string,
-    @Args('description') description: string
+    @Args('data') data: FeatureFlagUpdateInput
   ): Promise<FeatureFlag> {
-    return this.service.updateFlag(id, name, description);
+    return this.service.updateFlag(id, data);
+  }
+
+  @Mutation(() => FeatureFlag)
+  async updateFlagPercentage(
+    @Args('id') id: number,
+    @Args('data') data: FeatureFlagPercentageUpdateInput
+  ): Promise<FeatureFlag> {
+    return this.service.updateFlagPercentage(id, data);
   }
 
   @Mutation(() => FeatureFlag)

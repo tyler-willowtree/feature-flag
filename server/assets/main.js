@@ -10,7 +10,16 @@ const graphQlOptions = {
       delete: 'deleteFlag',
       example: 'createExampleFlag',
     },
-    returns: ['id', 'name', 'description', 'enabled', 'updatedAt'],
+    returns: [
+      'id',
+      'name',
+      'description',
+      'enabled',
+      'enablePercentage',
+      'onCount',
+      'offCount',
+      'updatedAt',
+    ],
   },
   shared: {
     queries: {
@@ -59,6 +68,13 @@ const tableOptions = {
         width: '120px',
       },
       {
+        id: 'enablePercentage',
+        label: 'Enable %',
+        divClassList: ['text-center'],
+        type: 'percent',
+        width: '120px',
+      },
+      {
         id: 'updatedAt',
         label: 'Updated At',
         divClassList: ['row-reverse'],
@@ -83,6 +99,7 @@ const tableOptions = {
         divClassList: ['text-center'],
         isToggleColumn: true,
       },
+      { id: 'enablePercentage', divClassList: ['text-center'] },
       { id: 'updatedAt', divClassList: ['text-end'], type: 'date' },
       { id: 'actions', includeToggle: true, toggle: 'enabled' },
     ],
@@ -206,9 +223,6 @@ class PageSetup {
   #nextButton;
   #addEditForm;
 
-  // for examples only
-  #currentIndexCount = 1;
-
   constructor(type) {
     if (dbOptions.includes(type)) {
       this.#db = type;
@@ -222,8 +236,15 @@ class PageSetup {
   /* ------ General Methods ------ */
   #buildMutation(name, variables) {
     const { mutations, returns } = graphQlOptions[this.#db];
+    if (variables) {
+      return this.#getApiConfig(`mutation ${mutations[name]} {
+        ${mutations[name]}(${variables}) {
+          ${returns.join('\n')}
+        }
+      }`);
+    }
     return this.#getApiConfig(`mutation ${mutations[name]} {
-      ${mutations[name]}(${variables}) {
+      ${mutations[name]} {
         ${returns.join('\n')}
       }
     }`);
@@ -324,7 +345,7 @@ class PageSetup {
       return this.#formatDate(data);
     } else if (colType === 'boolean') {
       return Boolean(data);
-    } else if (colType === 'number') {
+    } else if (colType === 'number' || colType === 'percent') {
       return Number(data);
     }
     return data;
@@ -490,6 +511,12 @@ class PageSetup {
           type: 'text',
           value: this.#editing ? this.#editing.description : '',
         },
+        {
+          name: 'enablePercentage',
+          label: 'Enable Percentage',
+          type: 'number',
+          value: this.#editing ? this.#editing.enablePercentage : 100,
+        },
       ];
 
       if (this.#editing) {
@@ -528,6 +555,15 @@ class PageSetup {
               let str;
               if (opt.type === 'date') {
                 str = this.#formatDate(cell[1]);
+              } else if (opt.type === 'percent') {
+                const onCount = entries.find((entry) => entry[0] === 'onCount');
+                const offCount = entries.find(
+                  (entry) => entry[0] === 'offCount'
+                );
+                str = `${cell[1]}%`;
+                if (Number(cell[1]) !== 100) {
+                  str += `<br/><span class='small'>${onCount[1]} / ${offCount[1]} viewing</span>`;
+                }
               } else {
                 str = cell[1];
               }
@@ -580,7 +616,7 @@ class PageSetup {
     });
     const editButton = this.#htmlCreateIconButton({
       icon: 'pencil',
-      clickHandler: () => dbClass.handleAddEditFormOpen('update', row),
+      clickHandler: () => dbClass.handleAddEditFormOpen('update', row.id),
       type: 'edit',
     });
     div.append(delButton);
@@ -631,7 +667,7 @@ class PageSetup {
         div.append(toggleBtn);
       }
     } else {
-      div.innerText = cellData;
+      div.innerHTML = cellData;
     }
 
     td.append(div);
@@ -816,9 +852,12 @@ class PageSetup {
     this.#editing = null;
   }
 
-  handleAddEditFormOpen(formType, flag) {
+  handleAddEditFormOpen(formType, id) {
     if (formType === formTypes.update) {
-      this.#editing = flag;
+      const flag = this.#pagedFlags[this.#currentPageForArray].find(
+        (f) => f.id === id
+      );
+      this.#editing = flag || null;
     } else {
       this.#editing = null;
     }
@@ -826,15 +865,24 @@ class PageSetup {
   }
 
   handleAddEditFormSubmit() {
-    const name = this.#addEditForm.querySelector('#name').value;
-    const description = this.#addEditForm.querySelector('#description').value;
-    let queryData = `name: "${name}", description: "${description}"`;
+    const inputs = this.#addEditForm.querySelectorAll('input');
+    const queryItems = ['data: {'];
+
+    inputs.forEach((input) => {
+      if (input.type === 'checkbox') {
+        queryItems.push(`${input.id}: ${input.checked}`);
+      } else if (input.type === 'number') {
+        queryItems.push(`${input.id}: ${input.value}`);
+      } else {
+        queryItems.push(`${input.id}: "${input.value}"`);
+      }
+    });
+    queryItems.push('}');
 
     if (this.#editing === null) {
-      this.addFlag(queryData);
+      this.addFlag(queryItems.join(','));
     } else {
-      queryData += `, id: ${this.#editing.id}`;
-      this.editFlag(queryData);
+      this.editFlag(`id: ${this.#editing.id}, ${queryItems.join(',')}`);
     }
   }
 
@@ -891,16 +939,9 @@ class PageSetup {
   }
 
   async updateDbWithExamples() {
-    const bodies = [];
     const arr = [];
     arr.length = 10;
-    arr.fill(this.#currentIndexCount);
-    arr.forEach((cc, index) => {
-      const count = index + cc;
-      const data = `name: "Example Flag ${count}", description: "This is example flag number ${count}"`;
-      bodies.push(this.#buildMutation('example', data));
-    });
-    this.#currentIndexCount += 10;
+    arr.fill(this.#buildMutation('example'));
 
     const callEach = async (theMeat) => {
       const fetchData = await fetch(theMeat.url, {
@@ -911,7 +952,7 @@ class PageSetup {
       return fetchData.json();
     };
 
-    await Promise.all(bodies.map((bod) => callEach(bod))).then((res) => {
+    await Promise.all(arr.map((bod) => callEach(bod))).then((res) => {
       res.forEach((item) => {
         const flag = item.data[graphQlOptions[this.#db].mutations.example];
         this.#allFlags.push(flag);
@@ -959,9 +1000,7 @@ class PageSetup {
         if (res.errors) {
           throw new Error(res.errors[0].message);
         }
-        const data = res.data[graphQlOptions[this.#db].queries.get];
-        this.#allFlags = data;
-        this.#currentIndexCount = data.length + 1;
+        this.#allFlags = res.data[graphQlOptions[this.#db].queries.get];
         this.#setup();
       })
       .catch((err) => console.error(err));
