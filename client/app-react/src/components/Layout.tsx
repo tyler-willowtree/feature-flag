@@ -45,9 +45,11 @@ export const Layout: React.FC = () => {
       </nav>
 
       <main className="body">
-        <p>
+        <p style={{ textAlign: 'center' }}>
           To show/hide "Test Two" page, toggle the flag "a-example-only" on the
           own db option
+          <br />
+          Refresh page to see a/b testing update
         </p>
 
         <Outlet />

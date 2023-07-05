@@ -11,7 +11,9 @@ export const Examples: React.FC = () => {
       <h1>Feature Flag Example (React)</h1>
 
       <h2>
-        All available flags <span>(uses single database option)</span>
+        All available flags
+        <br />
+        <span>using single database option</span>
       </h2>
       {error && <div>{error.message}</div>}
       {loading && <div>Loading...</div>}
@@ -21,24 +23,29 @@ export const Examples: React.FC = () => {
             {flags &&
               flags.map((flag) => (
                 <div key={flag.id} className="font16">
-                  Name: <code>{flag.name}</code>
-                  <br />
-                  Enabled: <code>{flag.enabled ? 'true' : 'false'}</code>
-                  <br />
-                  Percentage: <code>{flag.enablePercentage}</code>
-                  <br />
-                  On/Off:{' '}
-                  <code>
-                    {flag.onCount}/{flag.offCount}
-                  </code>
+                  {Object.entries(flag)
+                    .filter(
+                      ([label]) => label !== '__typename' && label !== 'id'
+                    )
+                    .map(([label, value]) => (
+                      <React.Fragment key={label}>
+                        {label}: <code>{`${value}`}</code>
+                        <br />
+                      </React.Fragment>
+                    ))}
                 </div>
               ))}
           </div>
 
           <hr />
 
-          <h2>Flags that are not enabled (allow code to be used)</h2>
+          <h2>
+            Flags that are not enabled
+            <br />
+            <span>allow code to be used, ignores percentages by default</span>
+          </h2>
           <FlagSection
+            ignorePercentage
             names={flags
               .filter((flag) => !flag.enabled)
               .map((flag) => flag.name)}
@@ -46,8 +53,14 @@ export const Examples: React.FC = () => {
 
           <hr />
 
-          <h2>Flags that are enabled (hide code)</h2>
+          <h2>
+            Flags that are enabled, no else element
+            <br />
+            <span>hide code, ignores percentages</span>
+          </h2>
           <FlagSection
+            ignorePercentage
+            showElseElement={false}
             names={flags
               .filter((flag) => flag.enabled)
               .map((flag) => flag.name)}
@@ -55,8 +68,13 @@ export const Examples: React.FC = () => {
 
           <hr />
 
-          <h2>Flags that are enabled (hide code, show elseElement)</h2>
+          <h2>
+            Flags that are enabled with else element
+            <br />
+            <span>show elseElement, ignores percentages</span>
+          </h2>
           <FlagSection
+            ignorePercentage
             names={flags
               .filter((flag) => flag.enabled)
               .map((flag) => flag.name)}
@@ -67,13 +85,30 @@ export const Examples: React.FC = () => {
 
           <h2>
             Flags that do not exist in the DB but are wrapped in the
-            FlaggedFeature component (hide code)
+            FlaggedFeature component
+            <br />
+            <span>hide code, ignores percentages</span>
             <br />
             <span className="font16">
               This allows the feature to be started before the DB is updated
+              (more useful when each environment has its own database)
             </span>
           </h2>
           <FlagSection names={fakeNames} />
+
+          <hr />
+
+          <h2>
+            Flags that are A/B testing, enabled, and uses else element
+            <br />
+            <span>uses percentages to decide to show, use else, or hide</span>
+          </h2>
+          <FlagSection
+            showElseElement
+            names={flags
+              .filter((flag) => flag.enabled)
+              .map((flag) => flag.name)}
+          />
         </>
       )}
     </>

@@ -1,5 +1,10 @@
-import { gql, useQuery } from '@apollo/client';
-import { Query, QueryGetFlagByNameArgs } from 'generated/graphql';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import {
+  Mutation,
+  MutationUpdateFlagPercentageArgs,
+  Query,
+  QueryGetFlagByNameArgs,
+} from 'generated/graphql';
 
 export const useGetAllFlags = () => {
   const { data, loading, error } = useQuery<Query>(
@@ -47,4 +52,33 @@ export const useGetFlagByName = (name: string) => {
     error,
     loading,
   };
+};
+
+export const useUpdateFlagCount = () => {
+  const [updateFlagPercentage] = useMutation<
+    Mutation,
+    MutationUpdateFlagPercentageArgs
+  >(
+    gql`
+      mutation UpdateFlagPercentage(
+        $data: FeatureFlagPercentageUpdateInput!
+        $id: Int!
+      ) {
+        updateFlagPercentage(data: $data, id: $id) {
+          createdAt
+          description
+          enablePercentage
+          enabled
+          id
+          name
+          offCount
+          onCount
+          updatedAt
+        }
+      }
+    `,
+    {}
+  );
+
+  return { updateFlagPercentage };
 };

@@ -62,7 +62,7 @@ export class FeatureFlagService {
       data: {
         name: paramCase(name),
         description: 'This is example flag only',
-        enablePercentage: Math.round(Math.random() * 10) * 10,
+        enablePercentage: Math.round(Math.ceil(Math.random() * 10)) * 10,
         onCount: 0,
         offCount: 0,
         enabled: Math.random() > 0.5,
