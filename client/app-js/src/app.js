@@ -10,20 +10,25 @@ const buildAllFlags = (flags) => {
   flags.forEach((flag) => {
     const flagElement = document.createElement('div');
     flagElement.setAttribute('class', 'font16');
-    flagElement.innerHTML = `Name: <code>${flag.name}</code>
-        <br />
-        Enabled: <code>${flag.enabled ? 'true' : 'false'}</code>`;
+    const parts = [];
+    Object.entries(flag).forEach(([label, value]) => {
+      if (label !== '__typename' && label !== 'id') {
+        parts.push(`${label}: <code>${value}</code>`);
+      }
+    });
+    flagElement.innerHTML = parts.join('<br />');
     parent.appendChild(flagElement);
   });
 };
 
-const buildFlagSection = (flags, sectionName, showElse = false) => {
+const buildFlagSection = (flags, sectionName, showElse, ignorePercentage) => {
   const parent = document.getElementById(sectionName);
   const element = document.createElement('flag-section');
   element.setAttribute('names', flags.join(', '));
   if (showElse) {
-    element.setAttribute('elseElement', 'true');
+    element.setAttribute('else-element', 'true');
   }
+  element.setAttribute('ignore-percentage', `${ignorePercentage}`);
   parent.after(element);
   parent.remove();
 };
@@ -37,6 +42,9 @@ fetch(process.env.JS_APP_API_URL, {
         id
         name
         enabled
+        enablePercentage
+        onCount
+        offCount
       }
     }`,
   }),
@@ -44,14 +52,16 @@ fetch(process.env.JS_APP_API_URL, {
   .then((res) => res.json())
   .then((result) => {
     buildAllFlags(result.data.getAllFlags);
-    buildFlagSection(fakeNames, 'fake-flags');
+    buildFlagSection(fakeNames, 'fake-flags', false, true);
     const enabled = result.data.getAllFlags
       .filter((flag) => flag.enabled)
       .map((flag) => flag.name);
     const disabled = result.data.getAllFlags
       .filter((flag) => !flag.enabled)
       .map((flag) => flag.name);
-    buildFlagSection(enabled, 'enabled-flags');
-    buildFlagSection(disabled, 'disabled-flags');
-    buildFlagSection(enabled, 'enabled-flags-else', true);
+    buildFlagSection(enabled, 'enabled-flags', false, true);
+    buildFlagSection(disabled, 'disabled-flags', false, true);
+    buildFlagSection(enabled, 'enabled-flags-else', true, true);
+
+    buildFlagSection(enabled, 'ab-testing', true, false);
   });

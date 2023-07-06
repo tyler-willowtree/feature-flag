@@ -40,7 +40,7 @@ export const Examples: React.FC = () => {
           <hr />
 
           <h2>
-            Flags that are not enabled
+            ✅ Flags that are not enabled
             <br />
             <span>allow code to be used, ignores percentages by default</span>
           </h2>
@@ -54,9 +54,9 @@ export const Examples: React.FC = () => {
           <hr />
 
           <h2>
-            Flags that are enabled, no else element
+            ❌ Flags that are enabled
             <br />
-            <span>hide code, ignores percentages</span>
+            <span>hide code, no elseElement, ignores percentages</span>
           </h2>
           <FlagSection
             ignorePercentage
@@ -69,7 +69,7 @@ export const Examples: React.FC = () => {
           <hr />
 
           <h2>
-            Flags that are enabled with else element
+            🔆 Flags that are enabled
             <br />
             <span>show elseElement, ignores percentages</span>
           </h2>
@@ -84,10 +84,10 @@ export const Examples: React.FC = () => {
           <hr />
 
           <h2>
-            Flags that do not exist in the DB but are wrapped in the
+            ❌ Flags that do not exist in the DB but are wrapped in the
             FlaggedFeature component
             <br />
-            <span>hide code, ignores percentages</span>
+            <span>hide code, no elseElement</span>
             <br />
             <span className="font16">
               This allows the feature to be started before the DB is updated
@@ -99,9 +99,9 @@ export const Examples: React.FC = () => {
           <hr />
 
           <h2>
-            Flags that are A/B testing, enabled, and uses else element
+            🆎 Flags that are A/B testing, enabled, and uses else element
             <br />
-            <span>uses percentages to decide to show, use else, or hide</span>
+            <span>uses percentages to decide to show or use else/hide</span>
           </h2>
           <FlagSection
             showElseElement
