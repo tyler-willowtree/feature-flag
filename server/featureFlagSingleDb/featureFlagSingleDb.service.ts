@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { paramCase } from 'change-case';
+import { randomString } from 'server/featureFlag/featureFlag.service';
 import {
   FeatureFlagSingleDb,
+  FeatureFlagSingleDbCreateInput,
+  FeatureFlagSingleDbPercentageUpdateInput,
   FeatureFlagSingleDbToggleUniqueInput,
+  FeatureFlagSingleDbUpdateInput,
 } from 'server/featureFlagSingleDb/featureFlagSingleDb.type';
 import { PrismaService } from 'server/prisma.service';
 import { getPast } from 'server/utils';
@@ -22,32 +26,56 @@ export class FeatureFlagSingleDbService {
   }
 
   async createFlagSDB(
-    name: string,
-    description: string
+    data: FeatureFlagSingleDbCreateInput
   ): Promise<FeatureFlagSingleDb> {
     return this.prisma.featureFlagSingleDb.create({
       data: {
-        name: paramCase(name),
-        description,
+        name: paramCase(data.name),
+        description: data.description,
         localEnabled: true,
         stagingEnabled: true,
         productionEnabled: true,
+        localEnablePercentage: data.localEnablePercentage,
+        stagingEnablePercentage: data.stagingEnablePercentage,
+        productionEnablePercentage: data.productionEnablePercentage,
+        localOnCount: 0,
+        localOffCount: 0,
+        stagingOnCount: 0,
+        stagingOffCount: 0,
+        productionOnCount: 0,
+        productionOffCount: 0,
         updatedAt: new Date(),
       },
     });
   }
 
-  async createExampleFlagSDB(
-    name: string,
-    description: string
-  ): Promise<FeatureFlagSingleDb> {
+  async createExampleFlagSDB(): Promise<FeatureFlagSingleDb> {
+    const randomLengths = [
+      Math.ceil(Math.random() * 5) + 1,
+      Math.ceil(Math.random() * 7) + 1,
+      Math.ceil(Math.random() * 7) + 1,
+    ];
+    const name = `${randomString(randomLengths[0])}-${randomString(
+      randomLengths[1]
+    )}-${randomString(randomLengths[2])}`;
+
     return this.prisma.featureFlagSingleDb.create({
       data: {
         name: paramCase(name),
-        description,
+        description: 'This is example flag only',
         localEnabled: Math.random() > 0.5,
         stagingEnabled: Math.random() > 0.7,
         productionEnabled: Math.random() > 0.3,
+        localEnablePercentage: Math.round(Math.ceil(Math.random() * 10)) * 10,
+        stagingEnablePercentage: Math.round(Math.ceil(Math.random() * 10)) * 10,
+        productionEnablePercentage:
+          Math.round(Math.ceil(Math.random() * 10)) * 10,
+        localOnCount: 0,
+        localOffCount: 0,
+        stagingOnCount: 0,
+        stagingOffCount: 0,
+        productionOnCount: 0,
+        productionOffCount: 0,
         updatedAt: getPast().format(),
       },
     });
@@ -55,16 +83,28 @@ export class FeatureFlagSingleDbService {
 
   async updateFlagSDB(
     id: number,
-    name: string,
-    description: string
+    data: FeatureFlagSingleDbUpdateInput
   ): Promise<FeatureFlagSingleDb> {
+    const update = data;
+    if (data.name) {
+      update.name = paramCase(data.name as string);
+    }
     return this.prisma.featureFlagSingleDb.update({
       where: { id },
       data: {
-        name: paramCase(name),
-        description,
+        ...update,
         updatedAt: new Date(),
       },
+    });
+  }
+
+  async updateFlagSDBPercentage(
+    id: number,
+    data: FeatureFlagSingleDbPercentageUpdateInput
+  ): Promise<FeatureFlagSingleDb> {
+    return this.prisma.featureFlagSingleDb.update({
+      where: { id },
+      data,
     });
   }
 

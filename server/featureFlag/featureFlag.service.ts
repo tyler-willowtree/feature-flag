@@ -10,7 +10,7 @@ import {
 import { PrismaService } from 'server/prisma.service';
 import { getPast } from 'server/utils';
 
-const randomString = (length: number) => {
+export const randomString = (length: number) => {
   let result = '';
   const characters = 'abcdefghijklmnopqrstuvwxyz';
   let charactersLength = characters.length;

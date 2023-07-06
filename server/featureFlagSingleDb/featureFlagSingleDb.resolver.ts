@@ -2,7 +2,10 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { FeatureFlagSingleDbService } from 'server/featureFlagSingleDb/featureFlagSingleDb.service';
 import {
   FeatureFlagSingleDb,
+  FeatureFlagSingleDbCreateInput,
+  FeatureFlagSingleDbPercentageUpdateInput,
   FeatureFlagSingleDbToggleUniqueInput,
+  FeatureFlagSingleDbUpdateInput,
 } from 'server/featureFlagSingleDb/featureFlagSingleDb.type';
 
 @Resolver()
@@ -23,27 +26,30 @@ export class FeatureFlagSingleDbResolver {
 
   @Mutation(() => FeatureFlagSingleDb)
   async createFlagSDB(
-    @Args('name') name: string,
-    @Args('description') description: string
+    @Args('data') data: FeatureFlagSingleDbCreateInput
   ): Promise<FeatureFlagSingleDb> {
-    return this.service.createFlagSDB(name, description);
+    return this.service.createFlagSDB(data);
   }
 
   @Mutation(() => FeatureFlagSingleDb)
-  async createExampleFlagSDB(
-    @Args('name') name: string,
-    @Args('description') description: string
-  ): Promise<FeatureFlagSingleDb> {
-    return this.service.createExampleFlagSDB(name, description);
+  async createExampleFlagSDB(): Promise<FeatureFlagSingleDb> {
+    return this.service.createExampleFlagSDB();
   }
 
   @Mutation(() => FeatureFlagSingleDb)
   async updateFlagSDB(
     @Args('id') id: number,
-    @Args('name') name: string,
-    @Args('description') description: string
+    @Args('data') data: FeatureFlagSingleDbUpdateInput
   ): Promise<FeatureFlagSingleDb> {
-    return this.service.updateFlagSDB(id, name, description);
+    return this.service.updateFlagSDB(id, data);
+  }
+
+  @Mutation(() => FeatureFlagSingleDb)
+  async updateFlagSDBPercentage(
+    @Args('id') id: number,
+    @Args('data') data: FeatureFlagSingleDbPercentageUpdateInput
+  ): Promise<FeatureFlagSingleDb> {
+    return this.service.updateFlagSDBPercentage(id, data);
   }
 
   @Mutation(() => FeatureFlagSingleDb)
