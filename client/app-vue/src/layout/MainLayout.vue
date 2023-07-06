@@ -12,6 +12,9 @@ const { result } = useQuery<Query>(
         id
         name
         enabled
+        enablePercentage
+        onCount
+        offCount
       }
     }
   `
@@ -48,7 +51,10 @@ watch(flags, (newVal) => {
   </nav>
 
   <main class="body">
-    <p>To show/hide "Test Two" page, toggle the flag "a-example-only" on the own db option</p>
+    <p class="text-center">
+      To show/hide "Test Two" page, toggle the flag "a-example-only" on the own db option<br />
+      Refresh page to see a/b testing update
+    </p>
 
     <slot />
   </main>
