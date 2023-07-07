@@ -7,9 +7,9 @@ const featureFlag = {
   name: 'a-example-only',
   description: 'Example for different items on server and client sides',
   enabled: false,
-  enablePercentage: 100,
-  onCount: 10,
-  offCount: 0,
+  abPercentage: 100,
+  abShowCount: 0,
+  abHideCount: 0,
   updatedAt: new Date(),
 };
 

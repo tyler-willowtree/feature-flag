@@ -6,9 +6,9 @@ export const GET_FLAG_BY_NAME = gql`
       id
       name
       enabled
-      enablePercentage
-      onCount
-      offCount
+      abPercentage
+      abShowCount
+      abHideCount
     }
   }
 `
@@ -19,9 +19,9 @@ export const UPDATE_FLAG_PERCENTAGE = gql`
       id
       name
       enabled
-      enablePercentage
-      onCount
-      offCount
+      abPercentage
+      abShowCount
+      abHideCount
     }
   }
 `

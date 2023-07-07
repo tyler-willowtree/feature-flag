@@ -85,15 +85,18 @@ onResult(() => {
     }
 
     // USE PERCENTAGE
-    if (flag.value.enablePercentage < 100) {
+    if (flag.value.abPercentage < 100) {
       const onOffRatio = Math.ceil(
-        (flag.value.onCount / (flag.value.onCount + flag.value.offCount)) * 100
+        (flag.value.abShowCount / (flag.value.abShowCount + flag.value.abHideCount)) * 100
       )
-      const enabledPercentage = flag.value.enablePercentage
+      const enabledPercentage = flag.value.abPercentage
       const shouldShow = onOffRatio <= enabledPercentage
 
       if (shouldShow) {
-        updateFlagPercentage({ id: flag.value.id, data: { onCount: flag.value.onCount + 1 } })
+        updateFlagPercentage({
+          id: flag.value.id,
+          data: { abShowCount: flag.value.abShowCount + 1 }
+        })
         showFeature.value = ShowState.FEATURE
         return
       }
@@ -101,12 +104,12 @@ onResult(() => {
 
     // SHOW ELSE
     if (props.showElse) {
-      updateFlagPercentage({ id: flag.value.id, data: { offCount: flag.value.offCount + 1 } })
+      updateFlagPercentage({ id: flag.value.id, data: { abHideCount: flag.value.abHideCount + 1 } })
       showFeature.value = ShowState.ELSE
       return
     }
 
-    updateFlagPercentage({ id: flag.value.id, data: { offCount: flag.value.offCount + 1 } })
+    updateFlagPercentage({ id: flag.value.id, data: { abHideCount: flag.value.abHideCount + 1 } })
     showFeature.value = ShowState.NONE
   }
 })
@@ -117,7 +120,7 @@ onResult(() => {
   <p v-if="loading">Loading...</p>
   <template v-else>
     <div v-if="!ignorePercentage && flag" class="font16">
-      A/B: {{ flag.enablePercentage }}% ({{ flag.onCount }} / {{ flag.offCount }})
+      A/B: {{ flag.abPercentage }}% ({{ flag.abShowCount }} / {{ flag.abHideCount }})
     </div>
     <slot v-if="showFeature === ShowState.FEATURE" name="default"></slot>
     <slot v-else-if="showFeature === ShowState.ELSE" name="elseElement"></slot>

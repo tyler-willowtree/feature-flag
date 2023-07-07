@@ -1,24 +1,24 @@
 /*
   Warnings:
 
-  - Added the required column `localEnablePercentage` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `localOffCount` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `localOnCount` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `productionEnablePercentage` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `productionOffCount` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `productionOnCount` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `stagingEnablePercentage` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `stagingOffCount` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `stagingOnCount` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `abPercentageLocal` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `abHideCountLocal` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `abShowCountLocal` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `abPercentageProd` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `abHideCountProd` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `abShowCountProd` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `abPercentageStage` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `abHideCountStage` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `abShowCountStage` to the `FeatureFlagSingleDb` table without a default value. This is not possible if the table is not empty.
 
 */
 -- AlterTable
-ALTER TABLE `FeatureFlagSingleDb` ADD COLUMN `localEnablePercentage` INTEGER NOT NULL,
-    ADD COLUMN `localOffCount` INTEGER NOT NULL,
-    ADD COLUMN `localOnCount` INTEGER NOT NULL,
-    ADD COLUMN `productionEnablePercentage` INTEGER NOT NULL,
-    ADD COLUMN `productionOffCount` INTEGER NOT NULL,
-    ADD COLUMN `productionOnCount` INTEGER NOT NULL,
-    ADD COLUMN `stagingEnablePercentage` INTEGER NOT NULL,
-    ADD COLUMN `stagingOffCount` INTEGER NOT NULL,
-    ADD COLUMN `stagingOnCount` INTEGER NOT NULL;
+ALTER TABLE `FeatureFlagSingleDb` ADD COLUMN `abPercentageLocal` INTEGER NOT NULL,
+    ADD COLUMN `abHideCountLocal` INTEGER NOT NULL,
+    ADD COLUMN `abShowCountLocal` INTEGER NOT NULL,
+    ADD COLUMN `abPercentageProd` INTEGER NOT NULL,
+    ADD COLUMN `abHideCountProd` INTEGER NOT NULL,
+    ADD COLUMN `abShowCountProd` INTEGER NOT NULL,
+    ADD COLUMN `abPercentageStage` INTEGER NOT NULL,
+    ADD COLUMN `abHideCountStage` INTEGER NOT NULL,
+    ADD COLUMN `abShowCountStage` INTEGER NOT NULL;

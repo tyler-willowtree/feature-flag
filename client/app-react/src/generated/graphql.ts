@@ -18,49 +18,86 @@ export type Scalars = {
 
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
+  abHideCount: Scalars['Int']['output'];
+  abPercentage: Scalars['Int']['output'];
+  abShowCount: Scalars['Int']['output'];
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
-  enablePercentage: Scalars['Int']['output'];
   enabled: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
-  offCount: Scalars['Int']['output'];
-  onCount: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
 export type FeatureFlagCreateInput = {
-  createdAt?: Scalars['DateTime']['input'];
+  abPercentage?: Scalars['Int']['input'];
   description: Scalars['String']['input'];
-  enablePercentage?: Scalars['Int']['input'];
   enabled?: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
-  offCount?: Scalars['Int']['input'];
-  onCount?: Scalars['Int']['input'];
-  updatedAt?: Scalars['DateTime']['input'];
 };
 
 export type FeatureFlagPercentageUpdateInput = {
-  offCount?: InputMaybe<Scalars['Int']['input']>;
-  onCount?: InputMaybe<Scalars['Int']['input']>;
+  abHideCount?: InputMaybe<Scalars['Int']['input']>;
+  abShowCount?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type FeatureFlagSingleDb = {
   __typename?: 'FeatureFlagSingleDb';
+  abHideCountLocal: Scalars['Int']['output'];
+  abHideCountProd: Scalars['Int']['output'];
+  abHideCountStage: Scalars['Int']['output'];
+  abPercentageLocal: Scalars['Int']['output'];
+  abPercentageProd: Scalars['Int']['output'];
+  abPercentageStage: Scalars['Int']['output'];
+  abShowCountLocal: Scalars['Int']['output'];
+  abShowCountProd: Scalars['Int']['output'];
+  abShowCountStage: Scalars['Int']['output'];
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
+  enabledLocal: Scalars['Boolean']['output'];
+  enabledProd: Scalars['Boolean']['output'];
+  enabledStage: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
-  localEnabled: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
-  productionEnabled: Scalars['Boolean']['output'];
-  stagingEnabled: Scalars['Boolean']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type FeatureFlagSingleDbCreateInput = {
+  abPercentageLocal?: Scalars['Int']['input'];
+  abPercentageProd?: Scalars['Int']['input'];
+  abPercentageStage?: Scalars['Int']['input'];
+  description: Scalars['String']['input'];
+  enabledLocal?: Scalars['Boolean']['input'];
+  enabledProd?: Scalars['Boolean']['input'];
+  enabledStage?: Scalars['Boolean']['input'];
+  name: Scalars['String']['input'];
+};
+
+export type FeatureFlagSingleDbPercentageUpdateInput = {
+  abHideCountLocal?: InputMaybe<Scalars['Int']['input']>;
+  abHideCountProd?: InputMaybe<Scalars['Int']['input']>;
+  abHideCountStage?: InputMaybe<Scalars['Int']['input']>;
+  abShowCountLocal?: InputMaybe<Scalars['Int']['input']>;
+  abShowCountProd?: InputMaybe<Scalars['Int']['input']>;
+  abShowCountStage?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type FeatureFlagSingleDbToggleUniqueInput = {
-  localEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  productionEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  stagingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  enabledLocal?: InputMaybe<Scalars['Boolean']['input']>;
+  enabledProd?: InputMaybe<Scalars['Boolean']['input']>;
+  enabledStage?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type FeatureFlagSingleDbUpdateInput = {
+  abPercentageLocal?: Scalars['Int']['input'];
+  abPercentageProd?: Scalars['Int']['input'];
+  abPercentageStage?: Scalars['Int']['input'];
+  description: Scalars['String']['input'];
+  enabledLocal?: Scalars['Boolean']['input'];
+  enabledProd?: Scalars['Boolean']['input'];
+  enabledStage?: Scalars['Boolean']['input'];
+  id: Scalars['Int']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type FeatureFlagToggleInput = {
@@ -68,15 +105,11 @@ export type FeatureFlagToggleInput = {
 };
 
 export type FeatureFlagUpdateInput = {
-  createdAt?: Scalars['DateTime']['input'];
+  abPercentage?: Scalars['Int']['input'];
   description: Scalars['String']['input'];
-  enablePercentage?: Scalars['Int']['input'];
   enabled?: Scalars['Boolean']['input'];
   id: Scalars['Int']['input'];
   name: Scalars['String']['input'];
-  offCount?: Scalars['Int']['input'];
-  onCount?: Scalars['Int']['input'];
-  updatedAt?: Scalars['DateTime']['input'];
 };
 
 export type Mutation = {
@@ -92,17 +125,7 @@ export type Mutation = {
   updateFlag: FeatureFlag;
   updateFlagPercentage: FeatureFlag;
   updateFlagSDB: FeatureFlagSingleDb;
-};
-
-
-export type MutationCreateExampleFlagArgs = {
-  data: FeatureFlagCreateInput;
-};
-
-
-export type MutationCreateExampleFlagSdbArgs = {
-  description: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  updateFlagSDBPercentage: FeatureFlagSingleDb;
 };
 
 
@@ -112,8 +135,7 @@ export type MutationCreateFlagArgs = {
 
 
 export type MutationCreateFlagSdbArgs = {
-  description: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  data: FeatureFlagSingleDbCreateInput;
 };
 
 
@@ -152,9 +174,14 @@ export type MutationUpdateFlagPercentageArgs = {
 
 
 export type MutationUpdateFlagSdbArgs = {
-  description: Scalars['String']['input'];
+  data: FeatureFlagSingleDbUpdateInput;
   id: Scalars['Int']['input'];
-  name: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateFlagSdbPercentageArgs = {
+  data: FeatureFlagSingleDbPercentageUpdateInput;
+  id: Scalars['Int']['input'];
 };
 
 export type Query = {

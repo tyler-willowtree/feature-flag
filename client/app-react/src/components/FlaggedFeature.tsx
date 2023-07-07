@@ -60,7 +60,7 @@ export const FlaggedFeature: React.FC<FlaggedFeatureProps> = ({
     <>
       {!ignorePercentage && flag ? (
         <div className="font16">
-          A/B: {flag.enablePercentage}% ({flag.onCount} / {flag.offCount})
+          A/B: {flag.abPercentage}% ({flag.abShowCount} / {flag.abHideCount})
         </div>
       ) : null}
     </>
@@ -103,15 +103,15 @@ export const FlaggedFeature: React.FC<FlaggedFeatureProps> = ({
     }
 
     // USE PERCENTAGE
-    if (flag.enablePercentage < 100) {
+    if (flag.abPercentage < 100) {
       const onOffRatio = Math.ceil(
-        (flag.onCount / (flag.onCount + flag.offCount)) * 100
+        (flag.abShowCount / (flag.abShowCount + flag.abHideCount)) * 100
       );
-      const enabledPercentage = flag.enablePercentage;
+      const enabledPercentage = flag.abPercentage;
       const shouldShow = onOffRatio <= enabledPercentage;
 
       if (shouldShow) {
-        updateCounts({ onCount: flag.onCount + 1 });
+        updateCounts({ abShowCount: flag.abShowCount + 1 });
         setShowFeature(ShowState.FEATURE);
         return;
       }
@@ -119,13 +119,13 @@ export const FlaggedFeature: React.FC<FlaggedFeatureProps> = ({
 
     // SHOW ELSE ELEMENT
     if (elseElement) {
-      updateCounts({ offCount: flag.offCount + 1 });
+      updateCounts({ abHideCount: flag.abHideCount + 1 });
       setShowFeature(ShowState.ELSE);
       return;
     }
 
     // SHOW NOTHING
-    updateCounts({ offCount: flag.offCount + 1 });
+    updateCounts({ abHideCount: flag.abHideCount + 1 });
     setShowFeature(ShowState.NONE);
   }, [loading]);
 

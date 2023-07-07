@@ -14,9 +14,9 @@ export const useGetAllFlags = () => {
           id
           name
           enabled
-          enablePercentage
-          onCount
-          offCount
+          abPercentage
+          abShowCount
+          abHideCount
         }
       }
     `,
@@ -38,9 +38,9 @@ export const useGetFlagByName = (name: string) => {
           id
           name
           enabled
-          enablePercentage
-          onCount
-          offCount
+          abPercentage
+          abShowCount
+          abHideCount
         }
       }
     `,
@@ -67,12 +67,12 @@ export const useUpdateFlagCount = () => {
         updateFlagPercentage(data: $data, id: $id) {
           createdAt
           description
-          enablePercentage
+          abPercentage
           enabled
           id
           name
-          offCount
-          onCount
+          abHideCount
+          abShowCount
           updatedAt
         }
       }

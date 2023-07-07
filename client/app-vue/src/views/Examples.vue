@@ -11,9 +11,9 @@ const { result, loading, error } = useQuery<Query, QueryGetFlagByNameArgs>(
         id
         name
         enabled
-        enablePercentage
-        onCount
-        offCount
+        abPercentage
+        abShowCount
+        abHideCount
       }
     }
   `
@@ -100,8 +100,8 @@ const fakeNames = ['non-exist', 'test-84', 'test-85', 'test-86']
     <FlagSection
       :names="
         result.getAllFlags
-          .filter((flag) => flag.enabled && flag.enablePercentage < 100)
-          .sort((a, b) => (a.enablePercentage < b.enablePercentage ? 1 : -1))
+          .filter((flag) => flag.enabled && flag.abPercentage < 100)
+          .sort((a, b) => (a.abPercentage < b.abPercentage ? 1 : -1))
           .map((flag) => flag.name)
       "
       :showElseElement="true"

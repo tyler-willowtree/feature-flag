@@ -15,9 +15,9 @@ const graphQlOptions = {
       'name',
       'description',
       'enabled',
-      'enablePercentage',
-      'onCount',
-      'offCount',
+      'abPercentage',
+      'abShowCount',
+      'abHideCount',
       'updatedAt',
     ],
   },
@@ -36,18 +36,18 @@ const graphQlOptions = {
       'id',
       'name',
       'description',
-      'localEnabled',
-      'stagingEnabled',
-      'productionEnabled',
-      'localEnablePercentage',
-      'stagingEnablePercentage',
-      'productionEnablePercentage',
-      'localOnCount',
-      'localOffCount',
-      'stagingOnCount',
-      'stagingOffCount',
-      'productionOnCount',
-      'productionOffCount',
+      'enabledLocal',
+      'enabledStage',
+      'enabledProd',
+      'abPercentageLocal',
+      'abPercentageStage',
+      'abPercentageProd',
+      'abShowCountLocal',
+      'abHideCountLocal',
+      'abShowCountStage',
+      'abHideCountStage',
+      'abShowCountProd',
+      'abHideCountProd',
       'updatedAt',
     ],
   },
@@ -77,7 +77,7 @@ const tableOptions = {
         width: '120px',
       },
       {
-        id: 'enablePercentage',
+        id: 'abPercentage',
         label: 'A/B',
         sortable: true,
         type: 'ab-test',
@@ -109,7 +109,7 @@ const tableOptions = {
         includeToggle: true,
         toggle: 'enabled',
       },
-      { id: 'enablePercentage', type: 'ab-test' },
+      { id: 'abPercentage', type: 'ab-test' },
       { id: 'updatedAt', divClassList: ['text-end'], type: 'date' },
       { id: 'actions' },
     ],
@@ -129,7 +129,7 @@ const tableOptions = {
         type: 'text',
       },
       {
-        id: 'localEnabled',
+        id: 'enabledLocal',
         label: 'Local',
         sortable: true,
         type: 'boolean',
@@ -137,14 +137,14 @@ const tableOptions = {
         width: '130px',
       },
       {
-        id: 'stagingEnabled',
+        id: 'enabledStage',
         label: 'Staging',
         sortable: true,
         type: 'boolean',
         width: '130px',
       },
       {
-        id: 'productionEnabled',
+        id: 'enabledProd',
         label: 'Production',
         sortable: true,
         type: 'boolean',
@@ -171,21 +171,21 @@ const tableOptions = {
       { id: 'name' },
       { id: 'description' },
       {
-        id: 'localEnabled',
+        id: 'enabledLocal',
         includeToggle: true,
-        toggle: 'localEnabled',
+        toggle: 'enabledLocal',
         isToggleColumn: true,
       },
       {
-        id: 'stagingEnabled',
+        id: 'enabledStage',
         includeToggle: true,
-        toggle: 'stagingEnabled',
+        toggle: 'enabledStage',
         isToggleColumn: true,
       },
       {
-        id: 'productionEnabled',
+        id: 'enabledProd',
         includeToggle: true,
-        toggle: 'productionEnabled',
+        toggle: 'enabledProd',
         isToggleColumn: true,
       },
       { id: 'updatedAt', divClassList: ['text-end'], type: 'date' },
@@ -524,10 +524,10 @@ class PageSetup {
 
       if (this.#db === 'own') {
         fields.push({
-          name: 'enablePercentage',
+          name: 'abPercentage',
           label: 'A/B Percentage',
           type: 'number',
-          value: this.#editing ? this.#editing.enablePercentage : '100',
+          value: this.#editing ? this.#editing.abPercentage : '100',
           min: 5,
           max: 100,
           step: 5,
@@ -536,34 +536,30 @@ class PageSetup {
       } else {
         fields.push(
           {
-            name: 'localEnablePercentage',
+            name: 'abPercentageLocal',
             label: 'Local A/B Percentage',
             type: 'number',
-            value: this.#editing ? this.#editing.localEnablePercentage : '100',
+            value: this.#editing ? this.#editing.abPercentageLocal : '100',
             min: 5,
             max: 100,
             step: 5,
             extraText: 'Set to 100 to disable A/B testing',
           },
           {
-            name: 'stagingEnablePercentage',
+            name: 'abPercentageStage',
             label: 'Staging A/B Percentage',
             type: 'number',
-            value: this.#editing
-              ? this.#editing.stagingEnablePercentage
-              : '100',
+            value: this.#editing ? this.#editing.abPercentageStage : '100',
             min: 5,
             max: 100,
             step: 5,
             extraText: 'Set to 100 to disable A/B testing',
           },
           {
-            name: 'productionEnablePercentage',
+            name: 'abPercentageProd',
             label: 'Production A/B Percentage',
             type: 'number',
-            value: this.#editing
-              ? this.#editing.productionEnablePercentage
-              : '100',
+            value: this.#editing ? this.#editing.abPercentageProd : '100',
             min: 5,
             max: 100,
             step: 5,
@@ -657,13 +653,13 @@ class PageSetup {
     div.classList.add('text-center');
     let str;
 
-    const percent = row.enablePercentage;
+    const percent = row.abPercentage;
     if (Number(percent) === 100) {
       str = `n/a`;
     } else {
       str = `<div class='mb-1'>${percent}%</div>`;
       if (Number(percent) !== 100) {
-        str += `<div class='small'><u>Counts</u><br/>${row.onCount} / ${row.offCount}</div>`;
+        str += `<div class='small'><u>Counts</u><br/>${row.abShowCount} / ${row.abHideCount}</div>`;
       }
     }
     div.innerHTML = str;
@@ -741,11 +737,11 @@ class PageSetup {
       abDiv.classList.add('ps-2', 'small');
       let str;
       const env = rowOpt.toggle.replace('Enabled', '');
-      const percent = row[`${env}EnablePercentage`];
+      const percent = row[`${env}abPercentage`];
       str = `<div>A/B: ${percent}%</div>`;
       if (Number(percent) !== 100) {
-        str += `<div>Counts: ${row[`${env}OnCount`]} / ${
-          row[`${env}OffCount`]
+        str += `<div>Counts: ${row[`${env}abShowCount`]} / ${
+          row[`${env}abHideCount`]
         }</div>`;
       }
       abDiv.innerHTML = str;
