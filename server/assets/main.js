@@ -39,6 +39,15 @@ const graphQlOptions = {
       'localEnabled',
       'stagingEnabled',
       'productionEnabled',
+      'localEnablePercentage',
+      'stagingEnablePercentage',
+      'productionEnablePercentage',
+      'localOnCount',
+      'localOffCount',
+      'stagingOnCount',
+      'stagingOffCount',
+      'productionOnCount',
+      'productionOffCount',
       'updatedAt',
     ],
   },
@@ -69,18 +78,18 @@ const tableOptions = {
       },
       {
         id: 'enablePercentage',
-        label: 'Enable %',
-        divClassList: ['text-center'],
-        type: 'percent',
-        width: '120px',
+        label: 'A/B',
+        sortable: true,
+        type: 'ab-test',
+        width: '100px',
       },
       {
         id: 'updatedAt',
-        label: 'Updated At',
+        label: 'Updated',
         divClassList: ['row-reverse'],
         sortable: true,
         type: 'date',
-        width: '180px',
+        width: '110px',
       },
       {
         id: 'actions',
@@ -88,7 +97,7 @@ const tableOptions = {
         divClassList: ['text-center'],
         sortable: false,
         type: 'actions',
-        width: '167px',
+        width: '120px',
       },
     ],
     rows: [
@@ -96,12 +105,13 @@ const tableOptions = {
       { id: 'description' },
       {
         id: 'enabled',
-        divClassList: ['text-center'],
         isToggleColumn: true,
+        includeToggle: true,
+        toggle: 'enabled',
       },
-      { id: 'enablePercentage', divClassList: ['text-center'] },
+      { id: 'enablePercentage', type: 'ab-test' },
       { id: 'updatedAt', divClassList: ['text-end'], type: 'date' },
-      { id: 'actions', includeToggle: true, toggle: 'enabled' },
+      { id: 'actions' },
     ],
   },
   shared: {
@@ -142,11 +152,11 @@ const tableOptions = {
       },
       {
         id: 'updatedAt',
-        label: 'Updated At',
+        label: 'Updated',
         divClassList: ['row-reverse'],
         sortable: true,
         type: 'date',
-        width: '180px',
+        width: '110px',
       },
       {
         id: 'actions',
@@ -154,7 +164,7 @@ const tableOptions = {
         divClassList: ['text-center'],
         sortable: false,
         type: 'actions',
-        width: '115px',
+        width: '120px',
       },
     ],
     rows: [
@@ -162,33 +172,18 @@ const tableOptions = {
       { id: 'description' },
       {
         id: 'localEnabled',
-        divClassList: [
-          'd-flex',
-          'justify-content-around',
-          'align-items-center',
-        ],
         includeToggle: true,
         toggle: 'localEnabled',
         isToggleColumn: true,
       },
       {
         id: 'stagingEnabled',
-        divClassList: [
-          'd-flex',
-          'justify-content-around',
-          'align-items-center',
-        ],
         includeToggle: true,
         toggle: 'stagingEnabled',
         isToggleColumn: true,
       },
       {
         id: 'productionEnabled',
-        divClassList: [
-          'd-flex',
-          'justify-content-around',
-          'align-items-center',
-        ],
         includeToggle: true,
         toggle: 'productionEnabled',
         isToggleColumn: true,
@@ -291,7 +286,7 @@ class PageSetup {
   }
 
   #formatDate(date) {
-    return dayjs(date).format('MMM DD, YY h:mm a');
+    return dayjs(date).format('MMM DD, YY<br/>h:mm a');
   }
 
   #getApiConfig(query) {
@@ -301,6 +296,20 @@ class PageSetup {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query }),
     };
+  }
+
+  #getColumnTypeFunction(type, params) {
+    switch (type) {
+      case 'boolean':
+        return this.#buildCellBoolean(params);
+      case 'date':
+        return this.#buildCellDate(params);
+      case 'ab-test':
+        return this.#buildCellAbTest(params);
+      case 'text':
+      default:
+        return this.#buildCellText(params);
+    }
   }
 
   #htmlCreateButton({
@@ -327,10 +336,10 @@ class PageSetup {
     return button;
   }
 
-  #htmlCreateIconButton({ icon, clickHandler, type }) {
+  #htmlCreateIconButton({ icon, clickHandler, type, extraClasses = [] }) {
     const button = document.createElement('button');
     button.type = 'button';
-    button.classList.add('btn', 'btn-icon', type);
+    button.classList.add('btn', 'btn-icon', type, ...extraClasses);
     button.addEventListener('click', clickHandler);
     const iconEl = document.createElement('i');
     iconEl.classList.add('fa-solid', `fa-${icon}`, 'fa-lg');
@@ -541,42 +550,18 @@ class PageSetup {
   }
 
   #updateCustomTableBody() {
-    const colOpts = tableOptions[this.#db].headers;
-    const rowOpts = tableOptions[this.#db].rows;
-    const rows = this.#pagedFlags[this.#currentPageForArray].map((item) => {
-      const entries = Object.entries(item);
-      return {
-        id: item.id,
-        ...Object.assign(
-          {},
-          ...colOpts.map((opt) => {
-            const cell = entries.find((entry) => entry[0] === opt.id);
-            if (cell) {
-              let str;
-              if (opt.type === 'date') {
-                str = this.#formatDate(cell[1]);
-              } else if (opt.type === 'percent') {
-                const onCount = entries.find((entry) => entry[0] === 'onCount');
-                const offCount = entries.find(
-                  (entry) => entry[0] === 'offCount'
-                );
-                str = `${cell[1]}%`;
-                if (Number(cell[1]) !== 100) {
-                  str += `<br/><span class='small'>${onCount[1]} / ${offCount[1]} viewing</span>`;
-                }
-              } else {
-                str = cell[1];
-              }
-              return { [cell[0]]: str };
-            }
-          })
-        ),
-      };
-    });
-
-    this.#tableBody.setAttribute('rows', JSON.stringify(rows));
-    this.#tableBody.setAttribute('row-options', JSON.stringify(rowOpts));
-    this.#tableBody.setAttribute('col-options', JSON.stringify(colOpts));
+    this.#tableBody.setAttribute(
+      'rows',
+      JSON.stringify(this.#pagedFlags[this.#currentPageForArray])
+    );
+    this.#tableBody.setAttribute(
+      'row-options',
+      JSON.stringify(tableOptions[this.#db].rows)
+    );
+    this.#tableBody.setAttribute(
+      'col-options',
+      JSON.stringify(tableOptions[this.#db].headers)
+    );
   }
 
   #updateCustomTableHead() {
@@ -604,21 +589,64 @@ class PageSetup {
   }
 
   /*  ------ Create/Build Components ------ */
-  #buildActionCell(params) {
+  #buildCell(params) {
+    const { colOption, rowOpt, index } = params;
+    const td = document.createElement('td');
+    if (index === 0) {
+      td.setAttribute('scope', 'row');
+    }
+    const div = document.createElement('div');
+    div.classList.add('lh-sm');
+    td.append(div);
+
+    if (rowOpt.divClassList) {
+      div.classList.add(...rowOpt.divClassList);
+    }
+
+    this.#getColumnTypeFunction(colOption.type, { ...params, div, td });
+
+    return td;
+  }
+
+  #buildCellAbTest(params) {
+    const { row, div } = params;
+    div.classList.add('text-center');
+    let str;
+
+    const percent = row.enablePercentage;
+    if (Number(percent) === 100) {
+      str = `n/a`;
+    } else {
+      str = `<div class='mb-1'>${percent}%</div>`;
+      if (Number(percent) !== 100) {
+        str += `<div class='small'><u>Counts</u><br/>${row.onCount} / ${row.offCount}</div>`;
+      }
+    }
+    div.innerHTML = str;
+  }
+
+  #buildCellAction(params) {
     const { row, rowOpt } = params;
     const td = document.createElement('td');
     const div = document.createElement('div');
-    div.classList.add('actions');
+    div.classList.add(
+      'd-flex',
+      'align-items-center',
+      'justify-content-between'
+    );
+
     const delButton = this.#htmlCreateIconButton({
       icon: 'trash',
       clickHandler: () => this.handleDeleteFlag(row.id),
       type: 'delete',
     });
+
     const editButton = this.#htmlCreateIconButton({
       icon: 'pencil',
       clickHandler: () => dbClass.handleAddEditFormOpen('update', row.id),
       type: 'edit',
     });
+
     div.append(delButton);
     div.append(editButton);
 
@@ -636,42 +664,59 @@ class PageSetup {
     return td;
   }
 
-  #buildCell(params) {
-    const { cellData, row, rowOpt, index } = params;
-    const td = document.createElement('td');
-    if (index === 0) {
-      td.setAttribute('scope', 'row');
+  #buildCellBoolean(params) {
+    const { cellData, row, rowOpt, div, td } = params;
+
+    div.classList.add(
+      'd-flex',
+      'justify-content-between',
+      'align-items-center',
+      this.#db === 'own' ? 'ps-3' : 'ps-2'
+    );
+
+    const icon = document.createElement('i');
+    icon.classList.add(
+      'fa-solid',
+      `fa-${!cellData ? 'xmark' : 'check'}`,
+      'fa-lg'
+    );
+    div.append(icon);
+
+    if (rowOpt.includeToggle) {
+      const toggleBtn = this.#htmlCreateIconButton({
+        icon: row[rowOpt.toggle] ? 'toggle-off' : 'toggle-on',
+        clickHandler: () =>
+          this.handleToggleFlag(row.id, rowOpt.toggle, !row[rowOpt.toggle]),
+        type: 'toggle',
+      });
+      div.append(toggleBtn);
     }
-    const div = document.createElement('div');
 
-    if (rowOpt.divClassList) {
-      div.classList.add(...rowOpt.divClassList);
-    }
-
-    if (rowOpt.isToggleColumn) {
-      const icon = document.createElement('i');
-      icon.classList.add(
-        'fa-solid',
-        `fa-${!cellData ? 'xmark' : 'check'}`,
-        'fa-lg'
-      );
-      div.append(icon);
-
-      if (rowOpt.includeToggle) {
-        const toggleBtn = this.#htmlCreateIconButton({
-          icon: row[rowOpt.toggle] ? 'toggle-off' : 'toggle-on',
-          clickHandler: () =>
-            this.handleToggleFlag(row.id, rowOpt.toggle, !row[rowOpt.toggle]),
-          type: 'toggle',
-        });
-        div.append(toggleBtn);
+    if (this.#db === 'shared') {
+      const abDiv = document.createElement('div');
+      abDiv.classList.add('ps-2', 'small');
+      let str;
+      const env = rowOpt.toggle.replace('Enabled', '');
+      const percent = row[`${env}EnablePercentage`];
+      str = `<div>A/B: ${percent}%</div>`;
+      if (Number(percent) !== 100) {
+        str += `<div>Counts: ${row[`${env}OnCount`]} / ${
+          row[`${env}OffCount`]
+        }</div>`;
       }
-    } else {
-      div.innerHTML = cellData;
+      abDiv.innerHTML = str;
+      td.append(abDiv);
     }
+  }
 
-    td.append(div);
-    return td;
+  #buildCellDate(params) {
+    const { cellData, div } = params;
+    div.innerHTML = this.#formatDate(cellData);
+  }
+
+  #buildCellText(params) {
+    const { cellData, div } = params;
+    div.innerHTML = cellData;
   }
 
   #createPageContent() {
@@ -841,7 +886,7 @@ class PageSetup {
 
   createTableRowCell(params, isActions = false) {
     if (isActions) {
-      return this.#buildActionCell(params);
+      return this.#buildCellAction(params);
     } else {
       return this.#buildCell(params);
     }
