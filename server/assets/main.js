@@ -522,6 +522,56 @@ class PageSetup {
         },
       ];
 
+      if (this.#db === 'own') {
+        fields.push({
+          name: 'enablePercentage',
+          label: 'A/B Percentage',
+          type: 'number',
+          value: this.#editing ? this.#editing.enablePercentage : '100',
+          min: 5,
+          max: 100,
+          step: 5,
+          extraText: 'Set to 100 to disable A/B testing',
+        });
+      } else {
+        fields.push(
+          {
+            name: 'localEnablePercentage',
+            label: 'Local A/B Percentage',
+            type: 'number',
+            value: this.#editing ? this.#editing.localEnablePercentage : '100',
+            min: 5,
+            max: 100,
+            step: 5,
+            extraText: 'Set to 100 to disable A/B testing',
+          },
+          {
+            name: 'stagingEnablePercentage',
+            label: 'Staging A/B Percentage',
+            type: 'number',
+            value: this.#editing
+              ? this.#editing.stagingEnablePercentage
+              : '100',
+            min: 5,
+            max: 100,
+            step: 5,
+            extraText: 'Set to 100 to disable A/B testing',
+          },
+          {
+            name: 'productionEnablePercentage',
+            label: 'Production A/B Percentage',
+            type: 'number',
+            value: this.#editing
+              ? this.#editing.productionEnablePercentage
+              : '100',
+            min: 5,
+            max: 100,
+            step: 5,
+            extraText: 'Set to 100 to disable A/B testing',
+          }
+        );
+      }
+
       if (this.#editing) {
         this.#addEditForm.setAttribute('add-edit', 'edit');
         this.#addEditForm.setAttribute('title', 'Edit Flag');

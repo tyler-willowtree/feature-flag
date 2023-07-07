@@ -79,6 +79,12 @@ const updateFlagForm = (element) => {
       });
     }
 
+    if (field.type === 'number') {
+      input.setAttribute('min', field.min || '0');
+      input.setAttribute('max', field.max || '100');
+      input.setAttribute('step', field.step || '1');
+    }
+
     group.prepend(label, input);
     return group;
   });
