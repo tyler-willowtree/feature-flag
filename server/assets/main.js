@@ -336,10 +336,10 @@ class PageSetup {
     return button;
   }
 
-  #htmlCreateIconButton({ icon, clickHandler, type, extraClasses = [] }) {
+  #htmlCreateIconButton({ icon, clickHandler, type }) {
     const button = document.createElement('button');
     button.type = 'button';
-    button.classList.add('btn', 'btn-icon', type, ...extraClasses);
+    button.classList.add('btn', 'btn-icon', type);
     button.addEventListener('click', clickHandler);
     const iconEl = document.createElement('i');
     iconEl.classList.add('fa-solid', `fa-${icon}`, 'fa-lg');
@@ -351,7 +351,7 @@ class PageSetup {
     const row = tableOptions[this.#db].headers;
     const colType = row.find((cell) => this.#sortBy.id === cell.id).type;
     if (colType === 'date') {
-      return this.#formatDate(data);
+      return dayjs(data);
     } else if (colType === 'boolean') {
       return Boolean(data);
     } else if (colType === 'number' || colType === 'percent') {
@@ -519,12 +519,6 @@ class PageSetup {
           label: 'Description',
           type: 'text',
           value: this.#editing ? this.#editing.description : '',
-        },
-        {
-          name: 'enablePercentage',
-          label: 'Enable Percentage',
-          type: 'number',
-          value: this.#editing ? this.#editing.enablePercentage : 100,
         },
       ];
 
