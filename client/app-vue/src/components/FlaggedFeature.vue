@@ -116,7 +116,7 @@ onResult(() => {
   <p v-if="error">{{ error.message }}</p>
   <p v-if="loading">Loading...</p>
   <template v-else>
-    <div v-if="!ignorePercentage && flag">
+    <div v-if="!ignorePercentage && flag" class="font16">
       A/B: {{ flag.enablePercentage }}% ({{ flag.onCount }} / {{ flag.offCount }})
     </div>
     <slot v-if="showFeature === ShowState.FEATURE" name="default"></slot>

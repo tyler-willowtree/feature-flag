@@ -59,9 +59,13 @@ fetch(process.env.JS_APP_API_URL, {
     const disabled = result.data.getAllFlags
       .filter((flag) => !flag.enabled)
       .map((flag) => flag.name);
+    const ab = result.data.getAllFlags
+      .filter((flag) => flag.enabled && flag.enablePercentage < 100)
+      .sort((a, b) => (a.enablePercentage < b.enablePercentage ? 1 : -1))
+      .map((flag) => flag.name);
     buildFlagSection(enabled, 'enabled-flags', false, true);
     buildFlagSection(disabled, 'disabled-flags', false, true);
     buildFlagSection(enabled, 'enabled-flags-else', true, true);
 
-    buildFlagSection(enabled, 'ab-testing', true, false);
+    buildFlagSection(ab, 'ab-testing', true, false);
   });

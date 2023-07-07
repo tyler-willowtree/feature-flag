@@ -106,7 +106,10 @@ export const Examples: React.FC = () => {
           <FlagSection
             showElseElement
             names={flags
-              .filter((flag) => flag.enabled)
+              .filter((flag) => flag.enabled && flag.enablePercentage < 100)
+              .sort((a, b) =>
+                a.enablePercentage < b.enablePercentage ? 1 : -1
+              )
               .map((flag) => flag.name)}
           />
         </>

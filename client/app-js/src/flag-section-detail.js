@@ -8,7 +8,7 @@ customElements.define(
       this.innerHTML = `<div class='stacked'>
         <h5>Flag name: '${name}'</h5>
         <hr/>
-        <flagged-feature flag-key="${name}" ignore-percentage="${ignorePercentage}" class='text-center'>
+        <flagged-feature flag-key="${name}" ignore-percentage="${ignorePercentage}" class='stacked text-center'>
           <div slot="feature">Feature for ${name}</div>
           ${showElse ? '<div slot="elseElement">Coming soon</div> ' : ''}
         </flagged-feature

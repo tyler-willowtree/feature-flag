@@ -23,7 +23,7 @@ const fakeNames = ['non-exist', 'test-84', 'test-85', 'test-86']
 </script>
 
 <template>
-  <h1>Feature Flags Example (Vue)</h1>
+  <h1>Feature Flag Example (Vue)</h1>
 
   <h2>
     All available flags<br />
@@ -98,7 +98,12 @@ const fakeNames = ['non-exist', 'test-84', 'test-85', 'test-86']
       <span>uses percentages to decide to show or use else/hide</span>
     </h2>
     <FlagSection
-      :names="result.getAllFlags.filter((flag) => flag.enabled).map((flag) => flag.name)"
+      :names="
+        result.getAllFlags
+          .filter((flag) => flag.enabled && flag.enablePercentage < 100)
+          .sort((a, b) => (a.enablePercentage < b.enablePercentage ? 1 : -1))
+          .map((flag) => flag.name)
+      "
       :showElseElement="true"
     />
   </template>

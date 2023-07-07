@@ -34,7 +34,7 @@ customElements.define(
 
           // USE PERCENTAGE
           const abHtml = !ignorePercentage
-            ? `<div class='ab-string'>A/B: ${flag.enablePercentage}% (${flag.onCount} / ${flag.offCount})</div>`
+            ? `<div class="font16">A/B: ${flag.enablePercentage}% (${flag.onCount} / ${flag.offCount})</div>`
             : '';
 
           if (flag.enablePercentage < 100) {
