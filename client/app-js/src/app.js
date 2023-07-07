@@ -42,9 +42,9 @@ fetch(process.env.JS_APP_API_URL, {
         id
         name
         enabled
-        enablePercentage
-        onCount
-        offCount
+        abPercentage
+        abShowCount
+        abHideCount
       }
     }`,
   }),
@@ -60,8 +60,8 @@ fetch(process.env.JS_APP_API_URL, {
       .filter((flag) => !flag.enabled)
       .map((flag) => flag.name);
     const ab = result.data.getAllFlags
-      .filter((flag) => flag.enabled && flag.enablePercentage < 100)
-      .sort((a, b) => (a.enablePercentage < b.enablePercentage ? 1 : -1))
+      .filter((flag) => flag.enabled && flag.abPercentage < 100)
+      .sort((a, b) => (a.abPercentage < b.abPercentage ? 1 : -1))
       .map((flag) => flag.name);
     buildFlagSection(enabled, 'enabled-flags', false, true);
     buildFlagSection(disabled, 'disabled-flags', false, true);

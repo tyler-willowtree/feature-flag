@@ -12,40 +12,40 @@ export class FeatureFlagSingleDb {
   description: string;
 
   @Field(() => Boolean)
-  localEnabled: boolean;
+  enabledLocal: boolean;
 
   @Field(() => Boolean)
-  stagingEnabled: boolean;
+  enabledStage: boolean;
 
   @Field(() => Boolean)
-  productionEnabled: boolean;
+  enabledProd: boolean;
 
   @Field(() => Int)
-  localEnablePercentage: number;
+  abPercentageLocal: number;
 
   @Field(() => Int)
-  stagingEnablePercentage: number;
+  abPercentageStage: number;
 
   @Field(() => Int)
-  productionEnablePercentage: number;
+  abPercentageProd: number;
 
   @Field(() => Int)
-  localOnCount: number;
+  abShowCountLocal: number;
 
   @Field(() => Int)
-  localOffCount: number;
+  abHideCountLocal: number;
 
   @Field(() => Int)
-  stagingOnCount: number;
+  abShowCountStage: number;
 
   @Field(() => Int)
-  stagingOffCount: number;
+  abHideCountStage: number;
 
   @Field(() => Int)
-  productionOnCount: number;
+  abShowCountProd: number;
 
   @Field(() => Int)
-  productionOffCount: number;
+  abHideCountProd: number;
 
   @Field(() => Date)
   createdAt: Date;
@@ -57,34 +57,34 @@ export class FeatureFlagSingleDb {
 @InputType()
 export class FeatureFlagSingleDbToggleUniqueInput {
   @Field(() => Boolean, { nullable: true })
-  localEnabled: boolean;
+  enabledLocal: boolean;
 
   @Field(() => Boolean, { nullable: true })
-  stagingEnabled: boolean;
+  enabledStage: boolean;
 
   @Field(() => Boolean, { nullable: true })
-  productionEnabled: boolean;
+  enabledProd: boolean;
 }
 
 @InputType()
 export class FeatureFlagSingleDbPercentageUpdateInput {
   @Field(() => Int, { nullable: true })
-  localOnCount?: number;
+  abShowCountLocal?: number;
 
   @Field(() => Int, { nullable: true })
-  localOffCount?: number;
+  abHideCountLocal?: number;
 
   @Field(() => Int, { nullable: true })
-  stagingOnCount?: number;
+  abShowCountStage?: number;
 
   @Field(() => Int, { nullable: true })
-  stagingOffCount?: number;
+  abHideCountStage?: number;
 
   @Field(() => Int, { nullable: true })
-  productionOnCount?: number;
+  abShowCountProd?: number;
 
   @Field(() => Int, { nullable: true })
-  productionOffCount?: number;
+  abHideCountProd?: number;
 }
 
 @InputType()
@@ -96,22 +96,22 @@ export class FeatureFlagSingleDbCreateInput {
   description: string;
 
   @Field(() => Boolean, { defaultValue: true })
-  localEnabled: boolean;
+  enabledLocal: boolean;
 
   @Field(() => Boolean, { defaultValue: true })
-  stagingEnabled: boolean;
+  enabledStage: boolean;
 
   @Field(() => Boolean, { defaultValue: true })
-  productionEnabled: boolean;
+  enabledProd: boolean;
 
   @Field(() => Int, { defaultValue: 100 })
-  localEnablePercentage: number;
+  abPercentageLocal: number;
 
   @Field(() => Int, { defaultValue: 100 })
-  stagingEnablePercentage: number;
+  abPercentageStage: number;
 
   @Field(() => Int, { defaultValue: 100 })
-  productionEnablePercentage: number;
+  abPercentageProd: number;
 }
 
 @InputType()

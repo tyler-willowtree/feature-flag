@@ -34,20 +34,20 @@ customElements.define(
 
           // USE PERCENTAGE
           const abHtml = !ignorePercentage
-            ? `<div class="font16">A/B: ${flag.enablePercentage}% (${flag.onCount} / ${flag.offCount})</div>`
+            ? `<div class="font16">A/B: ${flag.abPercentage}% (${flag.abShowCount} / ${flag.abHideCount})</div>`
             : '';
 
-          if (flag.enablePercentage < 100) {
+          if (flag.abPercentage < 100) {
             const onOffRatio = Math.ceil(
-              (flag.onCount / (flag.onCount + flag.offCount)) * 100
+              (flag.abShowCount / (flag.abShowCount + flag.abHideCount)) * 100
             );
-            const enabledPercentage = flag.enablePercentage;
+            const enabledPercentage = flag.abPercentage;
             const shouldShow = onOffRatio <= enabledPercentage;
 
             if (shouldShow) {
               this.updateFlagCount(
                 flag.id,
-                `onCount: ${flag.onCount + 1}`
+                `abShowCount: ${flag.abShowCount + 1}`
               ).then();
               this.innerHTML = `${abHtml}${featureElement.innerHTML}`;
               return;
@@ -58,7 +58,7 @@ customElements.define(
           if (elseElement) {
             this.updateFlagCount(
               flag.id,
-              `offCount: ${flag.offCount + 1}`
+              `abHideCount: ${flag.abHideCount + 1}`
             ).then();
             this.innerHTML = `${abHtml}${elseElement.innerHTML}`;
             return;
@@ -66,7 +66,7 @@ customElements.define(
 
           this.updateFlagCount(
             flag.id,
-            `offCount: ${flag.offCount + 1}`
+            `abHideCount: ${flag.abHideCount + 1}`
           ).then();
           this.remove();
         })
@@ -85,9 +85,9 @@ customElements.define(
               id
               name
               enabled
-              enablePercentage
-              onCount
-              offCount
+              abPercentage
+              abShowCount
+              abHideCount
             }
           }`,
         }),
@@ -97,7 +97,7 @@ customElements.define(
       const flag = result.data.updateFlagPercentage;
       const hasString = this.querySelector('.ab-string');
       if (hasString) {
-        hasString.innerHTML = `A/B: ${flag.enablePercentage}% (${flag.onCount} / ${flag.offCount})`;
+        hasString.innerHTML = `A/B: ${flag.abPercentage}% (${flag.abShowCount} / ${flag.abHideCount})`;
       }
     }
 
@@ -113,9 +113,9 @@ customElements.define(
                 id
                 name
                 enabled
-                enablePercentage
-                onCount
-                offCount
+                abPercentage
+                abShowCount
+                abHideCount
               }
             }`,
         }),

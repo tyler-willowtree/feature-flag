@@ -15,13 +15,13 @@ export class FeatureFlag {
   enabled: boolean;
 
   @Field(() => Int)
-  enablePercentage: number;
+  abPercentage: number;
 
   @Field(() => Int)
-  onCount: number;
+  abShowCount: number;
 
   @Field(() => Int)
-  offCount: number;
+  abHideCount: number;
 
   @Field(() => Date)
   createdAt: Date;
@@ -39,10 +39,10 @@ export class FeatureFlagToggleInput {
 @InputType()
 export class FeatureFlagPercentageUpdateInput {
   @Field(() => Int, { nullable: true })
-  onCount?: number;
+  abShowCount?: number;
 
   @Field(() => Int, { nullable: true })
-  offCount?: number;
+  abHideCount?: number;
 }
 
 @InputType()
@@ -57,7 +57,7 @@ export class FeatureFlagCreateInput {
   enabled: boolean;
 
   @Field(() => Int, { defaultValue: 100 })
-  enablePercentage: number;
+  abPercentage: number;
 }
 
 @InputType()

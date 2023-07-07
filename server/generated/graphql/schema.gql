@@ -8,85 +8,85 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type FeatureFlag {
+  abHideCount: Int!
+  abPercentage: Int!
+  abShowCount: Int!
   createdAt: DateTime!
   description: String!
-  enablePercentage: Int!
   enabled: Boolean!
   id: Int!
   name: String!
-  offCount: Int!
-  onCount: Int!
   updatedAt: DateTime!
 }
 
 input FeatureFlagCreateInput {
+  abPercentage: Int! = 100
   description: String!
-  enablePercentage: Int! = 100
   enabled: Boolean! = true
   name: String!
 }
 
 input FeatureFlagPercentageUpdateInput {
-  offCount: Int
-  onCount: Int
+  abHideCount: Int
+  abShowCount: Int
 }
 
 type FeatureFlagSingleDb {
+  abHideCountLocal: Int!
+  abHideCountProd: Int!
+  abHideCountStage: Int!
+  abPercentageLocal: Int!
+  abPercentageProd: Int!
+  abPercentageStage: Int!
+  abShowCountLocal: Int!
+  abShowCountProd: Int!
+  abShowCountStage: Int!
   createdAt: DateTime!
   description: String!
+  enabledLocal: Boolean!
+  enabledProd: Boolean!
+  enabledStage: Boolean!
   id: Int!
-  localEnablePercentage: Int!
-  localEnabled: Boolean!
-  localOffCount: Int!
-  localOnCount: Int!
   name: String!
-  productionEnablePercentage: Int!
-  productionEnabled: Boolean!
-  productionOffCount: Int!
-  productionOnCount: Int!
-  stagingEnablePercentage: Int!
-  stagingEnabled: Boolean!
-  stagingOffCount: Int!
-  stagingOnCount: Int!
   updatedAt: DateTime!
 }
 
 input FeatureFlagSingleDbCreateInput {
+  abPercentageLocal: Int! = 100
+  abPercentageProd: Int! = 100
+  abPercentageStage: Int! = 100
   description: String!
-  localEnablePercentage: Int! = 100
-  localEnabled: Boolean! = true
+  enabledLocal: Boolean! = true
+  enabledProd: Boolean! = true
+  enabledStage: Boolean! = true
   name: String!
-  productionEnablePercentage: Int! = 100
-  productionEnabled: Boolean! = true
-  stagingEnablePercentage: Int! = 100
-  stagingEnabled: Boolean! = true
 }
 
 input FeatureFlagSingleDbPercentageUpdateInput {
-  localOffCount: Int
-  localOnCount: Int
-  productionOffCount: Int
-  productionOnCount: Int
-  stagingOffCount: Int
-  stagingOnCount: Int
+  abHideCountLocal: Int
+  abHideCountProd: Int
+  abHideCountStage: Int
+  abShowCountLocal: Int
+  abShowCountProd: Int
+  abShowCountStage: Int
 }
 
 input FeatureFlagSingleDbToggleUniqueInput {
-  localEnabled: Boolean
-  productionEnabled: Boolean
-  stagingEnabled: Boolean
+  enabledLocal: Boolean
+  enabledProd: Boolean
+  enabledStage: Boolean
 }
 
 input FeatureFlagSingleDbUpdateInput {
+  abPercentageLocal: Int! = 100
+  abPercentageProd: Int! = 100
+  abPercentageStage: Int! = 100
   description: String!
+  enabledLocal: Boolean! = true
+  enabledProd: Boolean! = true
+  enabledStage: Boolean! = true
   id: Int!
-  localEnablePercentage: Int! = 100
-  localEnabled: Boolean! = true
   name: String!
-  productionEnablePercentage: Int! = 100
-  productionEnabled: Boolean! = true
-  stagingEnablePercentage: Int! = 100
-  stagingEnabled: Boolean! = true
 }
 
 input FeatureFlagToggleInput {
@@ -94,8 +94,8 @@ input FeatureFlagToggleInput {
 }
 
 input FeatureFlagUpdateInput {
+  abPercentage: Int! = 100
   description: String!
-  enablePercentage: Int! = 100
   enabled: Boolean! = true
   id: Int!
   name: String!

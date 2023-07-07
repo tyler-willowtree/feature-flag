@@ -12,9 +12,9 @@ const { result } = useQuery<Query>(
         id
         name
         enabled
-        enablePercentage
-        onCount
-        offCount
+        abPercentage
+        abShowCount
+        abHideCount
       }
     }
   `
