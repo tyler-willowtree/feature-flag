@@ -3,10 +3,10 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
-import { FeatureFlagResolver } from 'server/featureFlag.resolver';
-import { FeatureFlagService } from 'server/featureFlag.service';
-import { FeatureFlagSingleDbResolver } from 'server/featureFlagSingleDb.resolver';
-import { FeatureFlagSingleDbService } from 'server/featureFlagSingleDb.service';
+import { FeatureFlagResolver } from 'server/featureFlag/featureFlag.resolver';
+import { FeatureFlagService } from 'server/featureFlag/featureFlag.service';
+import { FeatureFlagSingleDbResolver } from 'server/featureFlagSingleDb/featureFlagSingleDb.resolver';
+import { FeatureFlagSingleDbService } from 'server/featureFlagSingleDb/featureFlagSingleDb.service';
 import { PrismaService } from 'server/prisma.service';
 import { AppController } from './app.controller';
 

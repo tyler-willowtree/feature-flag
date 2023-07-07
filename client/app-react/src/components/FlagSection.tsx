@@ -4,9 +4,10 @@ import { FlaggedFeature } from 'components/FlaggedFeature';
 export const FlagSection: React.FC<{
   names: string[];
   showElseElement?: boolean;
-}> = ({ names, showElseElement }) => {
+  ignorePercentage?: boolean;
+}> = ({ names, showElseElement, ignorePercentage }) => {
   return (
-    <div className="stacked stacked-row stacked-justified-between largeRowGap">
+    <div className="featureGrid">
       {names.map((flagName) => (
         <div key={flagName} className="stacked">
           <h5>Flag name: '{flagName}'</h5>
@@ -15,9 +16,10 @@ export const FlagSection: React.FC<{
 
           <FlaggedFeature
             flagKey={flagName}
+            ignorePercentage={ignorePercentage}
             elseElement={showElseElement ? <div>Coming soon</div> : null}
           >
-            <div>Feature for {flagName}</div>
+            <div className="text-center">Feature for {flagName}</div>
           </FlaggedFeature>
         </div>
       ))}

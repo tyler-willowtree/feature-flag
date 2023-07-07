@@ -10,7 +10,16 @@ const graphQlOptions = {
       delete: 'deleteFlag',
       example: 'createExampleFlag',
     },
-    returns: ['id', 'name', 'description', 'enabled', 'updatedAt'],
+    returns: [
+      'id',
+      'name',
+      'description',
+      'enabled',
+      'enablePercentage',
+      'onCount',
+      'offCount',
+      'updatedAt',
+    ],
   },
   shared: {
     queries: {
@@ -30,6 +39,15 @@ const graphQlOptions = {
       'localEnabled',
       'stagingEnabled',
       'productionEnabled',
+      'localEnablePercentage',
+      'stagingEnablePercentage',
+      'productionEnablePercentage',
+      'localOnCount',
+      'localOffCount',
+      'stagingOnCount',
+      'stagingOffCount',
+      'productionOnCount',
+      'productionOffCount',
       'updatedAt',
     ],
   },
@@ -59,12 +77,19 @@ const tableOptions = {
         width: '120px',
       },
       {
+        id: 'enablePercentage',
+        label: 'A/B',
+        sortable: true,
+        type: 'ab-test',
+        width: '100px',
+      },
+      {
         id: 'updatedAt',
-        label: 'Updated At',
+        label: 'Updated',
         divClassList: ['row-reverse'],
         sortable: true,
         type: 'date',
-        width: '180px',
+        width: '110px',
       },
       {
         id: 'actions',
@@ -72,7 +97,7 @@ const tableOptions = {
         divClassList: ['text-center'],
         sortable: false,
         type: 'actions',
-        width: '167px',
+        width: '120px',
       },
     ],
     rows: [
@@ -80,11 +105,13 @@ const tableOptions = {
       { id: 'description' },
       {
         id: 'enabled',
-        divClassList: ['text-center'],
         isToggleColumn: true,
+        includeToggle: true,
+        toggle: 'enabled',
       },
+      { id: 'enablePercentage', type: 'ab-test' },
       { id: 'updatedAt', divClassList: ['text-end'], type: 'date' },
-      { id: 'actions', includeToggle: true, toggle: 'enabled' },
+      { id: 'actions' },
     ],
   },
   shared: {
@@ -125,11 +152,11 @@ const tableOptions = {
       },
       {
         id: 'updatedAt',
-        label: 'Updated At',
+        label: 'Updated',
         divClassList: ['row-reverse'],
         sortable: true,
         type: 'date',
-        width: '180px',
+        width: '110px',
       },
       {
         id: 'actions',
@@ -137,7 +164,7 @@ const tableOptions = {
         divClassList: ['text-center'],
         sortable: false,
         type: 'actions',
-        width: '115px',
+        width: '120px',
       },
     ],
     rows: [
@@ -145,33 +172,18 @@ const tableOptions = {
       { id: 'description' },
       {
         id: 'localEnabled',
-        divClassList: [
-          'd-flex',
-          'justify-content-around',
-          'align-items-center',
-        ],
         includeToggle: true,
         toggle: 'localEnabled',
         isToggleColumn: true,
       },
       {
         id: 'stagingEnabled',
-        divClassList: [
-          'd-flex',
-          'justify-content-around',
-          'align-items-center',
-        ],
         includeToggle: true,
         toggle: 'stagingEnabled',
         isToggleColumn: true,
       },
       {
         id: 'productionEnabled',
-        divClassList: [
-          'd-flex',
-          'justify-content-around',
-          'align-items-center',
-        ],
         includeToggle: true,
         toggle: 'productionEnabled',
         isToggleColumn: true,
@@ -219,8 +231,15 @@ class PageSetup {
   /* ------ General Methods ------ */
   #buildMutation(name, variables) {
     const { mutations, returns } = graphQlOptions[this.#db];
+    if (variables) {
+      return this.#getApiConfig(`mutation ${mutations[name]} {
+        ${mutations[name]}(${variables}) {
+          ${returns.join('\n')}
+        }
+      }`);
+    }
     return this.#getApiConfig(`mutation ${mutations[name]} {
-      ${mutations[name]}(${variables}) {
+      ${mutations[name]} {
         ${returns.join('\n')}
       }
     }`);
@@ -267,7 +286,7 @@ class PageSetup {
   }
 
   #formatDate(date) {
-    return dayjs(date).format('MMM DD, YY h:mm a');
+    return dayjs(date).format('MMM DD, YY<br/>h:mm a');
   }
 
   #getApiConfig(query) {
@@ -277,6 +296,20 @@ class PageSetup {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query }),
     };
+  }
+
+  #getColumnTypeFunction(type, params) {
+    switch (type) {
+      case 'boolean':
+        return this.#buildCellBoolean(params);
+      case 'date':
+        return this.#buildCellDate(params);
+      case 'ab-test':
+        return this.#buildCellAbTest(params);
+      case 'text':
+      default:
+        return this.#buildCellText(params);
+    }
   }
 
   #htmlCreateButton({
@@ -321,7 +354,7 @@ class PageSetup {
       return dayjs(data);
     } else if (colType === 'boolean') {
       return Boolean(data);
-    } else if (colType === 'number') {
+    } else if (colType === 'number' || colType === 'percent') {
       return Number(data);
     }
     return data;
@@ -511,33 +544,18 @@ class PageSetup {
   }
 
   #updateCustomTableBody() {
-    const colOpts = tableOptions[this.#db].headers;
-    const rowOpts = tableOptions[this.#db].rows;
-    const rows = this.#pagedFlags[this.#currentPageForArray].map((item) => {
-      const entries = Object.entries(item);
-      return {
-        id: item.id,
-        ...Object.assign(
-          {},
-          ...colOpts.map((opt) => {
-            const cell = entries.find((entry) => entry[0] === opt.id);
-            if (cell) {
-              let str;
-              if (opt.type === 'date') {
-                str = this.#formatDate(cell[1]);
-              } else {
-                str = cell[1];
-              }
-              return { [cell[0]]: str };
-            }
-          })
-        ),
-      };
-    });
-
-    this.#tableBody.setAttribute('rows', JSON.stringify(rows));
-    this.#tableBody.setAttribute('row-options', JSON.stringify(rowOpts));
-    this.#tableBody.setAttribute('col-options', JSON.stringify(colOpts));
+    this.#tableBody.setAttribute(
+      'rows',
+      JSON.stringify(this.#pagedFlags[this.#currentPageForArray])
+    );
+    this.#tableBody.setAttribute(
+      'row-options',
+      JSON.stringify(tableOptions[this.#db].rows)
+    );
+    this.#tableBody.setAttribute(
+      'col-options',
+      JSON.stringify(tableOptions[this.#db].headers)
+    );
   }
 
   #updateCustomTableHead() {
@@ -565,21 +583,64 @@ class PageSetup {
   }
 
   /*  ------ Create/Build Components ------ */
-  #buildActionCell(params) {
+  #buildCell(params) {
+    const { colOption, rowOpt, index } = params;
+    const td = document.createElement('td');
+    if (index === 0) {
+      td.setAttribute('scope', 'row');
+    }
+    const div = document.createElement('div');
+    div.classList.add('lh-sm');
+    td.append(div);
+
+    if (rowOpt.divClassList) {
+      div.classList.add(...rowOpt.divClassList);
+    }
+
+    this.#getColumnTypeFunction(colOption.type, { ...params, div, td });
+
+    return td;
+  }
+
+  #buildCellAbTest(params) {
+    const { row, div } = params;
+    div.classList.add('text-center');
+    let str;
+
+    const percent = row.enablePercentage;
+    if (Number(percent) === 100) {
+      str = `n/a`;
+    } else {
+      str = `<div class='mb-1'>${percent}%</div>`;
+      if (Number(percent) !== 100) {
+        str += `<div class='small'><u>Counts</u><br/>${row.onCount} / ${row.offCount}</div>`;
+      }
+    }
+    div.innerHTML = str;
+  }
+
+  #buildCellAction(params) {
     const { row, rowOpt } = params;
     const td = document.createElement('td');
     const div = document.createElement('div');
-    div.classList.add('actions');
+    div.classList.add(
+      'd-flex',
+      'align-items-center',
+      'justify-content-between'
+    );
+
     const delButton = this.#htmlCreateIconButton({
       icon: 'trash',
       clickHandler: () => this.handleDeleteFlag(row.id),
       type: 'delete',
     });
+
     const editButton = this.#htmlCreateIconButton({
       icon: 'pencil',
-      clickHandler: () => dbClass.handleAddEditFormOpen('update', row),
+      clickHandler: () => dbClass.handleAddEditFormOpen('update', row.id),
       type: 'edit',
     });
+
     div.append(delButton);
     div.append(editButton);
 
@@ -597,42 +658,59 @@ class PageSetup {
     return td;
   }
 
-  #buildCell(params) {
-    const { cellData, row, rowOpt, index } = params;
-    const td = document.createElement('td');
-    if (index === 0) {
-      td.setAttribute('scope', 'row');
+  #buildCellBoolean(params) {
+    const { cellData, row, rowOpt, div, td } = params;
+
+    div.classList.add(
+      'd-flex',
+      'justify-content-between',
+      'align-items-center',
+      this.#db === 'own' ? 'ps-3' : 'ps-2'
+    );
+
+    const icon = document.createElement('i');
+    icon.classList.add(
+      'fa-solid',
+      `fa-${!cellData ? 'xmark' : 'check'}`,
+      'fa-lg'
+    );
+    div.append(icon);
+
+    if (rowOpt.includeToggle) {
+      const toggleBtn = this.#htmlCreateIconButton({
+        icon: row[rowOpt.toggle] ? 'toggle-off' : 'toggle-on',
+        clickHandler: () =>
+          this.handleToggleFlag(row.id, rowOpt.toggle, !row[rowOpt.toggle]),
+        type: 'toggle',
+      });
+      div.append(toggleBtn);
     }
-    const div = document.createElement('div');
 
-    if (rowOpt.divClassList) {
-      div.classList.add(...rowOpt.divClassList);
-    }
-
-    if (rowOpt.isToggleColumn) {
-      const icon = document.createElement('i');
-      icon.classList.add(
-        'fa-solid',
-        `fa-${!cellData ? 'xmark' : 'check'}`,
-        'fa-lg'
-      );
-      div.append(icon);
-
-      if (rowOpt.includeToggle) {
-        const toggleBtn = this.#htmlCreateIconButton({
-          icon: row[rowOpt.toggle] ? 'toggle-off' : 'toggle-on',
-          clickHandler: () =>
-            this.handleToggleFlag(row.id, rowOpt.toggle, !row[rowOpt.toggle]),
-          type: 'toggle',
-        });
-        div.append(toggleBtn);
+    if (this.#db === 'shared') {
+      const abDiv = document.createElement('div');
+      abDiv.classList.add('ps-2', 'small');
+      let str;
+      const env = rowOpt.toggle.replace('Enabled', '');
+      const percent = row[`${env}EnablePercentage`];
+      str = `<div>A/B: ${percent}%</div>`;
+      if (Number(percent) !== 100) {
+        str += `<div>Counts: ${row[`${env}OnCount`]} / ${
+          row[`${env}OffCount`]
+        }</div>`;
       }
-    } else {
-      div.innerText = cellData;
+      abDiv.innerHTML = str;
+      td.append(abDiv);
     }
+  }
 
-    td.append(div);
-    return td;
+  #buildCellDate(params) {
+    const { cellData, div } = params;
+    div.innerHTML = this.#formatDate(cellData);
+  }
+
+  #buildCellText(params) {
+    const { cellData, div } = params;
+    div.innerHTML = cellData;
   }
 
   #createPageContent() {
@@ -802,7 +880,7 @@ class PageSetup {
 
   createTableRowCell(params, isActions = false) {
     if (isActions) {
-      return this.#buildActionCell(params);
+      return this.#buildCellAction(params);
     } else {
       return this.#buildCell(params);
     }
@@ -813,9 +891,12 @@ class PageSetup {
     this.#editing = null;
   }
 
-  handleAddEditFormOpen(formType, flag) {
+  handleAddEditFormOpen(formType, id) {
     if (formType === formTypes.update) {
-      this.#editing = flag;
+      const flag = this.#pagedFlags[this.#currentPageForArray].find(
+        (f) => f.id === id
+      );
+      this.#editing = flag || null;
     } else {
       this.#editing = null;
     }
@@ -823,15 +904,24 @@ class PageSetup {
   }
 
   handleAddEditFormSubmit() {
-    const name = this.#addEditForm.querySelector('#name').value;
-    const description = this.#addEditForm.querySelector('#description').value;
-    let queryData = `name: "${name}", description: "${description}"`;
+    const inputs = this.#addEditForm.querySelectorAll('input');
+    const queryItems = ['data: {'];
+
+    inputs.forEach((input) => {
+      if (input.type === 'checkbox') {
+        queryItems.push(`${input.id}: ${input.checked}`);
+      } else if (input.type === 'number') {
+        queryItems.push(`${input.id}: ${input.value}`);
+      } else {
+        queryItems.push(`${input.id}: "${input.value}"`);
+      }
+    });
+    queryItems.push('}');
 
     if (this.#editing === null) {
-      this.addFlag(queryData);
+      this.addFlag(queryItems.join(','));
     } else {
-      queryData += `, id: ${this.#editing.id}`;
-      this.editFlag(queryData);
+      this.editFlag(`id: ${this.#editing.id}, ${queryItems.join(',')}`);
     }
   }
 
@@ -888,35 +978,9 @@ class PageSetup {
   }
 
   async updateDbWithExamples() {
-    const randomString = (length) => {
-      let result = '';
-      const characters = 'abcdefghijklmnopqrstuvwxyz';
-      let charactersLength = characters.length;
-      for (let i = 0; i < length; i++) {
-        result += characters.charAt(
-          Math.floor(Math.random() * charactersLength)
-        );
-      }
-      return result;
-    };
-
-    const bodies = [];
     const arr = [];
     arr.length = 10;
-    arr.fill('');
-    arr.forEach(() => {
-      const randomLengths = [
-        Math.ceil(Math.random() * 6) + 1,
-        Math.ceil(Math.random() * 5) + 1,
-        Math.ceil(Math.random() * 8) + 1,
-      ];
-      const data = `name: "${randomString(randomLengths[0])}-${randomString(
-        randomLengths[1]
-      )}-${randomString(
-        randomLengths[2]
-      )}", description: "This is example flag only"`;
-      bodies.push(this.#buildMutation('example', data));
-    });
+    arr.fill(this.#buildMutation('example'));
 
     const callEach = async (theMeat) => {
       const fetchData = await fetch(theMeat.url, {
@@ -927,7 +991,7 @@ class PageSetup {
       return fetchData.json();
     };
 
-    await Promise.all(bodies.map((bod) => callEach(bod))).then((res) => {
+    await Promise.all(arr.map((bod) => callEach(bod))).then((res) => {
       res.forEach((item) => {
         const flag = item.data[graphQlOptions[this.#db].mutations.example];
         this.#allFlags.push(flag);

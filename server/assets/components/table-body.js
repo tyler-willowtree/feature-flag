@@ -43,6 +43,7 @@ const updateTableBody = (element) => {
               rowOpt: rowOptionsArray[index],
               cellData: row[option.id],
               index,
+              colOption: option,
             },
             option.id === 'actions'
           )

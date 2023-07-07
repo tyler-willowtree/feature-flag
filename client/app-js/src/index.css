@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 20px 0;
   font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
@@ -24,6 +28,23 @@ hr {
   width: 100%;
 }
 
+nav {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 20px;
+  margin-bottom: 30px;
+}
+
+nav a {
+  color: black;
+}
+
+nav a.active {
+  color: green;
+}
+
 .stacked {
   display: flex;
   flex-direction: column;
@@ -32,22 +53,12 @@ hr {
   gap: 10px;
 }
 
-.stacked-row {
-  width: 80%;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-
-.stacked-justified-between {
-  justify-content: space-between;
-}
-
-.largeRowGap {
-  row-gap: 40px;
-}
-
 .font16 {
   font-size: 16px;
+}
+
+.text-center {
+  text-align: center;
 }
 
 .body {
@@ -66,4 +77,12 @@ hr {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px 40px;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  width: 100%;
+  align-items: start;
 }

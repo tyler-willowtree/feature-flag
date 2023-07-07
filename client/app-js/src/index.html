@@ -12,34 +12,61 @@
 </noscript>
 
 <div class='body'>
-  <h1>Feature Flags Example (Web components)</h1>
+  <p class='text-center'>Refresh page to see a/b testing update</p>
 
-  <h2>All available flags <span>(uses single database option)</span></h2>
+  <h1>Feature Flag Example (Web components)</h1>
+
+  <h2>
+    All available flags<br />
+    <span>using single database option</span>
+  </h2>
   <div class='mainGrid'></div>
 
   <hr />
 
-  <h2>Flags that are not enabled (allow code to be used)</h2>
+  <h2>
+    ✅ Flags that are not enabled<br />
+    <span>allow code to be used, ignores percentages by default</span>
+  </h2>
   <div id='disabled-flags'></div>
 
   <hr />
 
-  <h2>Flags that are enabled (hide code)</h2>
+  <h2>
+    ❌ Flags that are enabled<br />
+    <span>hide code, no elseElement, ignores percentages</span>
+  </h2>
   <div id='enabled-flags'></div>
 
   <hr />
 
-  <h2>Flags that are enabled (hide code, show elseElement)</h2>
+  <h2>
+    🔆 Flags that are enabled<br />
+    <span>show elseElement, ignores percentages</span>
+  </h2>
   <div id="enabled-flags-else"></div>
 
   <hr />
 
   <h2>
-    Flags that do not exist in the DB but are wrapped in the FlaggedFeature component (hide code)
+    ❌ Flags that do not exist in the DB but are wrapped in the FlaggedFeature component<br />
+    <span>hide code, no elseElement</span>
     <br />
-    <span class='font16'>This allows the feature to be started before the DB is updated</span>
+    <span class='font16'>
+      This allows the feature to be started before the DB is updated (more useful when each
+      environment has its own database)
+    </span>
   </h2>
   <div id='fake-flags'></div>
+
+  <hr />
+
+  <h2>
+    🆎 Flags that are A/B testing, enabled, and uses else element
+    <br />
+    <span>uses percentages to decide to show or use else/hide</span>
+  </h2>
+  <div id='ab-testing'></div>
 </div>
 </body>
 </html>

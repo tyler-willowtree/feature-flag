@@ -13,23 +13,35 @@ datasource db {
 // An example of a feature flag that is enabled in all environments ('own')
 // useful when each environment has its own database
 model FeatureFlag {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  description String
-  enabled     Boolean
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               Int      @id @default(autoincrement())
+  name             String   @unique
+  description      String
+  enabled          Boolean
+  enablePercentage Int
+  onCount          Int
+  offCount         Int
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 // An example of a feature flag that is enabled in different environments ('shared')
 // useful when all environments share the same database
 model FeatureFlagSingleDb {
-  id                Int      @id @default(autoincrement())
-  name              String   @unique
-  description       String
-  localEnabled      Boolean
-  stagingEnabled    Boolean
-  productionEnabled Boolean
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                         Int      @id @default(autoincrement())
+  name                       String   @unique
+  description                String
+  localEnabled               Boolean
+  stagingEnabled             Boolean
+  productionEnabled          Boolean
+  localEnablePercentage      Int
+  stagingEnablePercentage    Int
+  productionEnablePercentage Int
+  localOnCount               Int
+  localOffCount              Int
+  stagingOnCount             Int
+  stagingOffCount            Int
+  productionOnCount          Int
+  productionOffCount         Int
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
 }
