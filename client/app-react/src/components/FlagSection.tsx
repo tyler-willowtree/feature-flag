@@ -1,4 +1,5 @@
 import React from 'react';
+import { FlaggedFeatureExample } from 'components/FlaggedFeatureExample';
 import { FlaggedFeature } from 'components/FlaggedFeature';
 
 export const FlagSection: React.FC<{
@@ -14,13 +15,22 @@ export const FlagSection: React.FC<{
 
           <hr />
 
-          <FlaggedFeature
-            flagKey={flagName}
-            ignorePercentage={ignorePercentage}
-            elseElement={showElseElement ? <div>Coming soon</div> : null}
-          >
-            <div className="text-center">Feature for {flagName}</div>
-          </FlaggedFeature>
+          {ignorePercentage ? (
+            <FlaggedFeatureExample
+              flagKey={flagName}
+              ignorePercentage={ignorePercentage}
+              altElement={showElseElement ? <div>Coming soon</div> : null}
+            >
+              <div className="text-center">Feature for {flagName}</div>
+            </FlaggedFeatureExample>
+          ) : (
+            <FlaggedFeature
+              flagKey={flagName}
+              altElement={showElseElement ? <div>Coming soon</div> : null}
+            >
+              <div className="text-center">Feature for {flagName}</div>
+            </FlaggedFeature>
+          )}
         </div>
       ))}
     </div>

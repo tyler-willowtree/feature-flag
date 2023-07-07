@@ -56,7 +56,7 @@ export const Examples: React.FC = () => {
           <h2>
             ❌ Flags that are enabled
             <br />
-            <span>hide code, no elseElement, ignores percentages</span>
+            <span>hide code, no altElement, ignores percentages</span>
           </h2>
           <FlagSection
             ignorePercentage
@@ -71,7 +71,7 @@ export const Examples: React.FC = () => {
           <h2>
             🔆 Flags that are enabled
             <br />
-            <span>show elseElement, ignores percentages</span>
+            <span>show altElement, ignores percentages</span>
           </h2>
           <FlagSection
             ignorePercentage
@@ -87,7 +87,7 @@ export const Examples: React.FC = () => {
             ❌ Flags that do not exist in the DB but are wrapped in the
             FlaggedFeature component
             <br />
-            <span>hide code, no elseElement</span>
+            <span>hide code, no altElement</span>
             <br />
             <span className="font16">
               This allows the feature to be started before the DB is updated

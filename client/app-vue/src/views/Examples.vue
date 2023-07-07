@@ -58,7 +58,7 @@ const fakeNames = ['non-exist', 'test-84', 'test-85', 'test-86']
 
     <h2>
       ❌ Flags that are enabled<br />
-      <span>hide code, no elseElement, ignores percentages</span>
+      <span>hide code, no altElement, ignores percentages</span>
     </h2>
     <FlagSection
       :names="result.getAllFlags.filter((flag) => flag.enabled).map((flag) => flag.name)"
@@ -69,7 +69,7 @@ const fakeNames = ['non-exist', 'test-84', 'test-85', 'test-86']
 
     <h2>
       🔆 Flags that are enabled<br />
-      <span>show elseElement, ignores percentages</span>
+      <span>show altElement, ignores percentages</span>
     </h2>
     <FlagSection
       :names="result.getAllFlags.filter((flag) => flag.enabled).map((flag) => flag.name)"
@@ -80,8 +80,8 @@ const fakeNames = ['non-exist', 'test-84', 'test-85', 'test-86']
     <hr />
 
     <h2>
-      ❌ Flags that do not exist in the DB but are wrapped in the FlaggedFeature component<br />
-      <span>hide code, no elseElement</span>
+      ❌ Flags that do not exist in the DB but are wrapped in the FlaggedFeatureExample component<br />
+      <span>hide code, no altElement</span>
       <br />
       <span class="font16">
         This allows the feature to be started before the DB is updated (more useful when each

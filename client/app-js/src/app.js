@@ -1,5 +1,6 @@
 import './index.css';
 import './flag-section';
+import './flagged-feature-example';
 import './flagged-feature';
 import './flag-section-detail';
 

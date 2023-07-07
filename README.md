@@ -3,11 +3,10 @@
 > Fullstack example of using feature flags in an application.
 > 
 > Backend uses Nestjs, Prisma, GraphQL, MySQL (using docker), EJS, and Web components to create a feature flagging system along with a page on the server side to create, edit, toggle, and 
-> delete flags.
-> All of these languages can be changed out to your liking, with a some update to the code.
+> delete flags. All of these languages can be changed out to your liking, with a some update to the code.
 > 
-> There are examples of the frontend in different languages including React, Vue and Web components. React and Vue use Prisma & GraphQL, while Web components just uses fetch. Again the way in 
-> which data is fetched can be updated to your liking.
+> There are examples of the frontend in different languages including React, Vue and Web components. React and Vue example components use Prisma & GraphQL, while Web Components and non-example 
+> components use fetch & GraphQL. Again the way in which data is fetched can be updated to your liking.
 > 
 > **Now includes A/B testing**
 
@@ -125,7 +124,7 @@ const Example = () => {
       {/* With an alternate component */}
       <FlaggedFeature
         flagKey="example-flag-with-alt"
-        elseElement={<div>This will be shown if the flag is enabled</div>}
+        altElement={<div>This will be shown if the flag is enabled</div>}
       >
         <p>This is the feature and will be shown if the flag is disabled</p>
       </FlaggedFeature>

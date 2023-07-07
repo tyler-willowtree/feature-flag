@@ -1,4 +1,4 @@
-import { FlaggedFeature } from 'components/FlaggedFeature';
+import { FlaggedFeatureExample } from 'components/FlaggedFeatureExample';
 import { Layout } from 'components/Layout';
 import { Examples } from 'pages/Examples';
 import { TestOnePage } from 'pages/TestOnePage';
@@ -36,12 +36,12 @@ export const mainRoutes: CustomRouteObject = {
       path: 'test-two',
       id: 'Test Two',
       element: (
-        <FlaggedFeature
+        <FlaggedFeatureExample
           flagKey="a-example-only"
-          elseElement={<div>Page coming soon!</div>}
+          altElement={<div>Page coming soon!</div>}
         >
           <TestTwoPage />
-        </FlaggedFeature>
+        </FlaggedFeatureExample>
       ),
       meta: {
         inNav: {
