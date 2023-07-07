@@ -125,7 +125,7 @@ const Example = () => {
       {/* With an alternate component */}
       <FlaggedFeature
         flagKey="example-flag-with-alt"
-        elseElement={<div>This will be shown if the flag is enabled</div>}
+        altElement={<div>This will be shown if the flag is enabled</div>}
       >
         <p>This is the feature and will be shown if the flag is disabled</p>
       </FlaggedFeature>

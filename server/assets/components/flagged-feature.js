@@ -27,9 +27,9 @@ customElements.define(
                 this.innerHTML =
                   this.querySelector('[slot="feature"]').innerHTML;
               } else {
-                const elseElement = this.querySelector('[slot="elseElement"]');
-                if (elseElement) {
-                  this.innerHTML = elseElement.innerHTML;
+                const altElement = this.querySelector('[slot="altElement"]');
+                if (altElement) {
+                  this.innerHTML = altElement.innerHTML;
                 } else {
                   this.remove();
                 }
