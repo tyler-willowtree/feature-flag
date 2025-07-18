@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import FlaggedFeatureExample from '@/components/FlaggedFeature.vue'
+import FlaggedFeature from '@/components/FlaggedFeature.vue'
 import FlaggedFeatureExample from '@/components/FlaggedFeatureExample.vue'
 
 defineProps<{

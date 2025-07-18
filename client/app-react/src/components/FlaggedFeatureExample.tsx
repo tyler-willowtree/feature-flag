@@ -77,7 +77,7 @@ export const FlaggedFeatureExample: React.FC<FlaggedFeatureProps> = ({
         });
       }
     },
-    [flag]
+    [flag, updateFlagPercentage]
   );
 
   useEffect(() => {
@@ -127,6 +127,7 @@ export const FlaggedFeatureExample: React.FC<FlaggedFeatureProps> = ({
     // SHOW NOTHING
     updateCounts({ abHideCount: flag.abHideCount + 1 });
     setShowFeature(ShowState.NONE);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   if (error) return <div>{error.message}</div>;

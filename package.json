@@ -24,17 +24,17 @@
     "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
-    "@apollo/server": "^4.7.3",
+    "@apollo/server": "4.9.3",
     "@nestjs/apollo": "^11.0.6",
-    "@nestjs/common": "^9.0.0",
+    "@nestjs/common": "11.0.16",
     "@nestjs/core": "^9.0.0",
     "@nestjs/graphql": "^11.0.6",
     "@nestjs/platform-express": "^9.0.0",
     "@prisma/client": "^4.15.0",
     "change-case": "^4.1.2",
     "dayjs": "^1.11.8",
-    "ejs": "^3.1.9",
-    "graphql": "^16.6.0",
+    "ejs": "3.1.10",
+    "graphql": "16.8.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
@@ -84,5 +84,6 @@
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }
