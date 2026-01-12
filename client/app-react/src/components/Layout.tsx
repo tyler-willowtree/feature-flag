@@ -1,6 +1,6 @@
 import { useGetAllFlags } from 'queries';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router';
 import { mainRoutes } from 'routes/mainRoutes';
 import { CustomRouteObject } from 'routes/types';
 
