@@ -1,4 +1,4 @@
-import { RouteObject } from 'react-router-dom';
+import { RouteObject } from 'react-router';
 
 export interface CustomRouteObject extends Omit<RouteObject, 'children'> {
   meta: {
